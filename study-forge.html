@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#090a0d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="STUDY FORGE — 知識を武器に変える学習RPG" />
+  <title>STUDY FORGE — Knowledge Becomes Power</title>
+  <style>
+:root {
+  --bg: #07080a;
+  --bg-2: #0e1014;
+  --panel: rgba(18, 20, 25, 0.92);
+  --panel-2: rgba(25, 27, 33, 0.92);
+  --line: rgba(255,255,255,.10);
+  --line-strong: rgba(255,255,255,.18);
+  --text: #f4f1ea;
+  --muted: #9b9ca2;
+  --ember: #ff8a2a;
+  --ember-2: #ffb14a;
+  --gold: #e7bf67;
+  --danger: #ff5151;
+  --ok: #65d28d;
+  --ice: #7ec8ff;
+  --shadow: 0 20px 60px rgba(0,0,0,.45);
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); overscroll-behavior-y: none; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior-y: none;
+  background:
+    radial-gradient(circle at 20% -10%, rgba(255,109,31,.14), transparent 32%),
+    radial-gradient(circle at 100% 10%, rgba(255,177,74,.07), transparent 30%),
+    linear-gradient(180deg,#0b0c0f 0%,#060709 100%);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; }
+button:focus-visible { outline: 2px solid var(--ember-2); outline-offset: 3px; }
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .18;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+.app-shell { width: min(1180px, 100%); margin: 0 auto; min-height: 100vh; min-height: 100dvh; padding-bottom: 116px; padding-bottom: calc(116px + env(safe-area-inset-bottom)); }
+.topbar {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: max(14px, env(safe-area-inset-top)) 20px 14px;
+  background: linear-gradient(180deg, rgba(7,8,10,.98), rgba(7,8,10,.84));
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+.brand-wrap { display:flex; align-items:center; gap:12px; }
+.brand-mark {
+  width:42px;height:42px;border:1px solid rgba(255,177,74,.45);display:grid;place-items:center;
+  background:linear-gradient(145deg,#2b2017,#101114 55%); color:var(--ember-2); font-weight:900; letter-spacing:-1px;
+  box-shadow:inset 0 0 20px rgba(255,138,42,.12),0 0 24px rgba(255,138,42,.08);
+  clip-path: polygon(12% 0,88% 0,100% 12%,100% 88%,88% 100%,12% 100%,0 88%,0 12%);
+}
+.brand { font-weight:900; letter-spacing:.12em; font-size:14px; }
+.brand-sub { color:var(--muted); font-size:9px; letter-spacing:.18em; margin-top:3px; }
+.resource-row { display:flex; gap:8px; }
+.resource { display:flex; align-items:center; gap:7px; padding:8px 10px; background:#111318; border:1px solid var(--line); border-radius:10px; font-size:13px; }
+.resource span { color:var(--gold); font-size:10px; font-weight:900; }
+.resource.forge span { color:var(--ember-2); }
+
+main { padding: 20px; }
+.screen { display:none; animation: screenIn .24s ease-out; }
+.screen.active { display:block; }
+@keyframes screenIn { from{opacity:0; transform:translateY(6px)} to{opacity:1;transform:none} }
+
+.metal-panel {
+  position:relative;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.035), transparent 28%),
+    linear-gradient(180deg, var(--panel-2), var(--panel));
+  border:1px solid var(--line);
+  box-shadow:var(--shadow), inset 0 1px rgba(255,255,255,.04);
+  border-radius:18px;
+  overflow:hidden;
+}
+.metal-panel::after { content:""; position:absolute; inset:0; pointer-events:none; border:1px solid rgba(255,255,255,.025); border-radius:18px; transform:scale(.985); }
+.hero-panel { padding:28px; }
+.eyebrow { color:var(--ember-2); font-size:10px; font-weight:900; letter-spacing:.22em; text-transform:uppercase; }
+.hero-top { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; margin-top:8px; }
+.level-line { color:var(--muted); font-size:13px; font-weight:800; letter-spacing:.16em; }
+.level-line strong { color:white; font-size:28px; margin-left:7px; }
+h1,h2,h3,p { margin-top:0; }
+.hero-top h1 { margin:4px 0 7px; font-size:clamp(27px,5vw,48px); letter-spacing:-.04em; }
+.hero-top p { color:var(--muted); margin-bottom:0; }
+.rank-emblem { width:76px; height:76px; display:grid; place-items:center; font:900 30px/1 Georgia,serif; color:var(--gold); border:1px solid rgba(231,191,103,.35); background:radial-gradient(circle,#2d2418,#0e0f12 70%); transform:rotate(45deg); }
+.rank-emblem::first-letter { transform:rotate(-45deg); }
+.exp-block { margin-top:24px; }
+.bar-label,.hp-label { display:flex; justify-content:space-between; color:var(--muted); font-size:10px; font-weight:800; letter-spacing:.12em; margin-bottom:7px; }
+.progress { height:10px; border-radius:999px; background:#08090b; border:1px solid rgba(255,255,255,.08); overflow:hidden; }
+.progress i { display:block; height:100%; width:0; background:linear-gradient(90deg,#ff6c24,var(--ember-2)); box-shadow:0 0 16px rgba(255,138,42,.4); transition:width .35s ease; }
+.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:18px; }
+.stat-card { padding:12px 14px; background:rgba(0,0,0,.22); border:1px solid var(--line); border-radius:12px; }
+.stat-card span { display:block; color:var(--muted); font-size:10px; font-weight:900; letter-spacing:.13em; }
+.stat-card b { display:block; margin-top:5px; font-size:21px; }
+
+.home-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin-top:14px; }
+.mode-card { min-height:190px; text-align:left; padding:24px; border:1px solid var(--line); border-radius:18px; background:#15171c; cursor:pointer; transition:.2s ease; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+.mode-card::before { content:""; position:absolute; inset:auto -10% -60% auto; width:240px; height:240px; border-radius:50%; filter:blur(8px); opacity:.22; }
+.mode-card.study-card::before { background:var(--ember); }
+.mode-card.battle-card::before { background:#a62b2b; }
+.mode-card:hover,.mode-card:active { transform:translateY(-2px); border-color:var(--line-strong); }
+.mode-kicker { display:block; font-size:9px; font-weight:900; letter-spacing:.2em; color:var(--muted); }
+.mode-card strong { display:block; margin-top:10px; font-size:clamp(30px,5vw,44px); letter-spacing:-.04em; }
+.mode-card > span:not(.mode-kicker) { display:block; max-width:360px; margin-top:5px; color:#c1c1c3; font-size:13px; }
+.mode-card em { position:absolute; left:24px; bottom:22px; color:var(--ember-2); font-style:normal; font-weight:900; font-size:11px; letter-spacing:.12em; }
+
+.dashboard-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+.compact-panel { padding:18px; }
+.panel-head { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--line); }
+.panel-head > span { font-size:11px; font-weight:900; letter-spacing:.16em; }
+.panel-head small { color:var(--muted); font-size:8px; letter-spacing:.14em; }
+.metric-list { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:14px; }
+.metric-list div { padding:10px; background:rgba(0,0,0,.17); border-radius:10px; }
+.metric-list span { display:block; color:var(--muted); font-size:9px; }
+.metric-list b { display:block; margin-top:5px; font-size:18px; }
+.review-summary { display:flex; align-items:center; gap:12px; padding-top:15px; }
+.review-summary > b { font-size:38px; color:var(--ember-2); }
+.review-summary > span { color:var(--muted); font-size:12px; flex:1; }
+.text-button { border:0; background:transparent; color:var(--ember-2); font-size:11px; font-weight:900; cursor:pointer; padding:10px; }
+.phase-strip { display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; padding:12px 4px; color:#72747a; font-size:9px; font-weight:900; letter-spacing:.12em; }
+.phase-strip span { border:1px solid var(--line); padding:7px 9px; border-radius:999px; }
+.phase-strip .phase-active { color:var(--ok); border-color:rgba(101,210,141,.25); }
+.phase-strip .phase-locked { margin-left:auto; }
+
+.screen-title-row { display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center; margin-bottom:14px; }
+.screen-title-row h2 { margin:2px 0 0; font-size:clamp(23px,4vw,34px); }
+.icon-btn { width:46px; height:46px; border-radius:14px; border:1px solid var(--line); background:#14161a; cursor:pointer; font-size:20px; }
+.combo-badge,.battle-streak { text-align:right; }
+.combo-badge span,.battle-streak span { display:block; color:var(--muted); font-size:9px; letter-spacing:.14em; }
+.combo-badge b,.battle-streak b { color:var(--ember-2); font-size:24px; }
+
+.study-layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:14px; }
+.question-panel { padding:clamp(20px,4vw,34px); min-height:510px; display:flex; flex-direction:column; }
+.question-meta { display:flex; gap:8px; flex-wrap:wrap; }
+.question-meta span,.battle-question-meta span { padding:6px 8px; border:1px solid var(--line); color:var(--muted); border-radius:8px; font-size:9px; font-weight:800; letter-spacing:.08em; }
+.question-number { margin-top:24px; color:var(--ember-2); font-size:11px; font-weight:900; letter-spacing:.18em; }
+.question-panel h3 { font-size:clamp(20px,3.5vw,30px); line-height:1.55; margin:12px 0 24px; }
+.choice-grid { display:grid; grid-template-columns:1fr; gap:10px; }
+.choice-btn { display:grid; grid-template-columns:34px 1fr; gap:11px; align-items:center; min-height:58px; padding:10px 14px; text-align:left; background:#101216; border:1px solid var(--line); border-radius:12px; cursor:pointer; transition:.15s; }
+.choice-btn:hover { border-color:rgba(255,177,74,.3); background:#15171c; }
+.choice-btn.selected { border-color:rgba(255,177,74,.72); background:rgba(255,138,42,.12); box-shadow:inset 0 0 0 1px rgba(255,177,74,.12); }
+.choice-btn.selected .choice-key { background:rgba(255,138,42,.2); color:#ffd08a; }
+.choice-btn .choice-key { width:30px; height:30px; display:grid; place-items:center; border-radius:8px; background:#1c1f24; color:var(--ember-2); font-weight:900; }
+.choice-btn.correct { border-color:rgba(101,210,141,.5); background:rgba(65,160,98,.12); }
+.choice-btn.correct .choice-key { background:rgba(101,210,141,.18); color:var(--ok); }
+.choice-btn.wrong { border-color:rgba(255,81,81,.5); background:rgba(180,52,52,.12); }
+.choice-btn.wrong .choice-key { background:rgba(255,81,81,.18); color:var(--danger); }
+.choice-btn:disabled { cursor:default; }
+.answer-feedback { min-height:0; margin-top:0; overflow:hidden; transition:.25s; }
+.answer-feedback.show { min-height:96px; margin-top:18px; padding:14px; border-left:3px solid var(--ember-2); background:rgba(0,0,0,.2); color:#d8d5ce; font-size:13px; line-height:1.55; }
+.answer-feedback strong { color:white; display:block; margin-bottom:4px; }
+.primary-btn,.secondary-btn { border-radius:12px; min-height:52px; padding:13px 18px; border:1px solid transparent; font-weight:900; letter-spacing:.08em; cursor:pointer; transition:.16s; }
+.primary-btn { background:linear-gradient(135deg,#d8581d,#ff9134); color:#160b04; box-shadow:0 8px 30px rgba(255,112,34,.18); }
+.primary-btn:hover,.primary-btn:active { filter:brightness(1.07); transform:translateY(-1px); }
+.secondary-btn { background:#17191e; border-color:var(--line); }
+.primary-btn small,.secondary-btn small { display:block; opacity:.72; font-size:9px; letter-spacing:0; margin-top:4px; }
+#nextQuestionBtn { margin-top:18px; align-self:flex-start; }
+.selection-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
+.selection-hint { color:var(--muted); font-size:11px; line-height:1.45; }
+.selection-hint.ready { color:var(--ember-2); }
+.selection-hint.result-ok { color:var(--ok); }
+.selection-hint.result-bad { color:var(--danger); }
+.answer-submit { min-width:128px; min-height:46px; padding:11px 16px; flex:0 0 auto; }
+.answer-submit:disabled { opacity:.38; cursor:not-allowed; filter:saturate(.55); transform:none; }
+.correct-answer-line { margin-top:8px; color:var(--gold); font-weight:900; letter-spacing:.03em; }
+.explanation-list { display:grid; gap:8px; margin-top:12px; }
+.choice-explanation { padding:9px 10px; border:1px solid var(--line); border-radius:9px; background:rgba(255,255,255,.025); color:#cbc8c1; }
+.choice-explanation.is-true { border-left:3px solid rgba(101,210,141,.6); }
+.choice-explanation.is-false { border-left:3px solid rgba(255,81,81,.55); }
+.hidden { display:none !important; }
+.study-side { display:flex; flex-direction:column; gap:14px; }
+.reward-panel { padding:18px; }
+.reward-row { display:flex; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line); font-size:11px; color:var(--muted); }
+.reward-row b { color:white; }
+.multiplier { margin-top:14px; padding:10px; background:rgba(255,138,42,.08); color:var(--ember-2); text-align:center; font-size:10px; font-weight:900; letter-spacing:.12em; border-radius:9px; }
+.segmented { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:14px; }
+.seg { border:1px solid var(--line); border-radius:9px; background:#101216; color:var(--muted); padding:10px 8px; cursor:pointer; font-size:10px; font-weight:900; }
+.seg.active { color:#170b04; background:var(--ember-2); border-color:var(--ember-2); }
+.small-copy { color:var(--muted); font-size:11px; line-height:1.5; margin:12px 0 0; }
+
+.battle-stage { padding:18px; }
+.enemy-zone { position:relative; min-height:330px; padding:8px 4px 0; background:radial-gradient(circle at 50% 65%,rgba(163,47,33,.17),transparent 38%); }
+.enemy-title-row { display:flex; justify-content:space-between; gap:14px; align-items:start; }
+.enemy-title-row span { font-size:9px; color:var(--danger); font-weight:900; letter-spacing:.15em; }
+.enemy-title-row h3 { margin:3px 0 0; font-size:25px; }
+.enemy-title-row > b { color:var(--muted); }
+.enemy-hp i { background:linear-gradient(90deg,#8c2626,#ff5252); box-shadow:0 0 14px rgba(255,82,82,.34); }
+.enemy-avatar { width:190px; height:190px; margin:30px auto 0; position:relative; filter:drop-shadow(0 18px 24px rgba(0,0,0,.45)); }
+.enemy-core { position:absolute; width:120px; height:120px; left:35px; top:45px; background:linear-gradient(145deg,#24252a,#090a0c); border:1px solid rgba(255,255,255,.12); clip-path:polygon(50% 0,83% 16%,100% 48%,86% 86%,50% 100%,14% 86%,0 48%,17% 16%); box-shadow:inset 0 0 30px rgba(255,81,81,.08); }
+.enemy-core::before,.enemy-core::after { content:""; position:absolute; width:48px; height:70px; background:#17181c; top:-28px; }
+.enemy-core::before { left:3px; transform:rotate(-34deg); clip-path:polygon(50% 0,100% 100%,0 85%); }
+.enemy-core::after { right:3px; transform:rotate(34deg); clip-path:polygon(50% 0,100% 85%,0 100%); }
+.enemy-eye { position:absolute; width:10px; height:5px; top:98px; background:#ff483d; box-shadow:0 0 12px #ff483d; z-index:2; }
+.enemy-eye.left { left:75px; transform:rotate(9deg); }
+.enemy-eye.right { right:75px; transform:rotate(-9deg); }
+.floating-layer { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+.damage-float { position:absolute; left:50%; top:52%; font-weight:1000; font-size:26px; animation:floatDamage .85s ease-out forwards; text-shadow:0 2px 10px #000; }
+.damage-float.crit { color:var(--gold); font-size:34px; }
+.damage-float.enemy-dmg { color:var(--danger); left:28%; top:80%; }
+@keyframes floatDamage { 0%{opacity:0; transform:translate(-50%,8px) scale(.7)} 20%{opacity:1;transform:translate(-50%,0) scale(1.1)} 100%{opacity:0;transform:translate(-50%,-48px) scale(1)} }
+.versus-line { display:flex; align-items:center; gap:12px; margin:5px 0 14px; }
+.versus-line span { height:1px; background:var(--line); flex:1; }
+.versus-line b { color:#686a70; font-size:10px; letter-spacing:.15em; }
+.player-combat-row { display:grid; grid-template-columns:1fr auto; align-items:end; gap:20px; }
+.player-hp i { background:linear-gradient(90deg,#286e45,var(--ok)); box-shadow:0 0 14px rgba(101,210,141,.25); }
+.combat-stats { display:flex; gap:8px; }
+.combat-stats span { padding:8px 10px; border:1px solid var(--line); border-radius:8px; color:var(--muted); font-size:10px; }
+.combat-stats b { color:white; }
+.battle-log { margin:16px 0; padding:12px 14px; background:#0e1013; border:1px solid var(--line); border-radius:10px; color:#c1c1c5; font-size:12px; min-height:42px; }
+.battle-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.battle-quiz { margin-top:14px; padding:18px; background:rgba(0,0,0,.24); border:1px solid var(--line); border-radius:14px; }
+.battle-question-meta { display:flex; justify-content:space-between; gap:8px; }
+.battle-quiz h3 { margin:14px 0; font-size:18px; line-height:1.45; }
+.battle-result { text-align:center; padding:28px 10px 10px; }
+.battle-result h3 { font-size:36px; letter-spacing:.08em; margin-bottom:8px; color:var(--gold); }
+.battle-result p { color:var(--muted); }
+.battle-result .primary-btn { margin-top:8px; }
+.shake { animation:shake .24s linear; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 50%{transform:translateX(5px)} 75%{transform:translateX(-3px)} }
+
+.bottom-nav-shell {
+  position:fixed; z-index:60; left:0; right:0; bottom:0;
+  padding:0 12px 10px;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  pointer-events:none;
+  transform:translateZ(0); -webkit-transform:translateZ(0);
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+}
+.bottom-nav { position:relative; width:min(560px,100%); margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:4px; padding:6px; border:1px solid var(--line-strong); border-radius:17px; background:rgba(14,15,18,.985); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); box-shadow:0 16px 45px rgba(0,0,0,.48); pointer-events:auto; transform:translateZ(0); -webkit-transform:translateZ(0); }
+.nav-btn { min-height:56px; border:0; border-radius:12px; background:transparent; color:#777980; cursor:pointer; }
+.nav-btn span { display:block; font-size:18px; line-height:1; }
+.nav-btn b { display:block; margin-top:5px; font-size:9px; letter-spacing:.12em; }
+.nav-btn.active { color:var(--ember-2); background:rgba(255,138,42,.08); }
+
+.toast-stack { position:fixed; z-index:80; right:16px; top:88px; display:flex; flex-direction:column; gap:8px; width:min(340px,calc(100% - 32px)); pointer-events:none; }
+.toast { padding:12px 14px; border:1px solid var(--line); background:#17191d; border-radius:11px; box-shadow:var(--shadow); font-size:12px; animation:toastIn .24s ease-out, toastOut .25s ease-in 2.45s forwards; }
+.toast b { color:var(--ember-2); }
+@keyframes toastIn { from{opacity:0;transform:translateX(14px)} to{opacity:1;transform:none} }
+@keyframes toastOut { to{opacity:0;transform:translateX(10px)} }
+.modal-backdrop { position:fixed; z-index:100; inset:0; display:grid; place-items:center; padding:20px; background:rgba(2,3,4,.82); backdrop-filter:blur(12px); }
+.level-modal { width:min(430px,100%); text-align:center; padding:34px; border:1px solid rgba(255,177,74,.3); border-radius:20px; background:radial-gradient(circle at 50% 0,rgba(255,138,42,.18),transparent 45%),#101216; box-shadow:0 0 80px rgba(255,124,35,.14); }
+.level-modal > span { color:var(--ember-2); font-size:12px; font-weight:900; letter-spacing:.26em; }
+.level-burst { width:110px; height:110px; margin:24px auto; display:grid; place-items:center; border:1px solid rgba(255,177,74,.5); transform:rotate(45deg); background:#1b1611; font-size:48px; font-weight:1000; color:var(--gold); box-shadow:0 0 42px rgba(255,138,42,.18); }
+.level-modal h2 { font-size:28px; margin-bottom:8px; }
+.level-modal p { color:var(--muted); }
+
+@media (max-width: 760px) {
+  main { padding:14px; }
+  .topbar { padding-left:14px; padding-right:14px; }
+  .brand-sub { display:none; }
+  .brand-mark { width:38px;height:38px; }
+  .resource { padding:7px 8px; }
+  .hero-panel { padding:20px; }
+  .rank-emblem { width:56px;height:56px;font-size:23px; }
+  .stat-grid { grid-template-columns:repeat(2,1fr); }
+  .home-grid,.dashboard-grid,.study-layout { grid-template-columns:1fr; }
+  .mode-card { min-height:160px; }
+  .metric-list { grid-template-columns:repeat(2,1fr); }
+  .phase-strip .phase-locked { margin-left:0; }
+  .study-side { display:grid; grid-template-columns:1fr 1fr; }
+  .question-panel { min-height:auto; }
+  .enemy-zone { min-height:300px; }
+  .bottom-nav { backdrop-filter:none; -webkit-backdrop-filter:none; background:rgba(14,15,18,.995); }
+}
+@media (max-width: 520px) {
+  .brand { font-size:12px; }
+  .resource span { display:none; }
+  .hero-top { align-items:center; }
+  .hero-top p { font-size:12px; }
+  .screen-title-row { grid-template-columns:auto 1fr auto; }
+  .study-side { grid-template-columns:1fr; }
+  .battle-actions { grid-template-columns:1fr; }
+  .player-combat-row { grid-template-columns:1fr; }
+  .combat-stats { justify-content:flex-end; }
+  .review-summary { flex-wrap:wrap; }
+  .selection-row { align-items:stretch; flex-direction:column; }
+  .answer-submit { width:100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; }
+}
+
+.bank-summary { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:end; padding-top:15px; }
+.bank-summary b { grid-row:1 / 3; font-size:38px; line-height:1; color:var(--ember-2); }
+.bank-summary span { color:var(--muted); font-size:12px; }
+.bank-summary small { color:#6f7178; font-size:9px; letter-spacing:.12em; }
+.filter-label { display:block; margin-top:13px; color:var(--muted); font-size:9px; font-weight:900; letter-spacing:.12em; }
+.filter-select { width:100%; margin-top:6px; min-height:42px; padding:0 11px; color:var(--text); background:#101216; border:1px solid var(--line); border-radius:9px; font:inherit; font-size:12px; }
+.filter-select:focus { outline:1px solid var(--ember-2); }
+.pool-count { margin-top:12px; padding:9px 10px; border:1px solid rgba(255,138,42,.16); background:rgba(255,138,42,.06); border-radius:9px; color:var(--ember-2); font-size:9px; font-weight:900; letter-spacing:.1em; text-align:center; }
+@media (max-width: 980px) { .dashboard-grid { grid-template-columns:1fr 1fr; } .bank-panel { grid-column:1 / -1; } }
+@media (max-width: 760px) { .dashboard-grid { grid-template-columns:1fr; } .bank-panel { grid-column:auto; } }
+
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <header class="topbar">
+      <div class="brand-wrap" aria-label="STUDY FORGE">
+        <div class="brand-mark">SF</div>
+        <div>
+          <div class="brand">STUDY FORGE</div>
+          <div class="brand-sub">KNOWLEDGE BECOMES POWER</div>
+        </div>
+      </div>
+      <div class="resource-row" aria-label="所持資源">
+        <div class="resource"><span>G</span><b id="goldValue">0</b></div>
+        <div class="resource forge"><span>FE</span><b id="forgeEnergyValue">0</b></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="screen active" id="screen-home" data-screen="home">
+        <div class="hero-panel metal-panel">
+          <div class="eyebrow">FORGER PROFILE</div>
+          <div class="hero-top">
+            <div>
+              <div class="level-line">LEVEL <strong id="homeLevel">1</strong></div>
+              <h1 id="playerTitle">Rookie Forger</h1>
+              <p>問題を解き、知識を戦闘力へ変換せよ。</p>
+            </div>
+            <div class="rank-emblem" id="rankEmblem">I</div>
+          </div>
+          <div class="exp-block">
+            <div class="bar-label"><span>EXP</span><span id="expText">0 / 100</span></div>
+            <div class="progress"><i id="expBar"></i></div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card"><span>HP</span><b id="statHp">100</b></div>
+            <div class="stat-card"><span>ATK</span><b id="statAtk">12</b></div>
+            <div class="stat-card"><span>DEF</span><b id="statDef">5</b></div>
+            <div class="stat-card"><span>CRIT</span><b id="statCrit">8%</b></div>
+          </div>
+        </div>
+
+        <div class="home-grid">
+          <button class="mode-card study-card" data-nav="study">
+            <span class="mode-kicker">STUDY SYSTEM</span>
+            <strong>STUDY</strong>
+            <span>問題演習でEXPと戦闘資源を獲得</span>
+            <em>START TRAINING →</em>
+          </button>
+          <button class="mode-card battle-card" data-nav="battle">
+            <span class="mode-kicker">COMBAT SYSTEM</span>
+            <strong>BATTLE</strong>
+            <span>知識で攻撃し、敵を撃破</span>
+            <em>ENTER BATTLE →</em>
+          </button>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="metal-panel compact-panel">
+            <div class="panel-head"><span>TODAY</span><small>SESSION DATA</small></div>
+            <div class="metric-list">
+              <div><span>Answered</span><b id="todayAnswered">0</b></div>
+              <div><span>Correct</span><b id="todayCorrect">0</b></div>
+              <div><span>Accuracy</span><b id="todayAccuracy">—</b></div>
+              <div><span>Best Combo</span><b id="bestCombo">0</b></div>
+            </div>
+          </div>
+          <div class="metal-panel compact-panel">
+            <div class="panel-head"><span>REVIEW</span><small>WEAK POINTS</small></div>
+            <div class="review-summary">
+              <b id="reviewCount">0</b>
+              <span>復習待ち問題</span>
+              <button class="text-button" id="reviewStartBtn">復習を開始</button>
+            </div>
+          </div>
+          <div class="metal-panel compact-panel bank-panel">
+            <div class="panel-head"><span>QUESTION BANK</span><small>LOCAL DATA</small></div>
+            <div class="bank-summary">
+              <b id="questionBankCount">0</b>
+              <span>収録問題</span>
+              <small id="questionSubjectCount">0 SUBJECTS</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="phase-strip">
+          <span class="phase-active">PHASE 1 ACTIVE</span>
+          <span>HOME</span><span>STUDY</span><span>BATTLE</span><span>EXP</span><span>SAVE</span>
+          <span class="phase-locked">FORGE / WEAPONS / DUNGEON → PHASE 2–3</span>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-study" data-screen="study">
+        <div class="screen-title-row">
+          <button class="icon-btn" data-nav="home" aria-label="ホームへ戻る">←</button>
+          <div><span class="eyebrow">STUDY SYSTEM</span><h2>Knowledge Training</h2></div>
+          <div class="combo-badge"><span>COMBO</span><b id="studyCombo">0</b></div>
+        </div>
+
+        <div class="study-layout">
+          <div class="question-panel metal-panel">
+            <div class="question-meta">
+              <span id="questionSubject">SUBJECT</span>
+              <span id="questionDifficulty">NORMAL</span>
+              <span id="questionYear">—</span>
+            </div>
+            <div class="question-number" id="questionCounter">QUESTION</div>
+            <h3 id="questionText">読み込み中…</h3>
+            <div class="choice-grid" id="choiceGrid"></div>
+            <div class="selection-row" id="studySelectionRow">
+              <span class="selection-hint" id="selectionHint">選択肢を選んでください</span>
+              <button class="primary-btn answer-submit" id="submitAnswerBtn" disabled>回答する</button>
+            </div>
+            <div class="answer-feedback" id="answerFeedback" aria-live="polite"></div>
+            <button class="primary-btn hidden" id="nextQuestionBtn">NEXT QUESTION</button>
+          </div>
+
+          <aside class="study-side">
+            <div class="metal-panel reward-panel">
+              <div class="panel-head"><span>REWARD PREVIEW</span><small>ON CORRECT</small></div>
+              <div class="reward-row"><span>EXP</span><b id="previewExp">+12</b></div>
+              <div class="reward-row"><span>GOLD</span><b id="previewGold">+8</b></div>
+              <div class="reward-row"><span>FORGE ENERGY</span><b id="previewEnergy">+2</b></div>
+              <div class="multiplier" id="comboMultiplier">COMBO ×1.00</div>
+            </div>
+            <div class="metal-panel compact-panel">
+              <div class="panel-head"><span>MODE</span><small>QUESTION POOL</small></div>
+              <div class="segmented">
+                <button class="seg active" data-study-mode="normal">NORMAL</button>
+                <button class="seg" data-study-mode="review">REVIEW</button>
+              </div>
+              <p class="small-copy" id="studyModeHelp">全問題から出題します。</p>
+            </div>
+            <div class="metal-panel compact-panel">
+              <div class="panel-head"><span>FILTER</span><small>LARGE BANK READY</small></div>
+              <label class="filter-label">SUBJECT
+                <select id="subjectFilter" class="filter-select"><option value="all">ALL SUBJECTS</option></select>
+              </label>
+              <label class="filter-label">DIFFICULTY
+                <select id="difficultyFilter" class="filter-select">
+                  <option value="all">ALL LEVELS</option>
+                  <option value="1">EASY</option>
+                  <option value="2">NORMAL</option>
+                  <option value="3">HARD</option>
+                </select>
+              </label>
+              <div class="pool-count" id="poolCount">POOL 0 / BANK 0</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-battle" data-screen="battle">
+        <div class="screen-title-row">
+          <button class="icon-btn" data-nav="home" aria-label="ホームへ戻る">←</button>
+          <div><span class="eyebrow">COMBAT SYSTEM</span><h2>Trial Arena</h2></div>
+          <div class="battle-streak"><span>WINS</span><b id="battleWins">0</b></div>
+        </div>
+
+        <div class="battle-stage metal-panel" id="battleStage">
+          <div class="enemy-zone">
+            <div class="enemy-title-row"><div><span id="enemyTier">NORMAL</span><h3 id="enemyName">Ashfang Wolf</h3></div><b id="enemyLevel">Lv.1</b></div>
+            <div class="hp-label"><span>ENEMY HP</span><span id="enemyHpText">80 / 80</span></div>
+            <div class="progress enemy-hp"><i id="enemyHpBar"></i></div>
+            <div class="enemy-avatar" id="enemyAvatar" aria-label="敵シルエット">
+              <div class="enemy-core"></div><div class="enemy-eye left"></div><div class="enemy-eye right"></div>
+            </div>
+            <div class="floating-layer" id="floatingLayer"></div>
+          </div>
+
+          <div class="versus-line"><span></span><b>VS</b><span></span></div>
+
+          <div class="player-combat-row">
+            <div>
+              <div class="hp-label"><span>FORGER HP</span><span id="playerHpText">100 / 100</span></div>
+              <div class="progress player-hp"><i id="playerHpBar"></i></div>
+            </div>
+            <div class="combat-stats"><span>ATK <b id="battleAtk">12</b></span><span>FE <b id="battleEnergy">0</b></span></div>
+          </div>
+
+          <div class="battle-log" id="battleLog">知識を武器に、最初の一撃を放て。</div>
+
+          <div class="battle-actions" id="battleActions">
+            <button class="primary-btn" id="quizStrikeBtn">QUIZ STRIKE <small>問題に正解して攻撃</small></button>
+            <button class="secondary-btn" id="guardBtn">GUARD <small>被ダメージ軽減 + HP小回復</small></button>
+          </div>
+
+          <div class="battle-quiz hidden" id="battleQuiz">
+            <div class="battle-question-meta"><span>QUIZ STRIKE</span><span id="battleQuestionSubject">SUBJECT</span></div>
+            <h3 id="battleQuestionText">Question</h3>
+            <div class="choice-grid battle-choice-grid" id="battleChoiceGrid"></div>
+            <div class="selection-row battle-selection-row">
+              <span class="selection-hint" id="battleSelectionHint">選択肢を選んでください</span>
+              <button class="primary-btn answer-submit" id="submitBattleAnswerBtn" disabled>ATTACK</button>
+            </div>
+          </div>
+
+          <div class="battle-result hidden" id="battleResult">
+            <h3 id="battleResultTitle">VICTORY</h3>
+            <p id="battleResultText"></p>
+            <button class="primary-btn" id="nextBattleBtn">NEXT ENEMY</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="bottom-nav-shell" aria-hidden="false">
+      <nav class="bottom-nav" aria-label="メインナビゲーション">
+        <button class="nav-btn active" data-nav="home"><span>⌂</span><b>HOME</b></button>
+        <button class="nav-btn" data-nav="study"><span>✦</span><b>STUDY</b></button>
+        <button class="nav-btn" data-nav="battle"><span>⚔</span><b>BATTLE</b></button>
+      </nav>
+    </div>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+    <div class="modal-backdrop hidden" id="levelUpModal">
+      <div class="level-modal">
+        <span>LEVEL UP</span>
+        <div class="level-burst" id="levelBurst">2</div>
+        <h2>FORGER EVOLVED</h2>
+        <p id="levelUpText">能力値が上昇した。</p>
+        <button class="primary-btn" id="closeLevelModal">CONTINUE</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+window.STUDY_FORGE_QUESTIONS = [{"id":"2023-bac-q001","qNum":1,"question":"貧血について正しいのはどれか。2つ選べ。","choices":["成人女性の約半数は鉄欠乏性貧血、または鉄欠乏状態である。","初期症状としては息切れが多い。","再生不良性貧血も含まれる。","鉄欠乏性貧血の原因は、鉄摂取の不足または鉄排泄の増大のいずれかである。","溶血性貧血の予防はできない。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[0,2],"selectCount":2,"answerMode":"correct","choiceStatementsCorrect":[true,false,true,false,false],"choiceExplanations":["【正しい】〇a．成人女性の約半数は鉄欠乏性貧血、または鉄欠乏状態である。","【誤り】✗b．初期には自覚症状に乏しいこともあり、進行すると動悸、息切れ、めまい、易疲労感などがみられる。","【正しい】〇c．再生不良性貧血も貧血の一つに含まれる。","【誤り】✗d．鉄欠乏性貧血の原因には、鉄摂取不足、鉄吸収障害、鉄需要の増大、鉄排泄の増大などがある。","【誤り】✗e．溶血性貧血には原因に応じた予防が可能なものがある。"],"explanation":"【正しい】〇a．成人女性の約半数は鉄欠乏性貧血、または鉄欠乏状態である。 / 【誤り】✗b．初期には自覚症状に乏しいこともあり、進行すると動悸、息切れ、めまい、易疲労感などがみられる。 / 【正しい】〇c．再生不良性貧血も貧血の一つに含まれる。 / 【誤り】✗d．鉄欠乏性貧血の原因には、鉄摂取不足、鉄吸収障害、鉄需要の増大、鉄排泄の増大などがある。 / 【誤り】✗e．溶血性貧血には原因に応じた予防が可能なものがある。","subject":"内科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q002","qNum":2,"question":"行動変容を促す認知行動介入における目標設定技法について誤っているのはどれか。","choices":["「優勝する」など競技における成功を目標に設定する。","挑戦意欲が湧くような目標を設定する。","評価可能な行動を設定する。","目標の達成日を設定する。","肯定的な目標を設定する。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[0],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[false,true,true,true,true],"choiceExplanations":["【誤り】✗a．結果目標だけでなく、自分でコントロールでき、評価可能な具体的行動を目標として設定する。","【正しい】〇b．挑戦意欲が湧くような目標を設定する。","【正しい】〇c．評価可能な行動を設定する。","【正しい】〇d．目標の達成日を設定する。","【正しい】〇e．肯定的な目標を設定する。"],"explanation":"【誤り】✗a．結果目標だけでなく、自分でコントロールでき、評価可能な具体的行動を目標として設定する。 / 【正しい】〇b．挑戦意欲が湧くような目標を設定する。 / 【正しい】〇c．評価可能な行動を設定する。 / 【正しい】〇d．目標の達成日を設定する。 / 【正しい】〇e．肯定的な目標を設定する。","subject":"コンディ","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q003","qNum":3,"question":"ウイルス性結膜炎について誤っているのはどれか。2つ選べ。","choices":["咽頭結膜熱（プール熱）は、アデノウイルスの3型によって起きることが多い。","咽頭結膜熱（プール熱）の潜伏期間は4～7日で、耳前リンパ節の腫脹や圧痛を伴う。","流行性角結膜炎は感染力がきわめて強く、潜伏期間が約1日と非常に短い特徴がある。","アデノウイルス、エンテロウイルスによる結膜炎に対する直接有効な薬剤はない。","急性出血性結膜炎は発病から1週間ほどの間症状が徐々に強まり、治るまでに通常2～3週間を要する。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[2,4],"selectCount":2,"answerMode":"incorrect","choiceStatementsCorrect":[true,true,false,true,false],"choiceExplanations":["【正しい】〇a．咽頭結膜熱（プール熱）は、アデノウイルス3型によって起きることが多い。","【正しい】〇b．咽頭結膜熱（プール熱）の潜伏期間は4～7日で、耳前リンパ節の腫脹や圧痛を伴う。","【誤り】✗c．流行性角結膜炎は感染力がきわめて強く、潜伏期間は約1週間である。","【正しい】〇d．アデノウイルス、エンテロウイルスによる結膜炎に対する直接有効な薬剤はない。","【誤り】✗e．急性出血性結膜炎は急激に発症する感染力の強い結膜炎であり、「1週間ほど徐々に強まり、通常2～3週間を要する」という経過ではない。"],"explanation":"【正しい】〇a．咽頭結膜熱（プール熱）は、アデノウイルス3型によって起きることが多い。 / 【正しい】〇b．咽頭結膜熱（プール熱）の潜伏期間は4～7日で、耳前リンパ節の腫脹や圧痛を伴う。 / 【誤り】✗c．流行性角結膜炎は感染力がきわめて強く、潜伏期間は約1週間である。 / 【正しい】〇d．アデノウイルス、エンテロウイルスによる結膜炎に対する直接有効な薬剤はない。 / 【誤り】✗e．急性出血性結膜炎は急激に発症する感染力の強い結膜炎であり、「1週間ほど徐々に強まり、通常2～3週間を要する」という経過ではない。","subject":"内科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q004","qNum":4,"question":"関節の構造について誤っているのはどれか。2つ選べ。","choices":["関節内に存在する軟骨は硝子軟骨のみである。","関節軟骨は軟骨表面から栄養分を得ている。","関節包には自由神経終末がない。","滑膜は関節包の最内層の内壁を形成している。","滑膜は滑液の分泌だけでなく、吸収も行っている。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[0,2],"selectCount":2,"answerMode":"incorrect","choiceStatementsCorrect":[false,true,false,true,true],"choiceExplanations":["【誤り】✗a．関節内には硝子軟骨だけでなく、半月板や関節円板などの線維軟骨も存在する。","【正しい】〇b．関節軟骨は滑液を介して軟骨表面から栄養分を得ている。","【誤り】✗c．関節包には自由神経終末が存在し、痛覚などに関与する。","【正しい】〇d．滑膜は関節包の最内層の内壁を形成している。","【正しい】〇e．滑膜は滑液の分泌だけでなく、吸収も行っている。"],"explanation":"【誤り】✗a．関節内には硝子軟骨だけでなく、半月板や関節円板などの線維軟骨も存在する。 / 【正しい】〇b．関節軟骨は滑液を介して軟骨表面から栄養分を得ている。 / 【誤り】✗c．関節包には自由神経終末が存在し、痛覚などに関与する。 / 【正しい】〇d．滑膜は関節包の最内層の内壁を形成している。 / 【正しい】〇e．滑膜は滑液の分泌だけでなく、吸収も行っている。","subject":"解剖","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q005","qNum":5,"question":"歯および口腔の外傷として誤っているのはどれか。","choices":["舌の裂傷が生じた際は気道の確保にも留意する。","歯の完全脱臼の際は乾燥した清潔なガーゼで抜けた歯をくるみ、直ちに医療機関を受診する。","歯の破折面の中心に赤い斑点がある場合、破折は歯髄にまで及んでいる。","下顎骨関節突起部骨折の際は、耳出血を伴うことがある。","口腔外傷時には、より重篤な頭部外傷の可能性を除外しない。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[1],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,false,true,true,true],"choiceExplanations":["【正しい】〇a．舌の裂傷が生じた際は気道の確保にも留意する。","【誤り】✗b．歯の完全脱臼では抜けた歯を乾燥させず、0.9％食塩水などで湿らせたガーゼや専用保存液などに保存し、速やかに受診する。","【正しい】〇c．歯の破折面の中心に赤い斑点がある場合、破折は歯髄にまで及んでいる。","【正しい】〇d．下顎骨関節突起部骨折では耳出血を伴うことがある。","【正しい】〇e．口腔外傷時には、より重篤な頭部外傷の可能性を除外しない。"],"explanation":"【正しい】〇a．舌の裂傷が生じた際は気道の確保にも留意する。 / 【誤り】✗b．歯の完全脱臼では抜けた歯を乾燥させず、0.9％食塩水などで湿らせたガーゼや専用保存液などに保存し、速やかに受診する。 / 【正しい】〇c．歯の破折面の中心に赤い斑点がある場合、破折は歯髄にまで及んでいる。 / 【正しい】〇d．下顎骨関節突起部骨折では耳出血を伴うことがある。 / 【正しい】〇e．口腔外傷時には、より重篤な頭部外傷の可能性を除外しない。","subject":"外科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q006","qNum":6,"question":"糖質の補給と回復について正しいのはどれか。2つ選べ。","choices":["グルコースは肝臓と筋肉に蓄えられている糖質である。","グリコーゲンは血液や体液中にわずかに含まれる糖質である。","過剰に摂取された糖質は脂肪組織において中性脂肪に変換されて貯蔵される。","グリコーゲンの枯渇は、疲労困憊の要因となる。","アスリートにとって糖質を十分に摂取するための目安は、総摂取エネルギー量の40%程度とされる。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[2,3],"selectCount":2,"answerMode":"correct","choiceStatementsCorrect":[false,false,true,true,false],"choiceExplanations":["【誤り】✗a．肝臓と筋肉に蓄えられている糖質はグリコーゲンである。","【誤り】✗b．血液や体液中に存在する主要な糖質はグルコースであり、グリコーゲンは主に肝臓と筋肉に貯蔵される。","【正しい】〇c．過剰に摂取された糖質は脂肪組織において中性脂肪に変換されて貯蔵される。","【正しい】〇d．グリコーゲンの枯渇は、疲労困憊の要因となる。","【誤り】✗e．アスリートが糖質を十分に摂取する目安は、総摂取エネルギー量の60％程度とされる。"],"explanation":"【誤り】✗a．肝臓と筋肉に蓄えられている糖質はグリコーゲンである。 / 【誤り】✗b．血液や体液中に存在する主要な糖質はグルコースであり、グリコーゲンは主に肝臓と筋肉に貯蔵される。 / 【正しい】〇c．過剰に摂取された糖質は脂肪組織において中性脂肪に変換されて貯蔵される。 / 【正しい】〇d．グリコーゲンの枯渇は、疲労困憊の要因となる。 / 【誤り】✗e．アスリートが糖質を十分に摂取する目安は、総摂取エネルギー量の60％程度とされる。","subject":"栄養","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q007","qNum":7,"question":"脳振とうについて誤っているのはどれか。","choices":["急激な脳組織のひずみによって脳の機能障害を生じ、精神活動が障害される。","脳振とうの既往がある者は、ない者よりも脳振とうを起こしやすい。","意識障害を伴わない場合に脳振とうと診断される。","脳振とう後症候群の症状として、めまい、吐き気などが挙げられる。","脳振とうを慢性的に繰り返すと、パーキンソン様症状を呈することがある。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[2],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,true,false,true,true],"choiceExplanations":["【正しい】〇a．急激な脳組織のひずみによって脳の機能障害を生じ、精神活動が障害される。","【正しい】〇b．脳振とうの既往がある者は、ない者よりも再受傷しやすい。","【誤り】✗c．脳振とうは意識消失を伴う場合と伴わない場合のどちらもある。","【正しい】〇d．脳振とう後症候群の症状として、めまい、吐き気などが挙げられる。","【正しい】〇e．脳振とうを慢性的に繰り返すと、パーキンソン様症状を呈することがある。"],"explanation":"【正しい】〇a．急激な脳組織のひずみによって脳の機能障害を生じ、精神活動が障害される。 / 【正しい】〇b．脳振とうの既往がある者は、ない者よりも再受傷しやすい。 / 【誤り】✗c．脳振とうは意識消失を伴う場合と伴わない場合のどちらもある。 / 【正しい】〇d．脳振とう後症候群の症状として、めまい、吐き気などが挙げられる。 / 【正しい】〇e．脳振とうを慢性的に繰り返すと、パーキンソン様症状を呈することがある。","subject":"外科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q008","qNum":8,"question":"関節運動について誤っているのはどれか。","choices":["屈曲は矢状面・水平前額軸の運動である。","外転は前額面・水平矢状軸の運動である。","指の外転とは示指を通る手の長軸から離れる運動である。","外旋は水平面・垂直軸の運動で、出発肢位での前面が外側へ向く方向の運動である。","ぶん回し運動は体節が円錐形を描く運動である。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[2],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,true,false,true,true],"choiceExplanations":["【正しい】〇a．屈曲は矢状面・水平前額軸の運動である。","【正しい】〇b．外転は前額面・水平矢状軸の運動である。","【誤り】✗c．指の外転とは中指を通る手の長軸から離れる運動である。","【正しい】〇d．外旋は水平面・垂直軸の運動で、出発肢位での前面が外側へ向く方向の運動である。","【正しい】〇e．ぶん回し運動は体節が円錐形を描く運動である。"],"explanation":"【正しい】〇a．屈曲は矢状面・水平前額軸の運動である。 / 【正しい】〇b．外転は前額面・水平矢状軸の運動である。 / 【誤り】✗c．指の外転とは中指を通る手の長軸から離れる運動である。 / 【正しい】〇d．外旋は水平面・垂直軸の運動で、出発肢位での前面が外側へ向く方向の運動である。 / 【正しい】〇e．ぶん回し運動は体節が円錐形を描く運動である。","subject":"解剖","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q009","qNum":9,"question":"アスリートのウエイトコントロールについて誤っているのはどれか。","choices":["体重の構成要素は、体脂肪量と除脂肪量に大別される。","たんぱく質の摂取量を増やせば増やすほど、体たんぱく質の合成量は高まる。","エネルギー摂取を増やす場合、現状の食事内容についての分析は重要である。","減量は除脂肪体重の減少を極力抑え、体脂肪を減量させることを目的として行わなければならない。","負のエネルギー出納状態では体重は減少する。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[1],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,false,true,true,true],"choiceExplanations":["【正しい】〇a．体重の構成要素は、体脂肪量と除脂肪量に大別される。","【誤り】✗b．たんぱく質摂取量を増やし続けても、体たんぱく質合成量が際限なく高まるわけではない。","【正しい】〇c．エネルギー摂取を増やす場合、現状の食事内容についての分析は重要である。","【正しい】〇d．減量は除脂肪体重の減少を極力抑え、体脂肪を減少させることを目的として行う。","【正しい】〇e．負のエネルギー出納状態では体重は減少する。"],"explanation":"【正しい】〇a．体重の構成要素は、体脂肪量と除脂肪量に大別される。 / 【誤り】✗b．たんぱく質摂取量を増やし続けても、体たんぱく質合成量が際限なく高まるわけではない。 / 【正しい】〇c．エネルギー摂取を増やす場合、現状の食事内容についての分析は重要である。 / 【正しい】〇d．減量は除脂肪体重の減少を極力抑え、体脂肪を減少させることを目的として行う。 / 【正しい】〇e．負のエネルギー出納状態では体重は減少する。","subject":"栄養","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q010","qNum":10,"question":"熱中症の予防として誤っているのはどれか。","choices":["汗には塩分も含まれているので、水分補給は0.1%～0.2%程度の食塩水がよい。","運動前後の体重変化は4%以内におさまるように水分補給を行うのがよい。","服装は軽装とし、吸湿性や通気性のよい素材にする。","WBGT31度以上では運動は原則中止する。","WBGT28度以上では厳重警戒とし激しい運動は中止する。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[1],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,false,true,true,true],"choiceExplanations":["【正しい】〇a．汗には塩分も含まれているので、水分補給は0.1%～0.2%程度の食塩水がよい。","【誤り】✗b．運動前後の体重減少は2％以内におさまるように水分補給を行う。","【正しい】〇c．服装は軽装とし、吸湿性や通気性のよい素材にする。","【正しい】〇d．WBGT31度以上では運動は原則中止する。","【正しい】〇e．WBGT28度以上では厳重警戒とし、激しい運動は中止する。"],"explanation":"【正しい】〇a．汗には塩分も含まれているので、水分補給は0.1%～0.2%程度の食塩水がよい。 / 【誤り】✗b．運動前後の体重減少は2％以内におさまるように水分補給を行う。 / 【正しい】〇c．服装は軽装とし、吸湿性や通気性のよい素材にする。 / 【正しい】〇d．WBGT31度以上では運動は原則中止する。 / 【正しい】〇e．WBGT28度以上では厳重警戒とし、激しい運動は中止する。","subject":"内科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"}];
+
+  </script>
+  <script>
+(() => {
+  'use strict';
+
+  const SAVE_KEY = 'studyForge.phase1.v1';
+  const TODAY_KEY = () => new Date().toISOString().slice(0, 10);
+
+  const FALLBACK_QUESTIONS = [
+    {id:'fallback-1',question:'筋収縮に必要なカルシウムイオンは主にどこから放出されるか。',choices:['筋小胞体','核','ゴルジ装置','細胞外のみ'],correct:0,explanation:'骨格筋では活動電位により筋小胞体からCa²⁺が放出され、収縮が始まります。',subject:'運動生理',year:'基礎',difficulty:1},
+    {id:'fallback-2',question:'膝関節伸展の主働筋群はどれか。',choices:['大腿四頭筋','ハムストリングス','下腿三頭筋','腸腰筋'],correct:0,explanation:'大腿四頭筋は膝伸展の主働筋群です。',subject:'機能解剖',year:'基礎',difficulty:1},
+    {id:'fallback-3',question:'力積と等しいものはどれか。',choices:['運動量の変化量','加速度の二乗','位置エネルギー','密度'],correct:0,explanation:'力積は力×時間で、運動量の変化量に等しいです。',subject:'バイオメカニクス',year:'基礎',difficulty:2}
+  ];
+
+  const defaultState = () => ({
+    version: 1,
+    player: {
+      level: 1, exp: 0, hp: 100, maxHp: 100, atk: 12, def: 5,
+      critical: 0.08, speed: 10, forgePower: 1
+    },
+    currency: { gold: 0, forgeEnergy: 0 },
+    study: {
+      combo: 0, bestCombo: 0, totalAnswered: 0, totalCorrect: 0,
+      reviewIds: [], history: {}, mode: 'normal', lastQuestionId: null,
+      filters: { subject: 'all', difficulty: 'all' }
+    },
+    battle: { wins: 0, enemyIndex: 0, playerHp: 100 },
+    today: { date: TODAY_KEY(), answered: 0, correct: 0 },
+    settings: { sound: false }
+  });
+
+  let state = loadState();
+  let questions = [...FALLBACK_QUESTIONS];
+  let currentQuestion = null;
+  let currentBattleQuestion = null;
+  let studyAnswered = false;
+  let battleAnswered = false;
+  let studySelection = new Set();
+  let battleSelection = new Set();
+  let currentEnemy = null;
+  let guardActive = false;
+
+  const $ = (id) => document.getElementById(id);
+  const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+  const ENEMIES = [
+    {name:'Ashfang Wolf', tier:'NORMAL', hp:76, atk:10, exp:24, gold:16},
+    {name:'Ironhide Boar', tier:'NORMAL', hp:95, atk:12, exp:28, gold:19},
+    {name:'Ember Wraith', tier:'ELITE', hp:122, atk:15, exp:36, gold:25},
+    {name:'Forge Sentinel', tier:'MINI BOSS', hp:165, atk:18, exp:52, gold:38}
+  ];
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return defaultState();
+      const parsed = JSON.parse(raw);
+      const base = defaultState();
+      const merged = {
+        ...base, ...parsed,
+        player: {...base.player, ...(parsed.player || {})},
+        currency: {...base.currency, ...(parsed.currency || {})},
+        study: {...base.study, ...(parsed.study || {})},
+        battle: {...base.battle, ...(parsed.battle || {})},
+        today: {...base.today, ...(parsed.today || {})},
+        settings: {...base.settings, ...(parsed.settings || {})}
+      };
+      if (merged.today.date !== TODAY_KEY()) merged.today = {date:TODAY_KEY(), answered:0, correct:0};
+      merged.battle.playerHp = Math.min(merged.battle.playerHp || merged.player.maxHp, merged.player.maxHp);
+      return merged;
+    } catch (err) {
+      console.warn('Save load failed:', err);
+      return defaultState();
+    }
+  }
+
+  function saveState() {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
+    catch (err) { console.warn('Save failed:', err); }
+  }
+
+  function getCorrectIndexes(q) {
+    const raw = Array.isArray(q?.correctAnswers) ? q.correctAnswers : (Number.isInteger(q?.correct) ? [q.correct] : []);
+    return [...new Set(raw.filter(index => Number.isInteger(index) && index >= 0 && index < (q?.choices?.length || 0)))].sort((a,b) => a-b);
+  }
+
+  function getSelectCount(q) {
+    const answers = getCorrectIndexes(q);
+    const requested = Number.isInteger(q?.selectCount) ? q.selectCount : answers.length;
+    return Math.max(1, Math.min(q?.choices?.length || 1, requested || answers.length || 1));
+  }
+
+  function getChoiceLabel(q, index) {
+    const custom = Array.isArray(q?.choiceLabels) ? q.choiceLabels[index] : null;
+    return custom || String.fromCharCode(97 + index);
+  }
+
+  function formatAnswerLabels(q, indexes = getCorrectIndexes(q)) {
+    return indexes.map(index => getChoiceLabel(q, index)).join('・');
+  }
+
+  function selectionsMatch(selection, answers) {
+    if (selection.size !== answers.length) return false;
+    return answers.every(index => selection.has(index));
+  }
+
+  function validQuestion(q) {
+    if (!q || typeof q.id !== 'string' || typeof q.question !== 'string' || !Array.isArray(q.choices) || q.choices.length < 2) return false;
+    const answers = getCorrectIndexes(q);
+    return answers.length >= 1 && getSelectCount(q) === answers.length;
+  }
+
+  async function loadQuestions() {
+    try {
+      if (Array.isArray(window.STUDY_FORGE_QUESTIONS) && window.STUDY_FORGE_QUESTIONS.length >= 1) {
+        const loaded = window.STUDY_FORGE_QUESTIONS.filter(validQuestion);
+        if (loaded.length) questions = loaded;
+        return;
+      }
+      const response = await fetch('data/questions.json', {cache:'no-store'});
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      const loaded = Array.isArray(data) ? data.filter(validQuestion) : [];
+      if (loaded.length) questions = loaded;
+    } catch (err) {
+      console.info('Using built-in fallback question set.', err);
+    }
+  }
+
+  function normalizeFilters() {
+    if (!state.study.filters || typeof state.study.filters !== 'object') {
+      state.study.filters = {subject:'all', difficulty:'all'};
+    }
+    state.study.filters.subject ||= 'all';
+    state.study.filters.difficulty ||= 'all';
+  }
+
+  function buildQuestionFilters() {
+    normalizeFilters();
+    const subjects = [...new Set(questions.map(q => q.subject || 'GENERAL'))].sort((a,b) => a.localeCompare(b,'ja'));
+    const select = $('subjectFilter');
+    select.innerHTML = '<option value="all">ALL SUBJECTS</option>' +
+      subjects.map(subject => `<option value="${escapeHtml(subject)}">${escapeHtml(subject)}</option>`).join('');
+    if (subjects.includes(state.study.filters.subject)) select.value = state.study.filters.subject;
+    else { state.study.filters.subject = 'all'; select.value = 'all'; }
+    $('difficultyFilter').value = ['1','2','3'].includes(String(state.study.filters.difficulty)) ? String(state.study.filters.difficulty) : 'all';
+  }
+
+  function expToNext(level = state.player.level) {
+    return Math.round(100 * Math.pow(1.18, level - 1));
+  }
+
+  function comboMultiplier() {
+    const combo = state.study.combo;
+    if (combo >= 20) return 1.65;
+    if (combo >= 10) return 1.4;
+    if (combo >= 5) return 1.22;
+    if (combo >= 3) return 1.1;
+    return 1;
+  }
+
+  function titleForLevel(level) {
+    if (level >= 20) return 'Master Forger';
+    if (level >= 12) return 'Arcane Forger';
+    if (level >= 7) return 'Steel Forger';
+    if (level >= 3) return 'Apprentice Forger';
+    return 'Rookie Forger';
+  }
+
+  function rankForLevel(level) {
+    if (level >= 20) return 'V';
+    if (level >= 12) return 'IV';
+    if (level >= 7) return 'III';
+    if (level >= 3) return 'II';
+    return 'I';
+  }
+
+  function addRewards({exp=0,gold=0,energy=0}, showToast = true) {
+    state.player.exp += exp;
+    state.currency.gold += gold;
+    state.currency.forgeEnergy += energy;
+    let levelsGained = 0;
+    while (state.player.exp >= expToNext()) {
+      state.player.exp -= expToNext();
+      state.player.level += 1;
+      state.player.maxHp += 12;
+      state.player.hp = state.player.maxHp;
+      state.battle.playerHp = state.player.maxHp;
+      state.player.atk += 3;
+      state.player.def += 2;
+      state.player.critical = Math.min(.25, state.player.critical + .005);
+      state.player.speed += 1;
+      levelsGained++;
+    }
+    if (showToast && (exp || gold || energy)) toast(`<b>REWARD</b> +${exp} EXP / +${gold} G / +${energy} FE`);
+    if (levelsGained) showLevelUp(levelsGained);
+    saveState();
+    renderAll();
+  }
+
+  function showLevelUp(levelsGained) {
+    $('levelBurst').textContent = state.player.level;
+    $('levelUpText').textContent = `LEVEL ${state.player.level} — HP +${12*levelsGained} / ATK +${3*levelsGained} / DEF +${2*levelsGained}`;
+    $('levelUpModal').classList.remove('hidden');
+  }
+
+  function toast(html) {
+    const item = document.createElement('div');
+    item.className = 'toast';
+    item.innerHTML = html;
+    $('toastStack').appendChild(item);
+    setTimeout(() => item.remove(), 2800);
+  }
+
+  function navigate(screen) {
+    $$('.screen').forEach(el => el.classList.toggle('active', el.dataset.screen === screen));
+    $$('.nav-btn').forEach(el => el.classList.toggle('active', el.dataset.nav === screen));
+    if (screen === 'study' && !currentQuestion) nextStudyQuestion();
+    if (screen === 'battle') ensureEnemy();
+    window.scrollTo({top:0, behavior:'smooth'});
+    renderAll();
+  }
+
+  function renderAll() {
+    $('goldValue').textContent = state.currency.gold.toLocaleString();
+    $('forgeEnergyValue').textContent = state.currency.forgeEnergy.toLocaleString();
+    $('homeLevel').textContent = state.player.level;
+    $('playerTitle').textContent = titleForLevel(state.player.level);
+    $('rankEmblem').textContent = rankForLevel(state.player.level);
+    const need = expToNext();
+    $('expText').textContent = `${state.player.exp} / ${need}`;
+    $('expBar').style.width = `${Math.min(100, state.player.exp / need * 100)}%`;
+    $('statHp').textContent = state.player.maxHp;
+    $('statAtk').textContent = state.player.atk;
+    $('statDef').textContent = state.player.def;
+    $('statCrit').textContent = `${Math.round(state.player.critical * 100)}%`;
+    $('todayAnswered').textContent = state.today.answered;
+    $('todayCorrect').textContent = state.today.correct;
+    $('todayAccuracy').textContent = state.today.answered ? `${Math.round(state.today.correct / state.today.answered * 100)}%` : '—';
+    $('bestCombo').textContent = state.study.bestCombo;
+    $('reviewCount').textContent = state.study.reviewIds.length;
+    $('questionBankCount').textContent = questions.length.toLocaleString();
+    $('questionSubjectCount').textContent = `${new Set(questions.map(q => q.subject || 'GENERAL')).size} SUBJECTS`;
+    $('studyCombo').textContent = state.study.combo;
+    updatePoolCount();
+    $('battleWins').textContent = state.battle.wins;
+    $('battleAtk').textContent = state.player.atk;
+    $('battleEnergy').textContent = state.currency.forgeEnergy;
+
+    if (currentQuestion && !studyAnswered) renderRewardPreview(currentQuestion);
+    renderBattleBars();
+  }
+
+  function renderRewardPreview(question) {
+    const mult = comboMultiplier();
+    const baseExp = 10 + (question.difficulty || 1) * 3;
+    const baseGold = 6 + (question.difficulty || 1) * 2;
+    const baseEnergy = 1 + Math.ceil((question.difficulty || 1) / 2);
+    $('previewExp').textContent = `+${Math.round(baseExp * mult)}`;
+    $('previewGold').textContent = `+${Math.round(baseGold * mult)}`;
+    $('previewEnergy').textContent = `+${baseEnergy}`;
+    $('comboMultiplier').textContent = `COMBO ×${mult.toFixed(2)}`;
+  }
+
+  function questionPool(mode = state.study.mode) {
+    normalizeFilters();
+    let pool = questions;
+    if (mode === 'review') {
+      const set = new Set(state.study.reviewIds);
+      const reviewPool = questions.filter(q => set.has(q.id));
+      pool = reviewPool.length ? reviewPool : questions;
+    }
+    const subject = state.study.filters.subject;
+    const difficulty = state.study.filters.difficulty;
+    const filtered = pool.filter(q =>
+      (subject === 'all' || (q.subject || 'GENERAL') === subject) &&
+      (difficulty === 'all' || String(q.difficulty || 1) === String(difficulty))
+    );
+    return filtered.length ? filtered : pool;
+  }
+
+  function updatePoolCount() {
+    if (!$('poolCount')) return;
+    const pool = questionPool(state.study.mode);
+    $('poolCount').textContent = `POOL ${pool.length.toLocaleString()} / BANK ${questions.length.toLocaleString()}`;
+  }
+
+  function setQuestionFilter(kind, value) {
+    normalizeFilters();
+    state.study.filters[kind] = value;
+    saveState();
+    updatePoolCount();
+    nextStudyQuestion();
+  }
+
+  function pickQuestion(mode = state.study.mode, excludeId = null) {
+    const pool = questionPool(mode);
+    const candidates = pool.length > 1 ? pool.filter(q => q.id !== excludeId) : pool;
+    return candidates[Math.floor(Math.random() * candidates.length)] || FALLBACK_QUESTIONS[0];
+  }
+
+  function nextStudyQuestion() {
+    studyAnswered = false;
+    studySelection = new Set();
+    currentQuestion = pickQuestion(state.study.mode, state.study.lastQuestionId);
+    state.study.lastQuestionId = currentQuestion.id;
+    $('questionSubject').textContent = currentQuestion.subject || 'GENERAL';
+    $('questionDifficulty').textContent = ['EASY','NORMAL','HARD'][Math.max(0, Math.min(2, (currentQuestion.difficulty || 1)-1))];
+    $('questionYear').textContent = currentQuestion.year || '—';
+    const qLabel = currentQuestion.qNum ? `問${currentQuestion.qNum}` : 'QUESTION';
+    $('questionCounter').textContent = state.study.mode === 'review' ? `REVIEW • ${qLabel}` : `AT EXAM • ${qLabel}`;
+    $('questionText').textContent = currentQuestion.question;
+    $('answerFeedback').className = 'answer-feedback';
+    $('answerFeedback').innerHTML = '';
+    $('nextQuestionBtn').classList.add('hidden');
+    $('submitAnswerBtn').classList.remove('hidden');
+    $('submitAnswerBtn').disabled = true;
+    renderChoices($('choiceGrid'), currentQuestion, studySelection, updateStudySelectionUI);
+    updateStudySelectionUI();
+    renderRewardPreview(currentQuestion);
+  }
+
+  function renderChoices(container, question, selection, onChange) {
+    container.innerHTML = '';
+    const maxSelections = getSelectCount(question);
+    question.choices.forEach((choice, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'choice-btn';
+      btn.setAttribute('aria-pressed', 'false');
+      btn.innerHTML = `<span class="choice-key">${escapeHtml(getChoiceLabel(question,index))}</span><span>${escapeHtml(choice)}</span>`;
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        if (selection.has(index)) {
+          selection.delete(index);
+        } else {
+          if (maxSelections === 1) selection.clear();
+          else if (selection.size >= maxSelections) {
+            toast(`<b>SELECT ${maxSelections}</b> ${maxSelections}つまで選択できます`);
+            return;
+          }
+          selection.add(index);
+        }
+        Array.from(container.querySelectorAll('.choice-btn')).forEach((choiceBtn, choiceIndex) => {
+          const selected = selection.has(choiceIndex);
+          choiceBtn.classList.toggle('selected', selected);
+          choiceBtn.setAttribute('aria-pressed', String(selected));
+        });
+        if (onChange) onChange();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function updateStudySelectionUI() {
+    if (!currentQuestion) return;
+    const needed = getSelectCount(currentQuestion);
+    const count = studySelection.size;
+    const hint = $('selectionHint');
+    hint.className = `selection-hint${count === needed ? ' ready' : ''}`;
+    hint.textContent = needed === 1 ? `1つ選択してください • ${count}/1` : `${needed}つ選択してください • ${count}/${needed}`;
+    $('submitAnswerBtn').disabled = count !== needed || studyAnswered;
+  }
+
+  function explanationHtml(q) {
+    const answers = formatAnswerLabels(q);
+    let details = '';
+    if (Array.isArray(q.choiceExplanations) && q.choiceExplanations.length === q.choices.length) {
+      details = `<div class="explanation-list">${q.choiceExplanations.map((text,index) => {
+        const truth = Array.isArray(q.choiceStatementsCorrect) ? q.choiceStatementsCorrect[index] : null;
+        const cls = truth === true ? ' is-true' : truth === false ? ' is-false' : '';
+        return `<div class="choice-explanation${cls}">${escapeHtml(text)}</div>`;
+      }).join('')}</div>`;
+    } else if (q.explanation) {
+      details = `<div class="explanation-list"><div class="choice-explanation">${escapeHtml(q.explanation)}</div></div>`;
+    }
+    return `<div class="correct-answer-line">正解：${escapeHtml(answers)}</div>${details}`;
+  }
+
+  function answerStudy() {
+    if (studyAnswered || !currentQuestion) return;
+    const q = currentQuestion;
+    const answers = getCorrectIndexes(q);
+    if (studySelection.size !== getSelectCount(q)) return;
+    studyAnswered = true;
+    const correct = selectionsMatch(studySelection, answers);
+    const buttons = Array.from($('choiceGrid').querySelectorAll('.choice-btn'));
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (answers.includes(i)) btn.classList.add('correct');
+      if (studySelection.has(i) && !answers.includes(i)) btn.classList.add('wrong');
+    });
+    $('submitAnswerBtn').disabled = true;
+    $('submitAnswerBtn').classList.add('hidden');
+    $('selectionHint').className = `selection-hint ${correct ? 'result-ok' : 'result-bad'}`;
+    $('selectionHint').textContent = correct ? `正解 • ${formatAnswerLabels(q)}` : `不正解 • 正解は ${formatAnswerLabels(q)}`;
+
+    state.study.totalAnswered++;
+    state.today.answered++;
+    state.study.history[q.id] = {answered:(state.study.history[q.id]?.answered || 0)+1, correct:(state.study.history[q.id]?.correct || 0)+(correct?1:0), lastCorrect:correct};
+
+    if (correct) {
+      state.study.totalCorrect++;
+      state.today.correct++;
+      state.study.combo++;
+      state.study.bestCombo = Math.max(state.study.bestCombo, state.study.combo);
+      state.study.reviewIds = state.study.reviewIds.filter(id => id !== q.id);
+      const mult = comboMultiplier();
+      const exp = Math.round((10 + (q.difficulty||1)*3) * mult);
+      const gold = Math.round((6 + (q.difficulty||1)*2) * mult);
+      const energy = 1 + Math.ceil((q.difficulty||1)/2);
+      $('answerFeedback').innerHTML = `<strong>✓ CORRECT — COMBO ${state.study.combo}</strong>${explanationHtml(q)}`;
+      addRewards({exp,gold,energy});
+    } else {
+      state.study.combo = 0;
+      if (!state.study.reviewIds.includes(q.id)) state.study.reviewIds.push(q.id);
+      $('answerFeedback').innerHTML = `<strong>✕ WRONG — 復習問題に追加</strong>${explanationHtml(q)}`;
+      toast('<b>REVIEW ADDED</b> 間違えた問題を復習リストへ登録');
+      saveState();
+      renderAll();
+    }
+    $('answerFeedback').classList.add('show');
+    $('nextQuestionBtn').classList.remove('hidden');
+  }
+
+  function setStudyMode(mode) {
+    state.study.mode = mode;
+    $$('.seg').forEach(btn => btn.classList.toggle('active', btn.dataset.studyMode === mode));
+    $('studyModeHelp').textContent = mode === 'review'
+      ? (state.study.reviewIds.length ? `復習待ち ${state.study.reviewIds.length}問から出題します。` : '復習待ちがないため通常問題から出題します。')
+      : '全問題から出題します。';
+    saveState();
+    nextStudyQuestion();
+  }
+
+  function enemyForIndex(index) {
+    const base = ENEMIES[index % ENEMIES.length];
+    const cycle = Math.floor(index / ENEMIES.length);
+    const scale = 1 + cycle * .22;
+    return {
+      ...base,
+      level: 1 + index,
+      maxHp: Math.round(base.hp * scale),
+      hp: Math.round(base.hp * scale),
+      atkScaled: Math.round(base.atk * (1 + cycle*.16)),
+      expScaled: Math.round(base.exp * (1 + cycle*.18)),
+      goldScaled: Math.round(base.gold * (1 + cycle*.18))
+    };
+  }
+
+  function ensureEnemy(forceNew = false) {
+    if (!currentEnemy || forceNew) currentEnemy = enemyForIndex(state.battle.enemyIndex);
+    state.battle.playerHp = Math.max(1, Math.min(state.battle.playerHp || state.player.maxHp, state.player.maxHp));
+    guardActive = false;
+    $('battleActions').classList.remove('hidden');
+    $('battleQuiz').classList.add('hidden');
+    $('battleResult').classList.add('hidden');
+    $('enemyName').textContent = currentEnemy.name;
+    $('enemyTier').textContent = currentEnemy.tier;
+    $('enemyLevel').textContent = `Lv.${currentEnemy.level}`;
+    $('battleLog').textContent = `${currentEnemy.name} が出現。QUIZ STRIKEで知識を攻撃力へ変換せよ。`;
+    renderBattleBars();
+  }
+
+  function renderBattleBars() {
+    if (!currentEnemy) return;
+    $('enemyHpText').textContent = `${Math.max(0,currentEnemy.hp)} / ${currentEnemy.maxHp}`;
+    $('enemyHpBar').style.width = `${Math.max(0, currentEnemy.hp / currentEnemy.maxHp * 100)}%`;
+    $('playerHpText').textContent = `${Math.max(0,state.battle.playerHp)} / ${state.player.maxHp}`;
+    $('playerHpBar').style.width = `${Math.max(0, state.battle.playerHp / state.player.maxHp * 100)}%`;
+  }
+
+  function startQuizStrike() {
+    if (!currentEnemy || currentEnemy.hp <= 0 || state.battle.playerHp <= 0) return;
+    battleAnswered = false;
+    battleSelection = new Set();
+    currentBattleQuestion = pickQuestion('normal', currentBattleQuestion?.id);
+    $('battleActions').classList.add('hidden');
+    $('battleQuiz').classList.remove('hidden');
+    $('battleQuestionSubject').textContent = `${currentBattleQuestion.subject || 'GENERAL'} • ${currentBattleQuestion.year || '—'}`;
+    $('battleQuestionText').textContent = currentBattleQuestion.question;
+    $('submitBattleAnswerBtn').classList.remove('hidden');
+    $('submitBattleAnswerBtn').disabled = true;
+    renderChoices($('battleChoiceGrid'), currentBattleQuestion, battleSelection, updateBattleSelectionUI);
+    updateBattleSelectionUI();
+  }
+
+  function updateBattleSelectionUI() {
+    if (!currentBattleQuestion) return;
+    const needed = getSelectCount(currentBattleQuestion);
+    const count = battleSelection.size;
+    const hint = $('battleSelectionHint');
+    hint.className = `selection-hint${count === needed ? ' ready' : ''}`;
+    hint.textContent = needed === 1 ? `1つ選択 • ${count}/1` : `${needed}つ選択 • ${count}/${needed}`;
+    $('submitBattleAnswerBtn').disabled = count !== needed || battleAnswered;
+  }
+
+  function answerBattle() {
+    if (battleAnswered || !currentBattleQuestion) return;
+    const q = currentBattleQuestion;
+    const answers = getCorrectIndexes(q);
+    if (battleSelection.size !== getSelectCount(q)) return;
+    battleAnswered = true;
+    const correct = selectionsMatch(battleSelection, answers);
+    const buttons = Array.from($('battleChoiceGrid').querySelectorAll('.choice-btn'));
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (answers.includes(i)) btn.classList.add('correct');
+      if (battleSelection.has(i) && !answers.includes(i)) btn.classList.add('wrong');
+    });
+    $('submitBattleAnswerBtn').disabled = true;
+    $('submitBattleAnswerBtn').classList.add('hidden');
+    $('battleSelectionHint').className = `selection-hint ${correct ? 'result-ok' : 'result-bad'}`;
+    $('battleSelectionHint').textContent = correct ? `正解 • ${formatAnswerLabels(q)}` : `不正解 • 正解 ${formatAnswerLabels(q)}`;
+
+    state.study.totalAnswered++;
+    state.today.answered++;
+    state.study.history[q.id] = {answered:(state.study.history[q.id]?.answered || 0)+1, correct:(state.study.history[q.id]?.correct || 0)+(correct?1:0), lastCorrect:correct};
+
+    setTimeout(() => {
+      $('battleQuiz').classList.add('hidden');
+      if (correct) {
+        state.study.totalCorrect++;
+        state.today.correct++;
+        state.study.combo++;
+        state.study.bestCombo = Math.max(state.study.bestCombo, state.study.combo);
+        state.study.reviewIds = state.study.reviewIds.filter(id => id !== q.id);
+        let damage = Math.round(state.player.atk * (1 + state.study.combo * .018) + (q.difficulty||1)*2);
+        const crit = Math.random() < state.player.critical;
+        if (crit) damage = Math.round(damage * 1.7);
+        currentEnemy.hp -= damage;
+        floatDamage(damage, crit);
+        $('battleLog').textContent = crit ? `CRITICAL! 正解の知識が ${damage} ダメージを与えた。` : `正解！ ${damage} ダメージ。COMBO ${state.study.combo}`;
+        addRewards({exp:4+(q.difficulty||1)*2,gold:2,energy:1}, false);
+        if (currentEnemy.hp <= 0) return winBattle();
+      } else {
+        state.study.combo = 0;
+        if (!state.study.reviewIds.includes(q.id)) state.study.reviewIds.push(q.id);
+        $('battleLog').textContent = `不正解。${currentEnemy.name} の反撃！`;
+        enemyAttack();
+        if (state.battle.playerHp <= 0) return loseBattle();
+      }
+      saveState();
+      renderAll();
+      setTimeout(() => $('battleActions').classList.remove('hidden'), 220);
+    }, 900);
+  }
+
+  function enemyAttack() {
+    const raw = Math.max(1, currentEnemy.atkScaled - Math.round(state.player.def * .45));
+    const damage = guardActive ? Math.max(1, Math.round(raw * .38)) : raw;
+    state.battle.playerHp -= damage;
+    guardActive = false;
+    $('battleStage').classList.remove('shake');
+    void $('battleStage').offsetWidth;
+    $('battleStage').classList.add('shake');
+    floatDamage(damage, false, true);
+    renderBattleBars();
+  }
+
+  function guard() {
+    if (!currentEnemy || currentEnemy.hp <= 0 || state.battle.playerHp <= 0) return;
+    guardActive = true;
+    const heal = Math.max(3, Math.round(state.player.maxHp * .06));
+    state.battle.playerHp = Math.min(state.player.maxHp, state.battle.playerHp + heal);
+    $('battleLog').textContent = `GUARD：HPを ${heal} 回復。次の攻撃ダメージを大幅軽減。`;
+    renderBattleBars();
+    setTimeout(() => {
+      enemyAttack();
+      if (state.battle.playerHp <= 0) loseBattle();
+      else $('battleLog').textContent += ` ${currentEnemy.name} の攻撃を受け流した。`;
+      saveState();
+      renderAll();
+    }, 280);
+  }
+
+  function floatDamage(value, crit = false, enemyDmg = false) {
+    const el = document.createElement('div');
+    el.className = `damage-float${crit?' crit':''}${enemyDmg?' enemy-dmg':''}`;
+    el.textContent = enemyDmg ? `-${value}` : `${crit?'CRIT ':''}-${value}`;
+    $('floatingLayer').appendChild(el);
+    setTimeout(() => el.remove(), 900);
+  }
+
+  function winBattle() {
+    currentEnemy.hp = 0;
+    const exp = currentEnemy.expScaled;
+    const gold = currentEnemy.goldScaled;
+    const energy = currentEnemy.tier.includes('BOSS') ? 5 : currentEnemy.tier === 'ELITE' ? 3 : 2;
+    state.battle.wins++;
+    state.battle.enemyIndex++;
+    state.battle.playerHp = Math.min(state.player.maxHp, state.battle.playerHp + Math.round(state.player.maxHp*.18));
+    $('battleActions').classList.add('hidden');
+    $('battleQuiz').classList.add('hidden');
+    $('battleResult').classList.remove('hidden');
+    $('battleResultTitle').textContent = 'VICTORY';
+    $('battleResultText').textContent = `${currentEnemy.name} 撃破 — +${exp} EXP / +${gold} G / +${energy} FE`;
+    addRewards({exp,gold,energy}, false);
+    toast(`<b>VICTORY</b> ${currentEnemy.name} を撃破`);
+    renderBattleBars();
+  }
+
+  function loseBattle() {
+    state.battle.playerHp = 0;
+    $('battleActions').classList.add('hidden');
+    $('battleQuiz').classList.add('hidden');
+    $('battleResult').classList.remove('hidden');
+    $('battleResultTitle').textContent = 'DEFEAT';
+    $('battleResultText').textContent = '敗北。ペナルティはありません。HPを全回復して同じ敵へ再挑戦できます。';
+    $('nextBattleBtn').textContent = 'RETRY';
+    saveState();
+    renderAll();
+  }
+
+  function nextBattle() {
+    const defeated = currentEnemy && currentEnemy.hp <= 0;
+    if (defeated) {
+      currentEnemy = null;
+      $('nextBattleBtn').textContent = 'NEXT ENEMY';
+      ensureEnemy(true);
+    } else {
+      state.battle.playerHp = state.player.maxHp;
+      $('nextBattleBtn').textContent = 'NEXT ENEMY';
+      ensureEnemy(false);
+    }
+    saveState();
+    renderAll();
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  }
+
+  function bindEvents() {
+    $$('[data-nav]').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.nav)));
+    $('nextQuestionBtn').addEventListener('click', nextStudyQuestion);
+    $('submitAnswerBtn').addEventListener('click', answerStudy);
+    $('submitBattleAnswerBtn').addEventListener('click', answerBattle);
+    $$('.seg').forEach(btn => btn.addEventListener('click', () => setStudyMode(btn.dataset.studyMode)));
+    $('subjectFilter').addEventListener('change', e => setQuestionFilter('subject', e.target.value));
+    $('difficultyFilter').addEventListener('change', e => setQuestionFilter('difficulty', e.target.value));
+    $('reviewStartBtn').addEventListener('click', () => { setStudyMode('review'); navigate('study'); });
+    $('quizStrikeBtn').addEventListener('click', startQuizStrike);
+    $('guardBtn').addEventListener('click', guard);
+    $('nextBattleBtn').addEventListener('click', nextBattle);
+    $('closeLevelModal').addEventListener('click', () => $('levelUpModal').classList.add('hidden'));
+  }
+
+  async function init() {
+    bindEvents();
+    await loadQuestions();
+    normalizeFilters();
+    buildQuestionFilters();
+    $$('.seg').forEach(btn => btn.classList.toggle('active', btn.dataset.studyMode === state.study.mode));
+    $('studyModeHelp').textContent = state.study.mode === 'review'
+      ? (state.study.reviewIds.length ? `復習待ち ${state.study.reviewIds.length}問から出題します。` : '復習待ちがないため通常問題から出題します。')
+      : '全問題から出題します。';
+    nextStudyQuestion();
+    renderAll();
+    saveState();
+  }
+
+  init();
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.info('Service worker registration skipped:', err));
+  }
+})();
+
+  </script>
+</body>
+</html>

@@ -1,1217 +1,605 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#090a0d" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="STUDY FORGE — 知識を武器に変える学習RPG" />
-  <title>STUDY FORGE — Knowledge Becomes Power</title>
-  <style>
-:root {
-  --bg: #07080a;
-  --bg-2: #0e1014;
-  --panel: rgba(18, 20, 25, 0.92);
-  --panel-2: rgba(25, 27, 33, 0.92);
-  --line: rgba(255,255,255,.10);
-  --line-strong: rgba(255,255,255,.18);
-  --text: #f4f1ea;
-  --muted: #9b9ca2;
-  --ember: #ff8a2a;
-  --ember-2: #ffb14a;
-  --gold: #e7bf67;
-  --danger: #ff5151;
-  --ok: #65d28d;
-  --ice: #7ec8ff;
-  --shadow: 0 20px 60px rgba(0,0,0,.45);
-}
-
-* { box-sizing: border-box; }
-html { background: var(--bg); overscroll-behavior-y: none; }
-body {
-  margin: 0;
-  min-height: 100vh;
-  min-height: 100dvh;
-  overscroll-behavior-y: none;
-  background:
-    radial-gradient(circle at 20% -10%, rgba(255,109,31,.14), transparent 32%),
-    radial-gradient(circle at 100% 10%, rgba(255,177,74,.07), transparent 30%),
-    linear-gradient(180deg,#0b0c0f 0%,#060709 100%);
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  -webkit-tap-highlight-color: transparent;
-}
-button { font: inherit; color: inherit; }
-button:focus-visible { outline: 2px solid var(--ember-2); outline-offset: 3px; }
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: .18;
-  background-image:
-    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: linear-gradient(to bottom, black, transparent 85%);
-}
-
-.app-shell { width: min(1180px, 100%); margin: 0 auto; min-height: 100vh; min-height: 100dvh; padding-bottom: 116px; padding-bottom: calc(116px + env(safe-area-inset-bottom)); }
-.topbar {
-  position: sticky; top: 0; z-index: 30;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: max(14px, env(safe-area-inset-top)) 20px 14px;
-  background: linear-gradient(180deg, rgba(7,8,10,.98), rgba(7,8,10,.84));
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--line);
-}
-.brand-wrap { display:flex; align-items:center; gap:12px; }
-.brand-mark {
-  width:42px;height:42px;border:1px solid rgba(255,177,74,.45);display:grid;place-items:center;
-  background:linear-gradient(145deg,#2b2017,#101114 55%); color:var(--ember-2); font-weight:900; letter-spacing:-1px;
-  box-shadow:inset 0 0 20px rgba(255,138,42,.12),0 0 24px rgba(255,138,42,.08);
-  clip-path: polygon(12% 0,88% 0,100% 12%,100% 88%,88% 100%,12% 100%,0 88%,0 12%);
-}
-.brand { font-weight:900; letter-spacing:.12em; font-size:14px; }
-.brand-sub { color:var(--muted); font-size:9px; letter-spacing:.18em; margin-top:3px; }
-.resource-row { display:flex; gap:8px; }
-.resource { display:flex; align-items:center; gap:7px; padding:8px 10px; background:#111318; border:1px solid var(--line); border-radius:10px; font-size:13px; }
-.resource span { color:var(--gold); font-size:10px; font-weight:900; }
-.resource.forge span { color:var(--ember-2); }
-
-main { padding: 20px; }
-.screen { display:none; animation: screenIn .24s ease-out; }
-.screen.active { display:block; }
-@keyframes screenIn { from{opacity:0; transform:translateY(6px)} to{opacity:1;transform:none} }
-
-.metal-panel {
-  position:relative;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,.035), transparent 28%),
-    linear-gradient(180deg, var(--panel-2), var(--panel));
-  border:1px solid var(--line);
-  box-shadow:var(--shadow), inset 0 1px rgba(255,255,255,.04);
-  border-radius:18px;
-  overflow:hidden;
-}
-.metal-panel::after { content:""; position:absolute; inset:0; pointer-events:none; border:1px solid rgba(255,255,255,.025); border-radius:18px; transform:scale(.985); }
-.hero-panel { padding:28px; }
-.eyebrow { color:var(--ember-2); font-size:10px; font-weight:900; letter-spacing:.22em; text-transform:uppercase; }
-.hero-top { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; margin-top:8px; }
-.level-line { color:var(--muted); font-size:13px; font-weight:800; letter-spacing:.16em; }
-.level-line strong { color:white; font-size:28px; margin-left:7px; }
-h1,h2,h3,p { margin-top:0; }
-.hero-top h1 { margin:4px 0 7px; font-size:clamp(27px,5vw,48px); letter-spacing:-.04em; }
-.hero-top p { color:var(--muted); margin-bottom:0; }
-.rank-emblem { width:76px; height:76px; display:grid; place-items:center; font:900 30px/1 Georgia,serif; color:var(--gold); border:1px solid rgba(231,191,103,.35); background:radial-gradient(circle,#2d2418,#0e0f12 70%); transform:rotate(45deg); }
-.rank-emblem::first-letter { transform:rotate(-45deg); }
-.exp-block { margin-top:24px; }
-.bar-label,.hp-label { display:flex; justify-content:space-between; color:var(--muted); font-size:10px; font-weight:800; letter-spacing:.12em; margin-bottom:7px; }
-.progress { height:10px; border-radius:999px; background:#08090b; border:1px solid rgba(255,255,255,.08); overflow:hidden; }
-.progress i { display:block; height:100%; width:0; background:linear-gradient(90deg,#ff6c24,var(--ember-2)); box-shadow:0 0 16px rgba(255,138,42,.4); transition:width .35s ease; }
-.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:18px; }
-.stat-card { padding:12px 14px; background:rgba(0,0,0,.22); border:1px solid var(--line); border-radius:12px; }
-.stat-card span { display:block; color:var(--muted); font-size:10px; font-weight:900; letter-spacing:.13em; }
-.stat-card b { display:block; margin-top:5px; font-size:21px; }
-
-.home-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin-top:14px; }
-.mode-card { min-height:190px; text-align:left; padding:24px; border:1px solid var(--line); border-radius:18px; background:#15171c; cursor:pointer; transition:.2s ease; box-shadow:var(--shadow); position:relative; overflow:hidden; }
-.mode-card::before { content:""; position:absolute; inset:auto -10% -60% auto; width:240px; height:240px; border-radius:50%; filter:blur(8px); opacity:.22; }
-.mode-card.study-card::before { background:var(--ember); }
-.mode-card.battle-card::before { background:#a62b2b; }
-.mode-card:hover,.mode-card:active { transform:translateY(-2px); border-color:var(--line-strong); }
-.mode-kicker { display:block; font-size:9px; font-weight:900; letter-spacing:.2em; color:var(--muted); }
-.mode-card strong { display:block; margin-top:10px; font-size:clamp(30px,5vw,44px); letter-spacing:-.04em; }
-.mode-card > span:not(.mode-kicker) { display:block; max-width:360px; margin-top:5px; color:#c1c1c3; font-size:13px; }
-.mode-card em { position:absolute; left:24px; bottom:22px; color:var(--ember-2); font-style:normal; font-weight:900; font-size:11px; letter-spacing:.12em; }
-
-.dashboard-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
-.compact-panel { padding:18px; }
-.panel-head { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--line); }
-.panel-head > span { font-size:11px; font-weight:900; letter-spacing:.16em; }
-.panel-head small { color:var(--muted); font-size:8px; letter-spacing:.14em; }
-.metric-list { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:14px; }
-.metric-list div { padding:10px; background:rgba(0,0,0,.17); border-radius:10px; }
-.metric-list span { display:block; color:var(--muted); font-size:9px; }
-.metric-list b { display:block; margin-top:5px; font-size:18px; }
-.review-summary { display:flex; align-items:center; gap:12px; padding-top:15px; }
-.review-summary > b { font-size:38px; color:var(--ember-2); }
-.review-summary > span { color:var(--muted); font-size:12px; flex:1; }
-.text-button { border:0; background:transparent; color:var(--ember-2); font-size:11px; font-weight:900; cursor:pointer; padding:10px; }
-.phase-strip { display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; padding:12px 4px; color:#72747a; font-size:9px; font-weight:900; letter-spacing:.12em; }
-.phase-strip span { border:1px solid var(--line); padding:7px 9px; border-radius:999px; }
-.phase-strip .phase-active { color:var(--ok); border-color:rgba(101,210,141,.25); }
-.phase-strip .phase-locked { margin-left:auto; }
-
-.screen-title-row { display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center; margin-bottom:14px; }
-.screen-title-row h2 { margin:2px 0 0; font-size:clamp(23px,4vw,34px); }
-.icon-btn { width:46px; height:46px; border-radius:14px; border:1px solid var(--line); background:#14161a; cursor:pointer; font-size:20px; }
-.combo-badge,.battle-streak { text-align:right; }
-.combo-badge span,.battle-streak span { display:block; color:var(--muted); font-size:9px; letter-spacing:.14em; }
-.combo-badge b,.battle-streak b { color:var(--ember-2); font-size:24px; }
-
-.study-layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:14px; }
-.question-panel { padding:clamp(20px,4vw,34px); min-height:510px; display:flex; flex-direction:column; }
-.question-meta { display:flex; gap:8px; flex-wrap:wrap; }
-.question-meta span,.battle-question-meta span { padding:6px 8px; border:1px solid var(--line); color:var(--muted); border-radius:8px; font-size:9px; font-weight:800; letter-spacing:.08em; }
-.question-number { margin-top:24px; color:var(--ember-2); font-size:11px; font-weight:900; letter-spacing:.18em; }
-.question-panel h3 { font-size:clamp(20px,3.5vw,30px); line-height:1.55; margin:12px 0 24px; }
-.choice-grid { display:grid; grid-template-columns:1fr; gap:10px; }
-.choice-btn { display:grid; grid-template-columns:34px 1fr; gap:11px; align-items:center; min-height:58px; padding:10px 14px; text-align:left; background:#101216; border:1px solid var(--line); border-radius:12px; cursor:pointer; transition:.15s; }
-.choice-btn:hover { border-color:rgba(255,177,74,.3); background:#15171c; }
-.choice-btn.selected { border-color:rgba(255,177,74,.72); background:rgba(255,138,42,.12); box-shadow:inset 0 0 0 1px rgba(255,177,74,.12); }
-.choice-btn.selected .choice-key { background:rgba(255,138,42,.2); color:#ffd08a; }
-.choice-btn .choice-key { width:30px; height:30px; display:grid; place-items:center; border-radius:8px; background:#1c1f24; color:var(--ember-2); font-weight:900; }
-.choice-btn.correct { border-color:rgba(101,210,141,.5); background:rgba(65,160,98,.12); }
-.choice-btn.correct .choice-key { background:rgba(101,210,141,.18); color:var(--ok); }
-.choice-btn.wrong { border-color:rgba(255,81,81,.5); background:rgba(180,52,52,.12); }
-.choice-btn.wrong .choice-key { background:rgba(255,81,81,.18); color:var(--danger); }
-.choice-btn:disabled { cursor:default; }
-.answer-feedback { min-height:0; margin-top:0; overflow:hidden; transition:.25s; }
-.answer-feedback.show { min-height:96px; margin-top:18px; padding:14px; border-left:3px solid var(--ember-2); background:rgba(0,0,0,.2); color:#d8d5ce; font-size:13px; line-height:1.55; }
-.answer-feedback strong { color:white; display:block; margin-bottom:4px; }
-.primary-btn,.secondary-btn { border-radius:12px; min-height:52px; padding:13px 18px; border:1px solid transparent; font-weight:900; letter-spacing:.08em; cursor:pointer; transition:.16s; }
-.primary-btn { background:linear-gradient(135deg,#d8581d,#ff9134); color:#160b04; box-shadow:0 8px 30px rgba(255,112,34,.18); }
-.primary-btn:hover,.primary-btn:active { filter:brightness(1.07); transform:translateY(-1px); }
-.secondary-btn { background:#17191e; border-color:var(--line); }
-.primary-btn small,.secondary-btn small { display:block; opacity:.72; font-size:9px; letter-spacing:0; margin-top:4px; }
-#nextQuestionBtn { margin-top:18px; align-self:flex-start; }
-.selection-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
-.selection-hint { color:var(--muted); font-size:11px; line-height:1.45; }
-.selection-hint.ready { color:var(--ember-2); }
-.selection-hint.result-ok { color:var(--ok); }
-.selection-hint.result-bad { color:var(--danger); }
-.answer-submit { min-width:128px; min-height:46px; padding:11px 16px; flex:0 0 auto; }
-.answer-submit:disabled { opacity:.38; cursor:not-allowed; filter:saturate(.55); transform:none; }
-.correct-answer-line { margin-top:8px; color:var(--gold); font-weight:900; letter-spacing:.03em; }
-.explanation-list { display:grid; gap:8px; margin-top:12px; }
-.choice-explanation { padding:9px 10px; border:1px solid var(--line); border-radius:9px; background:rgba(255,255,255,.025); color:#cbc8c1; }
-.choice-explanation.is-true { border-left:3px solid rgba(101,210,141,.6); }
-.choice-explanation.is-false { border-left:3px solid rgba(255,81,81,.55); }
-.hidden { display:none !important; }
-.study-side { display:flex; flex-direction:column; gap:14px; }
-.reward-panel { padding:18px; }
-.reward-row { display:flex; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line); font-size:11px; color:var(--muted); }
-.reward-row b { color:white; }
-.multiplier { margin-top:14px; padding:10px; background:rgba(255,138,42,.08); color:var(--ember-2); text-align:center; font-size:10px; font-weight:900; letter-spacing:.12em; border-radius:9px; }
-.segmented { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:14px; }
-.seg { border:1px solid var(--line); border-radius:9px; background:#101216; color:var(--muted); padding:10px 8px; cursor:pointer; font-size:10px; font-weight:900; }
-.seg.active { color:#170b04; background:var(--ember-2); border-color:var(--ember-2); }
-.small-copy { color:var(--muted); font-size:11px; line-height:1.5; margin:12px 0 0; }
-
-.battle-stage { padding:18px; }
-.enemy-zone { position:relative; min-height:330px; padding:8px 4px 0; background:radial-gradient(circle at 50% 65%,rgba(163,47,33,.17),transparent 38%); }
-.enemy-title-row { display:flex; justify-content:space-between; gap:14px; align-items:start; }
-.enemy-title-row span { font-size:9px; color:var(--danger); font-weight:900; letter-spacing:.15em; }
-.enemy-title-row h3 { margin:3px 0 0; font-size:25px; }
-.enemy-title-row > b { color:var(--muted); }
-.enemy-hp i { background:linear-gradient(90deg,#8c2626,#ff5252); box-shadow:0 0 14px rgba(255,82,82,.34); }
-.enemy-avatar { width:190px; height:190px; margin:30px auto 0; position:relative; filter:drop-shadow(0 18px 24px rgba(0,0,0,.45)); }
-.enemy-core { position:absolute; width:120px; height:120px; left:35px; top:45px; background:linear-gradient(145deg,#24252a,#090a0c); border:1px solid rgba(255,255,255,.12); clip-path:polygon(50% 0,83% 16%,100% 48%,86% 86%,50% 100%,14% 86%,0 48%,17% 16%); box-shadow:inset 0 0 30px rgba(255,81,81,.08); }
-.enemy-core::before,.enemy-core::after { content:""; position:absolute; width:48px; height:70px; background:#17181c; top:-28px; }
-.enemy-core::before { left:3px; transform:rotate(-34deg); clip-path:polygon(50% 0,100% 100%,0 85%); }
-.enemy-core::after { right:3px; transform:rotate(34deg); clip-path:polygon(50% 0,100% 85%,0 100%); }
-.enemy-eye { position:absolute; width:10px; height:5px; top:98px; background:#ff483d; box-shadow:0 0 12px #ff483d; z-index:2; }
-.enemy-eye.left { left:75px; transform:rotate(9deg); }
-.enemy-eye.right { right:75px; transform:rotate(-9deg); }
-.floating-layer { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
-.damage-float { position:absolute; left:50%; top:52%; font-weight:1000; font-size:26px; animation:floatDamage .85s ease-out forwards; text-shadow:0 2px 10px #000; }
-.damage-float.crit { color:var(--gold); font-size:34px; }
-.damage-float.enemy-dmg { color:var(--danger); left:28%; top:80%; }
-@keyframes floatDamage { 0%{opacity:0; transform:translate(-50%,8px) scale(.7)} 20%{opacity:1;transform:translate(-50%,0) scale(1.1)} 100%{opacity:0;transform:translate(-50%,-48px) scale(1)} }
-.versus-line { display:flex; align-items:center; gap:12px; margin:5px 0 14px; }
-.versus-line span { height:1px; background:var(--line); flex:1; }
-.versus-line b { color:#686a70; font-size:10px; letter-spacing:.15em; }
-.player-combat-row { display:grid; grid-template-columns:1fr auto; align-items:end; gap:20px; }
-.player-hp i { background:linear-gradient(90deg,#286e45,var(--ok)); box-shadow:0 0 14px rgba(101,210,141,.25); }
-.combat-stats { display:flex; gap:8px; }
-.combat-stats span { padding:8px 10px; border:1px solid var(--line); border-radius:8px; color:var(--muted); font-size:10px; }
-.combat-stats b { color:white; }
-.battle-log { margin:16px 0; padding:12px 14px; background:#0e1013; border:1px solid var(--line); border-radius:10px; color:#c1c1c5; font-size:12px; min-height:42px; }
-.battle-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.battle-quiz { margin-top:14px; padding:18px; background:rgba(0,0,0,.24); border:1px solid var(--line); border-radius:14px; }
-.battle-question-meta { display:flex; justify-content:space-between; gap:8px; }
-.battle-quiz h3 { margin:14px 0; font-size:18px; line-height:1.45; }
-.battle-result { text-align:center; padding:28px 10px 10px; }
-.battle-result h3 { font-size:36px; letter-spacing:.08em; margin-bottom:8px; color:var(--gold); }
-.battle-result p { color:var(--muted); }
-.battle-result .primary-btn { margin-top:8px; }
-.shake { animation:shake .24s linear; }
-@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 50%{transform:translateX(5px)} 75%{transform:translateX(-3px)} }
-
-.bottom-nav-shell {
-  position:fixed; z-index:60; left:0; right:0; bottom:0;
-  padding:0 12px 10px;
-  padding-bottom:calc(10px + env(safe-area-inset-bottom));
-  pointer-events:none;
-  transform:translateZ(0); -webkit-transform:translateZ(0);
-  backface-visibility:hidden; -webkit-backface-visibility:hidden;
-}
-.bottom-nav { position:relative; width:min(560px,100%); margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:4px; padding:6px; border:1px solid var(--line-strong); border-radius:17px; background:rgba(14,15,18,.985); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); box-shadow:0 16px 45px rgba(0,0,0,.48); pointer-events:auto; transform:translateZ(0); -webkit-transform:translateZ(0); }
-.nav-btn { min-height:56px; border:0; border-radius:12px; background:transparent; color:#777980; cursor:pointer; }
-.nav-btn span { display:block; font-size:18px; line-height:1; }
-.nav-btn b { display:block; margin-top:5px; font-size:9px; letter-spacing:.12em; }
-.nav-btn.active { color:var(--ember-2); background:rgba(255,138,42,.08); }
-
-.toast-stack { position:fixed; z-index:80; right:16px; top:88px; display:flex; flex-direction:column; gap:8px; width:min(340px,calc(100% - 32px)); pointer-events:none; }
-.toast { padding:12px 14px; border:1px solid var(--line); background:#17191d; border-radius:11px; box-shadow:var(--shadow); font-size:12px; animation:toastIn .24s ease-out, toastOut .25s ease-in 2.45s forwards; }
-.toast b { color:var(--ember-2); }
-@keyframes toastIn { from{opacity:0;transform:translateX(14px)} to{opacity:1;transform:none} }
-@keyframes toastOut { to{opacity:0;transform:translateX(10px)} }
-.modal-backdrop { position:fixed; z-index:100; inset:0; display:grid; place-items:center; padding:20px; background:rgba(2,3,4,.82); backdrop-filter:blur(12px); }
-.level-modal { width:min(430px,100%); text-align:center; padding:34px; border:1px solid rgba(255,177,74,.3); border-radius:20px; background:radial-gradient(circle at 50% 0,rgba(255,138,42,.18),transparent 45%),#101216; box-shadow:0 0 80px rgba(255,124,35,.14); }
-.level-modal > span { color:var(--ember-2); font-size:12px; font-weight:900; letter-spacing:.26em; }
-.level-burst { width:110px; height:110px; margin:24px auto; display:grid; place-items:center; border:1px solid rgba(255,177,74,.5); transform:rotate(45deg); background:#1b1611; font-size:48px; font-weight:1000; color:var(--gold); box-shadow:0 0 42px rgba(255,138,42,.18); }
-.level-modal h2 { font-size:28px; margin-bottom:8px; }
-.level-modal p { color:var(--muted); }
-
-@media (max-width: 760px) {
-  main { padding:14px; }
-  .topbar { padding-left:14px; padding-right:14px; }
-  .brand-sub { display:none; }
-  .brand-mark { width:38px;height:38px; }
-  .resource { padding:7px 8px; }
-  .hero-panel { padding:20px; }
-  .rank-emblem { width:56px;height:56px;font-size:23px; }
-  .stat-grid { grid-template-columns:repeat(2,1fr); }
-  .home-grid,.dashboard-grid,.study-layout { grid-template-columns:1fr; }
-  .mode-card { min-height:160px; }
-  .metric-list { grid-template-columns:repeat(2,1fr); }
-  .phase-strip .phase-locked { margin-left:0; }
-  .study-side { display:grid; grid-template-columns:1fr 1fr; }
-  .question-panel { min-height:auto; }
-  .enemy-zone { min-height:300px; }
-  .bottom-nav { backdrop-filter:none; -webkit-backdrop-filter:none; background:rgba(14,15,18,.995); }
-}
-@media (max-width: 520px) {
-  .brand { font-size:12px; }
-  .resource span { display:none; }
-  .hero-top { align-items:center; }
-  .hero-top p { font-size:12px; }
-  .screen-title-row { grid-template-columns:auto 1fr auto; }
-  .study-side { grid-template-columns:1fr; }
-  .battle-actions { grid-template-columns:1fr; }
-  .player-combat-row { grid-template-columns:1fr; }
-  .combat-stats { justify-content:flex-end; }
-  .review-summary { flex-wrap:wrap; }
-  .selection-row { align-items:stretch; flex-direction:column; }
-  .answer-submit { width:100%; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; }
-}
-
-.bank-summary { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:end; padding-top:15px; }
-.bank-summary b { grid-row:1 / 3; font-size:38px; line-height:1; color:var(--ember-2); }
-.bank-summary span { color:var(--muted); font-size:12px; }
-.bank-summary small { color:#6f7178; font-size:9px; letter-spacing:.12em; }
-.filter-label { display:block; margin-top:13px; color:var(--muted); font-size:9px; font-weight:900; letter-spacing:.12em; }
-.filter-select { width:100%; margin-top:6px; min-height:42px; padding:0 11px; color:var(--text); background:#101216; border:1px solid var(--line); border-radius:9px; font:inherit; font-size:12px; }
-.filter-select:focus { outline:1px solid var(--ember-2); }
-.pool-count { margin-top:12px; padding:9px 10px; border:1px solid rgba(255,138,42,.16); background:rgba(255,138,42,.06); border-radius:9px; color:var(--ember-2); font-size:9px; font-weight:900; letter-spacing:.1em; text-align:center; }
-@media (max-width: 980px) { .dashboard-grid { grid-template-columns:1fr 1fr; } .bank-panel { grid-column:1 / -1; } }
-@media (max-width: 760px) { .dashboard-grid { grid-template-columns:1fr; } .bank-panel { grid-column:auto; } }
-
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b101e">
+  <meta name="description" content="JSPO-AT試験向けビタミン13種類を暗記する学習RPG。4択クイズ、暗記カード、苦手復習、図鑑を搭載。">
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NiA5NiI+CjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHgyPSIxIiB5MT0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiNmZmRhOGIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmYzg3NDYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjIiIGZpbGw9IiMwZTE4MjkiLz4KPHBhdGggZD0iTTQ4IDEyIDE2IDI4djMwbDMyIDI2IDMyLTI2VjI4TDQ4IDEyWiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2cpIiBzdHJva2Utd2lkdGg9IjYiLz4KPHBhdGggZD0iTTQ4IDI0IDM2IDQ4aDEybC02IDIzIDE5LTMwSDQ4bDgtMTdaIiBmaWxsPSJ1cmwoI2cpIi8+Cjwvc3ZnPgo=" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAErUlEQVR4nO3awXETQRBG4TbF2RztFLgTCkUgDsSBUITiRHwkAw6ihMqoZ3d7umdmu993B8To+Z+V7YfH568C3PNp9gvAuogDKuKAijigIg6oiAMq4oCKOKAiDqiIAyrigIo4oCIOqIgDKuKA6vPsFyDvr99mv4R1Pb28TfzXH6b8sg9BGIwPZWgcNOFiWCWD4iALdwMSCY+DLEKFJhL7aYUyooWecNRykMVgERMSshyUMV7Emfsvh+FVzv00v6zpJ+kcx/7/D0EcMuVgPePY+R8gC7PBJ+wWx57XTRYuhh21TxybL5cs3A04c4dPK5Qxxeap9n9+Cf+RPWXEiT7b3jjaeVJGtPYJd45HVxyUsYK4PqKuFcoYKei07XE0kqSM8Rpnbh4PfocUKuP3ObLOxu9fP2x/8Mv3n76vxMb3fWE5oHKOg9mYy/f8LXHw6xpnZHjXPJej5mysxvFd4Jmj1zp3ijvigOpwHCkfONLcKW1H3zu35Tj1A4fZmneK13vBtVJlNgyIA6rqcfTMxpp3iqPqcaCBOKAqHQd3SlvpONBWNw4+wW6qG0ePCneKEAcaisbBnbJH0Th6FLlTpGYczMZOFePATsRxTJ07RQrGwZ2yX7k4sF+tODpno9SdItXiwCHEAVWhOLhTjioUB46qEgefYA2qxNGp4J0iReJgNmxKxAEb4thW806RCnFwp5jljwNmyePon42yd4qkjwM9iAOqzHFwp3T6PPsFLM3xk84ZO0u7HEt9gj1jGZI4DvQjjnAnnQ3JGsdSd8p55YxjHeedDUkZB7PhJWEc6zj1bEi+OJgNR9niWMfZZ0OIAw2p4ljnTkkwG5IsjkXkKEMyxbHObKSRJ45FpJkNyfQje693hQW6Yjk8ZZoNIY4PmI1bxOEm2WwIcaCBOHzkmw0hDhcpyxDiuMXT6AfE0SvrbAhxoIE4uiSeDSEONBDHX4an0dyzIcSBBuIwSj8bQhxoIA6LCrMhxGFQpAwhjgu+cX4XcRxTZzaEONBAHAeUmg0hDjQQx96n0WqzIcSBBuLYpeBsCHHsUbMMIQ40VI9j82m07GwIcaCBOFoqz4YQBxqIQ1V8NqR4HPykvq10HA3MhhAHGojjDmbjgjg+ooyrunHwNLqpbhx3MRu3iAMq4viH2fiAOKAijr+Yjf+5xfH++s3rrxog90cVr/ficBxPL28u//BSiszG0feOa6VKGQbEAZVnHOd67LjINxuO74IljrM/duR+GtUY3jXna+Vc48FstPHMAZUxjsZGnWU8Ss2G7UmA5YDKHsdJx+PyNMps7BG1HCv3kU/QaXfF0U5y2T6SzUb7nHu+7/Dw+PzV/Icv4l4cNoUefvgD6bL7kUD02TrEsZknfUTYPNX+zXa4Vi72FMAV42LYUbvFIbsXgkTMBp+wZxxy5AYhkUOmHKxzHGJ6wiCUu6afpH8cwhPoJO5fYyEfZVmC8SLOPGQ5rpiQAeK+FGO/CcaERAs94djluGJC3A34whsUxwWJuBi2x0PjuKISg/F39Jw4bhFKw9yHtvlxYFn8DilUxAEVcUBFHFARB1TEARVxQEUcUBEHVMQBFXFARRxQEQdUxAHVH02cV8WFZu6NAAAAAElFTkSuQmCC">
+  <title>VITAMIN FORGE | 知識を鍛える暗記RPG</title>
+  <style>:root{--bg:#080f1b;--panel:#101a2b;--panel2:#141f31;--line:#243248;--text:#f1f4f8;--muted:#97a5b9;--faint:#66768f;--gold:#ffbe6a;--orange:#fe914e;--cyan:#74dfe1;--mint:#70d8b7;--red:#ff8795;--purple:#bb9dff;--radius:17px;--shadow:0 18px 55px rgba(0,0,0,.15);font-synthesis:none}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans JP',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:disabled{cursor:not-allowed;opacity:.7}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}a{color:inherit;text-decoration:none}.hide{display:none!important}.app-layout{min-height:100vh;display:grid;grid-template-columns:246px minmax(0,1fr)}.sidebar{background:#0b1423;border-right:1px solid #213048;min-height:100vh;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:4;padding:32px 17px 22px}.brand{display:flex;gap:10px;align-items:center;padding:0 6px 51px;color:#fff}.brand-mark{display:grid;place-items:center;width:38px;height:43px;background:linear-gradient(155deg,#ffc177,#db7e3d);color:#17202c;clip-path:polygon(50% 0,95% 21%,95% 78%,50% 100%,5% 78%,5% 21%);font-size:25px;filter:drop-shadow(0 0 10px #c27a4a33)}.brand strong{font-size:16px;font-weight:900;letter-spacing:.012em;white-space:nowrap}.brand-accent{color:var(--gold)}.brand small{display:block;font-size:8px;letter-spacing:.24em;color:#8f9eb2;font-weight:800;margin-top:-3px}.sidebar-group-title{color:#65738a;font-size:10px;font-weight:800;letter-spacing:.17em;padding:0 16px 16px}.side-links{display:grid;gap:7px}.nav-link{height:50px;background:transparent;border:1px solid transparent;color:#9caec4;border-radius:11px;display:flex;align-items:center;gap:16px;padding:0 15px;text-align:left;font-weight:700;transition:background .15s,color .15s}.nav-link:hover{background:#18263a;color:#fff}.nav-link.active{color:#ffce87;border:1px solid #76553766;background:linear-gradient(90deg,#613f293d,#362d2b15);box-shadow:inset 3px 0 #ffb873}.nav-ico{font-size:23px;width:23px;line-height:1;text-align:center;font-weight:600}.sidebar-bottom{margin-top:auto;border-top:1px solid #1c2a3f;padding:19px 6px 0;color:#728099;font-size:10px;letter-spacing:.11em;font-weight:700}.status-dot,.live-circle{display:inline-block;width:7px;height:7px;border-radius:50%;background:#6ad7b8;box-shadow:0 0 10px #6ad7b855;margin-right:6px}.version{float:right}.workspace{min-width:0;display:flex;flex-direction:column;min-height:100vh;background:radial-gradient(circle at 76% 0,#18264088,transparent 39%),var(--bg)}.topbar{height:93px;flex-shrink:0;border-bottom:1px solid #1d2b40;display:flex;justify-content:space-between;align-items:center;padding:15px clamp(22px,4vw,58px);background:#0c1422c9}.topbar-title{display:flex;flex-direction:column;line-height:1.25;gap:5px}.topbar-overline{font-size:11px;letter-spacing:.07em;color:var(--muted);font-weight:800}.topbar-title strong{letter-spacing:.19em;font-size:13px;font-weight:900;color:#fff}.topbar-stats{display:flex;gap:10px;align-items:center}.mini-stat{display:inline-flex;align-items:center;gap:7px;color:var(--cyan);font-weight:700;font-size:13px;background:#172537;border:1px solid #2b3c51;border-radius:10px;padding:8px 12px}.mini-stat b{color:#f8fafb}.mini-stat.gold{color:var(--gold)}.main-content{max-width:1370px;width:100%;margin:0 auto;padding:35px clamp(20px,4vw,58px) 50px;flex:1}.app-footer{padding:13px 48px 18px;text-align:center;font-size:10px;color:#5e708a;letter-spacing:.045em}.bottom-nav{display:none}.kicker,.section-eyebrow,.small-caption{font-size:10px;letter-spacing:.17em;font-weight:900;color:var(--gold)}.section-eyebrow{color:#8c9eb5;display:flex;align-items:center;gap:3px;margin-bottom:16px}.section-eyebrow .right-sub{margin-left:auto;letter-spacing:.1em;color:#677990}.hero{min-height:338px;border:1px solid #65543a;border-radius:19px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 85% 45%,#66392168,transparent 48%),linear-gradient(110deg,#192536,#222231 58%,#443027);box-shadow:var(--shadow)}.hero-glow{position:absolute;right:5%;top:12%;height:300px;width:300px;background:radial-gradient(circle,#e7a64e22,transparent 64%);pointer-events:none}.hero-lines{position:absolute;inset:0;background-image:linear-gradient(#fff1 1px,transparent 1px),linear-gradient(90deg,#fff1 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(90deg,transparent 25%,#000 100%);opacity:.24}.hero-copy{position:relative;z-index:1;padding:37px 40px 37px;max-width:690px}.hero-badge{display:inline-block;border:1px solid #b77b4966;color:#f8bd79;background:#9b603524;padding:5px 12px;border-radius:5px;font-size:10px;letter-spacing:.14em;font-weight:900}.hero h1{font-size:clamp(32px,4.2vw,55px);line-height:1.36;letter-spacing:-.045em;margin:16px 0 10px;font-weight:900;text-shadow:0 3px 18px #0003}.hero h1 em{font-style:normal;color:#ffb268}.hero p{font-size:13px;line-height:1.9;color:#d3d5db;margin:0 0 20px}.primary-btn,.secondary-btn,.ghost-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:10px;padding:12px 23px;white-space:nowrap;font-weight:900;border:1px solid transparent;transition:transform .14s,filter .15s,background .15s;text-align:center}.primary-btn{background:linear-gradient(125deg,#ffcb7a,#f79a53);color:#211709;border-color:#ffc485;box-shadow:0 7px 22px #f7a25821}.primary-btn:not(:disabled):active,.secondary-btn:not(:disabled):active,.mode-row:active,.answer-btn:not(:disabled):active{transform:scale(.985)}.primary-btn:hover:not(:disabled){filter:brightness(1.08)}.primary-btn:disabled{filter:grayscale(.7)}.hero-cta{min-width:203px}.hero-cta span{margin-left:13px}.secondary-btn{background:#172337;color:#ebf2ff;border-color:#34445b}.secondary-btn:hover{background:#20314a}.ghost-btn{background:transparent;color:#a8b9d1;border-color:#2a3951}.hero-orb{position:absolute;width:228px;height:228px;right:9%;top:52px;border-radius:50%;border:1px solid #f2a76844;display:grid;place-items:center;box-shadow:0 0 0 15px #f3aa4712,0 0 0 34px #ffa73b07,0 0 80px #a67c4444,inset 0 0 44px #db9b401e;transform:rotate(-12deg)}.hero-orb:before,.hero-orb:after{content:'✦';position:absolute;color:#ffcc80;filter:drop-shadow(0 0 6px #ffab60)}.hero-orb:before{left:-22px;top:52px;font-size:22px}.hero-orb:after{right:-17px;bottom:44px;font-size:34px}.hero-orb-inner{width:148px;height:148px;border:4px double #dda15e;border-radius:23%;background:radial-gradient(circle,#784e2b,#262338 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(12deg);box-shadow:inset 0 0 50px #f7952638,0 0 60px #cf813535}.hero-orb-inner span{font-family:Georgia,serif;font-size:100px;line-height:1;color:#ffcf81;text-shadow:0 0 26px #ef8b44b0;font-weight:bold}.hero-orb-inner small{font-size:10px;letter-spacing:.32em;color:#ecbd8f;font-weight:900}.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:19px 0 27px}.stat-card{background:linear-gradient(155deg,#152235,#10192a);border:1px solid #2a384d;border-radius:14px;min-height:173px;padding:18px 19px;position:relative}.stat-icon{width:35px;height:35px;border-radius:10px;display:grid;place-items:center;font-size:21px;margin-bottom:12px}.stat-icon.amber{background:#93622f32;color:#ffbb67}.stat-icon.mint{background:#318c7650;color:#64e0ba}.stat-icon.purple{background:#6a4b9d53;color:#c0a1ff}.stat-icon.coral{background:#9b495a47;color:#ff95a7}.stat-name{position:absolute;right:15px;top:21px;color:#8a99ae;font-weight:900;letter-spacing:.10em;font-size:9px}.stat-value{font-size:33px;line-height:1.15;font-weight:900;display:block;letter-spacing:-.04em}.stat-value small{color:#a5b5c9;font-size:12px;letter-spacing:0}.stat-foot{color:#8999af;font-size:11px;display:block;margin-top:8px}.thin-track,.progress-track,.quiz-progress,.flash-progress,.result-bars{height:7px;border-radius:20px;background:#2c3950;overflow:hidden}.thin-track{margin-top:12px;height:5px}.thin-track span,.progress-track span,.quiz-progress span,.flash-progress span,.result-bars span{height:100%;display:block;border-radius:inherit;background:linear-gradient(90deg,#ef9656,#ffda82);transition:width .2s}.as-button{background:transparent;border:0;padding:0;text-align:left;color:var(--gold);font-weight:700;text-decoration:underline;text-underline-offset:3px}.home-columns{display:grid;grid-template-columns:minmax(0,1.27fr) minmax(280px,.73fr);gap:17px}.panel{background:#121d2e;border:1px solid #28374d;border-radius:16px;box-shadow:var(--shadow)}.home-columns>.panel{padding:22px}.panel-title-row{display:flex;align-items:start;justify-content:space-between;gap:10px}.panel-title-row h2{margin:0 0 16px;font-size:21px;font-weight:900}.dim-label{font-size:10px;color:#74869d;letter-spacing:.1em}.mode-list{display:grid;gap:9px}.mode-row{width:100%;display:flex;align-items:center;gap:15px;background:#1b293d;border:1px solid #2c3c53;padding:14px;border-radius:12px;color:#fff;text-align:left;transition:background .14s,transform .12s}.mode-row:hover{background:#23344d}.mode-icon{width:49px;height:49px;border-radius:12px;display:grid;place-items:center;font-size:27px;flex-shrink:0}.quiz-icon{background:#744a323d;color:#ffd090}.card-icon{background:#416a9f42;color:#90d6fa}.book-icon{background:#4d8e7840;color:#87e2c1}.mode-info{flex:1;min-width:0}.mode-info b{display:block;font-size:15px}.mode-info small{display:block;color:#9cacc0;font-size:11px;margin-top:3px}.mode-arrow{font-size:20px;color:#b8c7d8}.reward-badge{padding:3px 8px;background:#a67c2940;color:var(--gold);font-weight:900;border-radius:7px;border:1px solid #c6954a4b}.daily-panel{position:relative}.daily-emblem{font-size:40px;text-align:center;color:#f5b86d;background:radial-gradient(ellipse,#e99c3f22,transparent 60%);margin:0 0 2px}.daily-headline{font-size:19px;font-weight:900;text-align:center;margin:0}.daily-detail{font-size:11px;text-align:center;color:#9aacc0;margin:2px 0 18px}.daily-numbers{display:flex;justify-content:space-between;align-items:end;color:#a9b9cd;font-size:12px;margin-bottom:8px}.daily-numbers strong{font-size:22px;color:#fff;line-height:1}.daily-numbers strong span{font-size:12px;color:#8495ac}.daily-footer{font-size:11px;color:#dcb984;margin-top:11px;font-weight:700}.tip-strip{background:linear-gradient(95deg,#172b3b,#172338);border:1px solid #284354;border-radius:12px;margin-top:21px;padding:15px 18px;display:flex;align-items:center;gap:12px}.tip-strip>span{font-size:19px;flex-shrink:0}.tip-strip p{font-size:11px;color:#adbed0;margin:0;flex:1;line-height:1.8}.tip-strip strong{color:#e8f3ff}.tip-strip button{background:none;border:0;color:var(--gold);white-space:nowrap;font-size:11px;font-weight:800}.page-head{margin-bottom:27px}.page-head h1{margin:3px 0 5px;font-size:clamp(25px,3vw,37px);font-weight:900;line-height:1.4}.page-head h1 small{font-size:12px;letter-spacing:.13em;color:#7789a0;margin-left:11px;white-space:nowrap;vertical-align:middle}.page-head p{font-size:12px;color:#93a5ba;margin:4px 0;line-height:1.9}.setup-panel{padding:29px;max-width:850px;position:relative;overflow:hidden}.setup-ornament{position:absolute;top:6px;right:29px;opacity:.06;font-size:120px;pointer-events:none}.setup-panel h2{margin:3px 0 17px;font-size:19px}.segment{display:flex;flex-wrap:wrap;background:#0b1423;border:1px solid #26384e;border-radius:10px;padding:4px;gap:3px;width:max-content;max-width:100%}.seg-btn{min-height:38px;border:1px solid transparent;border-radius:7px;background:transparent;color:#97abc1;padding:8px 16px;font-size:12px;font-weight:800;white-space:nowrap}.seg-btn.selected{background:#dba468;color:#241b19;border-color:#ffd299;box-shadow:0 1px 5px #0003}.seg-btn:hover:not(.selected){background:#1d3046;color:#fff}.setup-divider{height:1px;background:#293649;margin:28px 0 25px}.type-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.type-choice{background:#172337;border:1px solid #34435a;padding:20px 8px;border-radius:10px;text-align:center;color:#eff3fa;min-height:89px}.type-choice.chosen{background:#4c3628;border-color:#f4b76b;box-shadow:inset 0 0 0 1px #efb36c55}.type-choice b{display:block;font-size:13px;letter-spacing:.1em}.type-choice small{color:#9fadc0;font-size:11px}.type-choice.chosen b{color:#ffcf84}.setup-bottom{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:33px}.setup-bottom>span{color:#96a8bf;font-size:11px}.setup-bottom b{color:var(--gold)}.quiz-stage{max-width:800px;margin:auto}.quiz-topline{display:flex;align-items:center;justify-content:space-between;margin-bottom:23px}.text-btn{background:none;border:0;color:#8ca0ba;padding:10px 7px;font-size:12px;font-weight:700}.text-btn:hover{color:#f2f5fb}.round-info{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:9px 0 14px}.round-info>span:first-child{color:#7d8fa7;font-size:12px;font-weight:800;letter-spacing:.13em}.round-info b{font-size:26px;color:#fff}.round-info small{color:#7b8ba0;font-size:12px}.combo-pill{border:1px solid #374159;background:#162336;color:#92a4bb;padding:5px 11px;border-radius:50px;font-size:11px;font-weight:900}.combo-pill.on{border-color:#ae7a3d;color:var(--gold);background:#543d243d;box-shadow:0 0 20px #e8a44d22}.quiz-progress{height:5px;margin-bottom:22px}.question-box{border:1px solid #3c4e66;border-radius:15px;min-height:212px;background:radial-gradient(ellipse at 100% 0,#2b44524d,transparent 50%),linear-gradient(145deg,#1a293d,#121d2e);padding:29px;position:relative;overflow:hidden}.question-box:after{content:'✦';position:absolute;right:20px;bottom:-47px;font-size:165px;color:#fff;opacity:.025;pointer-events:none}.question-top{display:flex;align-items:center;gap:10px}.question-type{border:1px solid #cb95564d;color:#f2b574;background:#c18e4930;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:900}.pill{display:inline-flex;align-items:center;gap:4px;border-radius:7px;padding:3px 8px;font-size:10px;font-weight:900;white-space:nowrap}.pill.water{background:#205b7250;color:#82e2f0;border:1px solid #4b96ac52}.pill.fat{background:#734f254d;color:#ffcf86;border:1px solid #b58c4e50}.question-box h1{font-size:clamp(20px,2.65vw,28px);line-height:1.7;font-weight:900;margin:24px 0 11px;max-width:94%}.question-hint{margin:0;color:#8ba2bb;font-size:11px}.answer-list{display:grid;gap:11px;margin:21px 0}.answer-btn{display:flex;align-items:center;width:100%;gap:13px;padding:14px 19px;min-height:67px;background:#152237;border:1px solid #2c3c54;border-radius:11px;color:#f0f4f8;text-align:left;transition:background .1s,border .1s,transform .1s}.answer-btn:hover:not(:disabled){background:#21334a;border-color:#648095}.answer-letter{display:grid;place-items:center;border:1px solid #3f536b;background:#23324a;color:#b9cce1;border-radius:8px;min-width:34px;height:34px;font-weight:900}.answer-text{flex:1;min-width:0;font-weight:700;font-size:13px;line-height:1.55}.answer-mark{font-size:22px;color:#667b95}.answer-btn.is-correct{border-color:#58c4a0;background:#173d38}.answer-btn.is-correct .answer-letter{background:#2a816b;border-color:#50bb99;color:#fff}.answer-btn.is-correct .answer-mark{color:#77e7c5}.answer-btn.is-wrong{border-color:#cc667b;background:#482333}.answer-btn.is-wrong .answer-letter{background:#ab465c;border-color:#d56e81;color:#fff}.answer-btn.is-wrong .answer-mark{color:#ff91a0}.answer-btn.is-dim{opacity:.45}.quiz-caption{text-align:center;color:#7890aa;font-size:11px;margin:21px auto}.feedback{border-radius:12px;padding:16px 20px;margin-top:17px;border:1px solid #2d765d;background:#14322e}.feedback-bad{border-color:#855062;background:#301f2b}.feedback-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;font-size:14px}.feedback-symbol{background:#49c49c;color:#07281c;width:27px;height:27px;border-radius:50%;display:grid;place-items:center;font-weight:900}.feedback-bad .feedback-symbol{background:#ee8493;color:#441924}.gain-tag{color:#fbd195;margin-left:auto;font-size:13px;font-weight:900}.feedback p{font-size:12px;line-height:1.85;margin:10px 0 0;color:#d9ece5}.feedback-bad p{color:#f3dbdf}.feedback-explanation{color:#bacdc7!important}.feedback-memory{font-size:11px;color:#e6d2a6;margin-top:12px}.full-width{width:100%}.next-btn{margin-top:16px}.result-panel{padding:48px 24px;max-width:760px;margin:10px auto;text-align:center}.result-medal{font-size:58px;filter:drop-shadow(0 0 25px #ffa6456a)}.result-panel h1{color:var(--gold);font-size:29px;letter-spacing:.12em;margin:0}.result-panel>p{font-size:12px;color:#9eb0c6}.result-score strong{font-size:90px;line-height:1.2;font-weight:900;color:#fff}.result-score span{color:#a1b3c8;font-size:16px;font-weight:800}.result-bars{max-width:380px;margin:10px auto 26px}.result-rewards{display:grid;grid-template-columns:repeat(3,1fr);max-width:510px;margin:auto;gap:10px}.result-rewards>div{background:#1b2a3f;border-radius:12px;padding:15px 8px}.result-rewards span{display:block;color:#90a3ba;font-size:11px}.result-rewards b{display:block;font-size:24px;color:#fff}.result-rewards .reward-value{color:var(--gold)}.result-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:27px}.flash-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(220px,.75fr);gap:20px;align-items:start}.flash-main{min-width:0}.card-controls{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:24px}.card-controls>div{display:grid;gap:7px}.card-controls .segment{padding:3px}.card-controls .seg-btn{padding:7px 10px;min-height:36px;font-size:10px}.style-select{height:45px;border:1px solid #324158;background:#172538;color:#f0f5fa;border-radius:9px;padding:0 13px;max-width:250px;font-size:11px}.flash-progress-top{display:flex;justify-content:space-between;gap:12px;color:#92a7be;font-size:11px;font-weight:800;letter-spacing:.07em;margin-bottom:9px}.flash-progress{height:5px;margin-bottom:20px}.flip-card{display:block;position:relative;width:100%;height:345px;padding:0;background:transparent;border:0;text-align:center;perspective:1600px;color:#fff;cursor:pointer}.flip-inner{position:absolute;inset:0;display:block;transform-style:preserve-3d;transition:transform .46s cubic-bezier(.2,.7,.2,1)}.flip-card.flipped .flip-inner{transform:rotateY(180deg)}.flip-face{position:absolute;inset:0;border:1px solid #53697a;border-radius:17px;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:radial-gradient(circle at 50% 35%,#29445a 0,#152538 46%,#111b2b 95%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;box-shadow:inset 0 0 33px #09132285,0 12px 45px #0004;overflow:hidden}.flip-face:before{content:'';pointer-events:none;position:absolute;inset:12px;border:1px solid #7385973a;border-radius:11px}.flip-front:after{content:'◇';position:absolute;font-size:305px;color:#729cb80a;top:-88px;right:3%;pointer-events:none}.flash-corner{position:absolute;top:27px;font-size:10px;letter-spacing:.12em;color:#93abc3;font-weight:900}.flash-gem{font-size:37px;display:grid;place-items:center;width:62px;height:62px;border-radius:50%;margin-top:10px;margin-bottom:16px;border:1px solid #719db5;background:#28557577;color:#86dcea;box-shadow:0 0 40px #53c4d029}.flash-gem.fat{color:#fac784;border-color:#a88559;background:#71523063;box-shadow:0 0 42px #da9a5933}.flash-title{font-size:clamp(23px,3vw,30px);font-weight:900}.flash-alias{color:#9aaec6;font-size:12px;margin-top:2px}.flash-question{margin-top:17px;font-size:16px;font-weight:800;color:#e8bd84}.flash-click{position:absolute;bottom:22px;font-size:10px;letter-spacing:.11em;color:#8ba1ba;font-weight:800}.flip-back{transform:rotateY(180deg);background:radial-gradient(circle at 50% 30%,#36433c,#172831 63%,#14222f 99%);border-color:#85b89e}.flash-answer-caption{font-size:12px;font-weight:900;letter-spacing:.08em;color:#8ee3bc;margin:10px 0 15px}.flash-answer{font-size:clamp(15px,2vw,20px);font-weight:900;color:#fff;line-height:1.75;max-width:90%;max-height:150px;overflow:auto}.flash-mnemonic{margin:21px 0 0;max-width:90%;font-size:12px;color:#e6cca3}.no-data{font-weight:700;color:#a5b1c3;font-size:.9em}.flip-prompt{text-align:center;color:#849bb3;font-size:11px;margin:13px 0 18px}.flash-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px}.flash-subbuttons{display:flex;justify-content:space-between;gap:6px;margin-top:12px}.flash-subbuttons .text-btn{font-size:11px}.flash-side{padding:25px 22px}.flash-side h3{font-size:19px;margin:3px 0 26px}.step-item{display:flex;align-items:flex-start;gap:12px;margin:16px 0;color:#b3c3d7;font-size:12px;line-height:1.75}.step-item b{color:var(--gold);border:1px solid #835d3f;padding:4px 7px;border-radius:7px;flex-shrink:0;font-size:11px}.step-item strong{color:#ecf3fa}.tip-mini{margin-top:25px;border-top:1px solid #314157;padding-top:17px;line-height:2.2;font-size:12px;color:#9eb0c3}.tip-mini strong{color:#f6d099}.library-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.search-box{height:49px;display:flex;align-items:center;gap:10px;border:1px solid #34465d;background:#152134;border-radius:11px;padding:0 16px;max-width:450px;min-width:250px;flex:1}.search-box span{font-size:24px;color:#7b99b5}.search-box input{border:0;outline:0;background:transparent;color:#fff;width:100%;font-size:12px;min-width:0}.search-box input::placeholder{color:#788da5}.library-count{font-size:11px;letter-spacing:.1em;color:#7f95ac;margin:23px 0 11px}.library-count b{color:#f5c78c}.library-count span{float:right;letter-spacing:0}.vitamin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:11px}.vitamin-item{border:1px solid #2d3d53;border-radius:12px;background:#152236;overflow:hidden}.vitamin-item.open{border-color:#8d765a;background:#1b2938;grid-row:span 2}.vitamin-toggle{display:flex;gap:11px;align-items:center;padding:14px;width:100%;background:transparent;border:0;color:#fff;text-align:left;min-height:77px}.vitamin-toggle:hover{background:#23324970}.vitamin-badge{width:44px;height:44px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;font-size:13px;font-weight:900}.vitamin-badge.water{color:#9de9ed;background:#205f735e;border:1px solid #377c91}.vitamin-badge.fat{color:#ffcf89;background:#6e4c295e;border:1px solid #927049}.vitamin-meta{flex:1;min-width:0}.vitamin-meta strong{font-size:13px;display:block;font-weight:900}.vitamin-meta small{font-size:10px;color:#95a8be}.expand-symbol{font-size:20px;color:#92a8bd;line-height:1}.vitamin-detail{border-top:1px solid #344252;padding:8px 18px 18px}.fact-row{padding:13px 0;border-bottom:1px solid #324050}.fact-label{font-size:11px;font-weight:900;color:#b9cce0;white-space:nowrap}.fact-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}.fact-dot.good{background:#67d6b0}.fact-dot.warn{background:#f6b77a}.fact-dot.bad{background:#ff8995}.fact-row p{font-size:12px;line-height:1.85;color:#e6ecf6;margin:6px 0 0}.memory-point{background:#473a2e78;border:1px solid #755c3b;border-radius:8px;font-size:11px;color:#f0d3a0;padding:9px;margin-top:15px}.detail-quiz{margin-top:14px;color:#ffce91;background:transparent;border:none;font-size:12px;font-weight:800;padding:9px 0}.footnote{border:1px solid #32465a;background:#142336;border-radius:10px;padding:14px 16px;margin:21px 0;color:#9bb0c8;font-size:11px;line-height:1.85}.search-empty{color:#9aacc2;background:#162237;border-radius:9px;padding:25px;text-align:center}.review-summary{display:grid;grid-template-columns:1fr 1fr minmax(230px,1.5fr);gap:12px;margin:26px 0 26px}.review-summary>div{background:#162337;border:1px solid #334159;border-radius:13px;padding:18px 20px;display:flex;flex-direction:column;gap:4px}.review-summary strong{font-size:40px;line-height:1.4}.review-summary strong small{color:#a2b3c6;font-size:13px}.review-summary-action{align-items:center;justify-content:center}.review-summary-action small{color:#859bb4;font-size:10px;margin-top:6px}.review-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 13px}.review-heading h2{font-size:20px;margin:0}.review-heading span{color:#8196aa;font-size:10px;letter-spacing:.1em}.review-list{display:grid;gap:10px}.review-entry{display:flex;align-items:center;gap:14px;min-height:75px;background:#152337;border:1px solid #34435a;border-radius:11px;padding:13px 16px}.review-entry-info{flex:1;min-width:0}.review-entry-info b{font-size:14px;display:block}.review-entry-info small{font-size:11px;color:#92a6bc}.weak-clear{border:1px solid #476d63;background:#2b473f63;color:#a0e8c7;font-size:11px;border-radius:8px;min-height:40px;padding:9px 11px;font-weight:800}.weak-clear:hover{background:#27564b}.review-empty{text-align:center;padding:48px 25px}.review-empty>div{font-size:58px;color:var(--gold)}.review-empty h2{margin:8px 0}.review-empty p{font-size:12px;color:#95a9bf;max-width:450px;margin:6px auto 22px}.reference-panel{padding:22px;max-width:1000px}.reference-title{display:flex;align-items:center;justify-content:space-between;gap:13px;margin-bottom:20px;flex-wrap:wrap;font-size:13px;font-weight:800}.reference-panel img{width:100%;height:auto;border-radius:8px;display:block}.toast{position:fixed;bottom:29px;left:50%;transform:translate(-50%,20px);z-index:20;border:1px solid #a07e53;background:#322c26;color:#ffdfa9;border-radius:12px;padding:12px 22px;box-shadow:0 12px 60px #0009;font-size:12px;font-weight:800;max-width:min(90vw,530px);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:1450px){.hero-orb{right:13%}.hero{min-height:360px}.hero-copy{padding-top:44px}}
+@media(max-width:1200px){.app-layout{grid-template-columns:208px minmax(0,1fr)}.sidebar{padding:28px 12px}.brand{padding-left:4px;gap:7px}.brand strong{font-size:13px}.brand small{font-size:7px}.hero-orb{right:4%;transform:rotate(-12deg) scale(.85)}.hero-copy{padding:32px;max-width:65%}.hero h1{font-size:36px}.home-columns{grid-template-columns:1fr 1fr}.stats-grid{gap:9px}.stat-card{padding:14px}.stat-name{font-size:8px;top:17px;right:10px}.vitamin-grid{grid-template-columns:1fr 1fr}.flash-layout{grid-template-columns:minmax(0,1fr) 210px}}
+@media(max-width:900px){.app-layout{display:block}.sidebar{display:none}.bottom-nav{position:fixed;z-index:10;bottom:0;left:0;right:0;display:flex;justify-content:space-around;height:calc(64px + env(safe-area-inset-bottom));padding:5px 6px calc(5px + env(safe-area-inset-bottom));background:#101a2af7;border-top:1px solid #354159;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 -10px 40px #0004}.bottom-link{display:grid;align-content:center;justify-items:center;gap:1px;flex:1;border:0;background:transparent;border-radius:9px;color:#8d9eb5;min-width:0}.bottom-link span{font-size:23px;line-height:1}.bottom-link small{font-size:10px;font-weight:800}.bottom-link.active{color:#ffcf8f;background:#f4a45914}.topbar{height:74px;padding:11px 24px}.main-content{padding:23px 24px 30px}.app-footer{padding:20px 20px calc(82px + env(safe-area-inset-bottom))}.hero-orb{right:5%;opacity:.77}.hero-copy{max-width:67%}.home-columns{grid-template-columns:1.15fr 1fr}.flash-layout{grid-template-columns:minmax(0,1fr) 230px}.vitamin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.toast{bottom:calc(81px + env(safe-area-inset-bottom))}}
+@media(max-width:680px){.topbar{padding:10px 16px;height:68px}.topbar-title strong{font-size:11px}.topbar-overline{font-size:9px}.topbar-stats{gap:5px}.mini-stat{font-size:10px;padding:6px 7px;gap:3px;border-radius:7px}.main-content{padding:19px 15px 34px}.section-eyebrow{font-size:9px}.section-eyebrow .right-sub{font-size:8px}.hero{min-height:340px;border-radius:15px}.hero-copy{padding:25px 19px;max-width:100%}.hero h1{font-size:37px;position:relative;z-index:2}.hero p{font-size:11px;line-height:1.9;max-width:245px;position:relative;z-index:2}.hero-badge{font-size:9px}.hero-orb{right:-58px;top:102px;opacity:.55;transform:rotate(-12deg) scale(.76)}.hero-cta{padding:11px 16px;min-width:188px;position:relative;z-index:2}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0 16px}.stat-card{min-height:146px;padding:12px}.stat-icon{width:29px;height:29px;font-size:18px}.stat-name{font-size:8px;right:10px;top:17px;max-width:93px;text-align:right}.stat-value{font-size:29px}.stat-foot{font-size:10px}.home-columns{grid-template-columns:1fr;gap:13px}.home-columns>.panel{padding:18px}.panel-title-row h2{font-size:18px}.mode-row{padding:11px;gap:12px}.mode-icon{width:43px;height:43px;font-size:23px}.mode-info b{font-size:14px}.mode-info small{font-size:10px}.daily-emblem{font-size:27px}.daily-headline{font-size:17px}.daily-detail{margin-bottom:12px}.tip-strip{padding:12px 13px;align-items:flex-start}.tip-strip{flex-wrap:wrap}.tip-strip button{display:block;margin-left:auto}.tip-strip p{font-size:10px}.page-head{margin-bottom:19px}.page-head h1{font-size:26px}.page-head h1 small{font-size:9px;display:inline-block}.page-head p{font-size:11px}.setup-panel{padding:19px}.segment{width:100%;display:flex;justify-content:stretch;flex-wrap:nowrap}.seg-btn{flex:1;min-width:0;padding:8px 6px;font-size:10px;white-space:normal;line-height:1.3}.type-grid{grid-template-columns:repeat(2,1fr);gap:8px}.type-choice{min-height:75px;padding:14px 5px}.setup-bottom{flex-direction:column;align-items:stretch;text-align:center;gap:15px}.quiz-topline{margin-bottom:15px}.question-box{min-height:194px;padding:19px}.question-box h1{font-size:20px;margin:23px 0 8px}.answer-btn{min-height:67px;padding:12px 12px;gap:9px}.answer-letter{min-width:32px;height:32px}.answer-text{font-size:12px}.feedback{padding:14px}.feedback-head{font-size:12px}.feedback p{font-size:11px}.flash-layout{grid-template-columns:1fr}.flash-side{display:none}.card-controls{gap:15px}.card-controls>div{width:100%}.card-controls .style-select{max-width:100%;width:100%}.flip-card{height:325px}.flash-title{font-size:26px}.flash-answer{font-size:17px}.flash-mnemonic{font-size:11px}.flash-buttons{gap:8px}.flash-buttons button{padding:9px 7px;font-size:11px}.flash-subbuttons .text-btn{font-size:10px}.library-toolbar{gap:10px}.search-box{width:100%;max-width:none;flex:auto}.library-toolbar .segment{width:100%}.vitamin-grid{grid-template-columns:1fr}.vitamin-item.open{grid-row:auto}.library-count span{font-size:9px}.review-summary{grid-template-columns:1fr 1fr;gap:9px}.review-summary>div{padding:15px}.review-summary strong{font-size:31px}.review-summary .review-summary-action{grid-column:1/-1}.review-summary-action .primary-btn{width:100%}.review-entry{padding:11px;gap:9px}.review-entry-info b{font-size:12px}.review-entry-info small{font-size:10px}.weak-clear{font-size:10px;padding:6px 9px}.reference-panel{padding:11px}.reference-title{font-size:11px}.reference-title .secondary-btn{width:100%;min-height:43px}.app-footer{font-size:9px;padding:15px 12px calc(83px + env(safe-area-inset-bottom))}.result-panel{padding:34px 13px}.result-score strong{font-size:70px}.result-rewards b{font-size:20px}.result-actions{flex-direction:column}.result-actions button{width:100%}}
+@media(max-width:360px){.hero h1{font-size:33px}.hero-copy{padding:22px 14px}.topbar-title strong{font-size:10px}.mini-stat{padding:5px;font-size:9px}.stat-name{font-size:7px}.flash-buttons button{font-size:10px}.bottom-link small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
 </head>
 <body>
-  <div class="app-shell" id="appShell">
-    <header class="topbar">
-      <div class="brand-wrap" aria-label="STUDY FORGE">
-        <div class="brand-mark">SF</div>
-        <div>
-          <div class="brand">STUDY FORGE</div>
-          <div class="brand-sub">KNOWLEDGE BECOMES POWER</div>
-        </div>
-      </div>
-      <div class="resource-row" aria-label="所持資源">
-        <div class="resource"><span>G</span><b id="goldValue">0</b></div>
-        <div class="resource forge"><span>FE</span><b id="forgeEnergyValue">0</b></div>
-      </div>
-    </header>
-
-    <main>
-      <section class="screen active" id="screen-home" data-screen="home">
-        <div class="hero-panel metal-panel">
-          <div class="eyebrow">FORGER PROFILE</div>
-          <div class="hero-top">
-            <div>
-              <div class="level-line">LEVEL <strong id="homeLevel">1</strong></div>
-              <h1 id="playerTitle">Rookie Forger</h1>
-              <p>問題を解き、知識を戦闘力へ変換せよ。</p>
-            </div>
-            <div class="rank-emblem" id="rankEmblem">I</div>
-          </div>
-          <div class="exp-block">
-            <div class="bar-label"><span>EXP</span><span id="expText">0 / 100</span></div>
-            <div class="progress"><i id="expBar"></i></div>
-          </div>
-          <div class="stat-grid">
-            <div class="stat-card"><span>HP</span><b id="statHp">100</b></div>
-            <div class="stat-card"><span>ATK</span><b id="statAtk">12</b></div>
-            <div class="stat-card"><span>DEF</span><b id="statDef">5</b></div>
-            <div class="stat-card"><span>CRIT</span><b id="statCrit">8%</b></div>
-          </div>
-        </div>
-
-        <div class="home-grid">
-          <button class="mode-card study-card" data-nav="study">
-            <span class="mode-kicker">STUDY SYSTEM</span>
-            <strong>STUDY</strong>
-            <span>問題演習でEXPと戦闘資源を獲得</span>
-            <em>START TRAINING →</em>
-          </button>
-          <button class="mode-card battle-card" data-nav="battle">
-            <span class="mode-kicker">COMBAT SYSTEM</span>
-            <strong>BATTLE</strong>
-            <span>知識で攻撃し、敵を撃破</span>
-            <em>ENTER BATTLE →</em>
-          </button>
-        </div>
-
-        <div class="dashboard-grid">
-          <div class="metal-panel compact-panel">
-            <div class="panel-head"><span>TODAY</span><small>SESSION DATA</small></div>
-            <div class="metric-list">
-              <div><span>Answered</span><b id="todayAnswered">0</b></div>
-              <div><span>Correct</span><b id="todayCorrect">0</b></div>
-              <div><span>Accuracy</span><b id="todayAccuracy">—</b></div>
-              <div><span>Best Combo</span><b id="bestCombo">0</b></div>
-            </div>
-          </div>
-          <div class="metal-panel compact-panel">
-            <div class="panel-head"><span>REVIEW</span><small>WEAK POINTS</small></div>
-            <div class="review-summary">
-              <b id="reviewCount">0</b>
-              <span>復習待ち問題</span>
-              <button class="text-button" id="reviewStartBtn">復習を開始</button>
-            </div>
-          </div>
-          <div class="metal-panel compact-panel bank-panel">
-            <div class="panel-head"><span>QUESTION BANK</span><small>LOCAL DATA</small></div>
-            <div class="bank-summary">
-              <b id="questionBankCount">0</b>
-              <span>収録問題</span>
-              <small id="questionSubjectCount">0 SUBJECTS</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="phase-strip">
-          <span class="phase-active">PHASE 1 ACTIVE</span>
-          <span>HOME</span><span>STUDY</span><span>BATTLE</span><span>EXP</span><span>SAVE</span>
-          <span class="phase-locked">FORGE / WEAPONS / DUNGEON → PHASE 2–3</span>
-        </div>
-      </section>
-
-      <section class="screen" id="screen-study" data-screen="study">
-        <div class="screen-title-row">
-          <button class="icon-btn" data-nav="home" aria-label="ホームへ戻る">←</button>
-          <div><span class="eyebrow">STUDY SYSTEM</span><h2>Knowledge Training</h2></div>
-          <div class="combo-badge"><span>COMBO</span><b id="studyCombo">0</b></div>
-        </div>
-
-        <div class="study-layout">
-          <div class="question-panel metal-panel">
-            <div class="question-meta">
-              <span id="questionSubject">SUBJECT</span>
-              <span id="questionDifficulty">NORMAL</span>
-              <span id="questionYear">—</span>
-            </div>
-            <div class="question-number" id="questionCounter">QUESTION</div>
-            <h3 id="questionText">読み込み中…</h3>
-            <div class="choice-grid" id="choiceGrid"></div>
-            <div class="selection-row" id="studySelectionRow">
-              <span class="selection-hint" id="selectionHint">選択肢を選んでください</span>
-              <button class="primary-btn answer-submit" id="submitAnswerBtn" disabled>回答する</button>
-            </div>
-            <div class="answer-feedback" id="answerFeedback" aria-live="polite"></div>
-            <button class="primary-btn hidden" id="nextQuestionBtn">NEXT QUESTION</button>
-          </div>
-
-          <aside class="study-side">
-            <div class="metal-panel reward-panel">
-              <div class="panel-head"><span>REWARD PREVIEW</span><small>ON CORRECT</small></div>
-              <div class="reward-row"><span>EXP</span><b id="previewExp">+12</b></div>
-              <div class="reward-row"><span>GOLD</span><b id="previewGold">+8</b></div>
-              <div class="reward-row"><span>FORGE ENERGY</span><b id="previewEnergy">+2</b></div>
-              <div class="multiplier" id="comboMultiplier">COMBO ×1.00</div>
-            </div>
-            <div class="metal-panel compact-panel">
-              <div class="panel-head"><span>MODE</span><small>QUESTION POOL</small></div>
-              <div class="segmented">
-                <button class="seg active" data-study-mode="normal">NORMAL</button>
-                <button class="seg" data-study-mode="review">REVIEW</button>
-              </div>
-              <p class="small-copy" id="studyModeHelp">全問題から出題します。</p>
-            </div>
-            <div class="metal-panel compact-panel">
-              <div class="panel-head"><span>FILTER</span><small>LARGE BANK READY</small></div>
-              <label class="filter-label">SUBJECT
-                <select id="subjectFilter" class="filter-select"><option value="all">ALL SUBJECTS</option></select>
-              </label>
-              <label class="filter-label">DIFFICULTY
-                <select id="difficultyFilter" class="filter-select">
-                  <option value="all">ALL LEVELS</option>
-                  <option value="1">EASY</option>
-                  <option value="2">NORMAL</option>
-                  <option value="3">HARD</option>
-                </select>
-              </label>
-              <div class="pool-count" id="poolCount">POOL 0 / BANK 0</div>
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <section class="screen" id="screen-battle" data-screen="battle">
-        <div class="screen-title-row">
-          <button class="icon-btn" data-nav="home" aria-label="ホームへ戻る">←</button>
-          <div><span class="eyebrow">COMBAT SYSTEM</span><h2>Trial Arena</h2></div>
-          <div class="battle-streak"><span>WINS</span><b id="battleWins">0</b></div>
-        </div>
-
-        <div class="battle-stage metal-panel" id="battleStage">
-          <div class="enemy-zone">
-            <div class="enemy-title-row"><div><span id="enemyTier">NORMAL</span><h3 id="enemyName">Ashfang Wolf</h3></div><b id="enemyLevel">Lv.1</b></div>
-            <div class="hp-label"><span>ENEMY HP</span><span id="enemyHpText">80 / 80</span></div>
-            <div class="progress enemy-hp"><i id="enemyHpBar"></i></div>
-            <div class="enemy-avatar" id="enemyAvatar" aria-label="敵シルエット">
-              <div class="enemy-core"></div><div class="enemy-eye left"></div><div class="enemy-eye right"></div>
-            </div>
-            <div class="floating-layer" id="floatingLayer"></div>
-          </div>
-
-          <div class="versus-line"><span></span><b>VS</b><span></span></div>
-
-          <div class="player-combat-row">
-            <div>
-              <div class="hp-label"><span>FORGER HP</span><span id="playerHpText">100 / 100</span></div>
-              <div class="progress player-hp"><i id="playerHpBar"></i></div>
-            </div>
-            <div class="combat-stats"><span>ATK <b id="battleAtk">12</b></span><span>FE <b id="battleEnergy">0</b></span></div>
-          </div>
-
-          <div class="battle-log" id="battleLog">知識を武器に、最初の一撃を放て。</div>
-
-          <div class="battle-actions" id="battleActions">
-            <button class="primary-btn" id="quizStrikeBtn">QUIZ STRIKE <small>問題に正解して攻撃</small></button>
-            <button class="secondary-btn" id="guardBtn">GUARD <small>被ダメージ軽減 + HP小回復</small></button>
-          </div>
-
-          <div class="battle-quiz hidden" id="battleQuiz">
-            <div class="battle-question-meta"><span>QUIZ STRIKE</span><span id="battleQuestionSubject">SUBJECT</span></div>
-            <h3 id="battleQuestionText">Question</h3>
-            <div class="choice-grid battle-choice-grid" id="battleChoiceGrid"></div>
-            <div class="selection-row battle-selection-row">
-              <span class="selection-hint" id="battleSelectionHint">選択肢を選んでください</span>
-              <button class="primary-btn answer-submit" id="submitBattleAnswerBtn" disabled>ATTACK</button>
-            </div>
-          </div>
-
-          <div class="battle-result hidden" id="battleResult">
-            <h3 id="battleResultTitle">VICTORY</h3>
-            <p id="battleResultText"></p>
-            <button class="primary-btn" id="nextBattleBtn">NEXT ENEMY</button>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <div class="bottom-nav-shell" aria-hidden="false">
-      <nav class="bottom-nav" aria-label="メインナビゲーション">
-        <button class="nav-btn active" data-nav="home"><span>⌂</span><b>HOME</b></button>
-        <button class="nav-btn" data-nav="study"><span>✦</span><b>STUDY</b></button>
-        <button class="nav-btn" data-nav="battle"><span>⚔</span><b>BATTLE</b></button>
+  <div id="app" class="app-layout">
+    <aside class="sidebar">
+      <a class="brand" href="#home" data-nav="home" aria-label="ホームへ">
+        <span class="brand-mark">✦</span>
+        <span><strong>VITAMIN<span class="brand-accent"> FORGE</span></strong><small>KNOWLEDGE IS POWER</small></span>
+      </a>
+      <div class="sidebar-group-title">STUDY MENU</div>
+      <nav class="side-links" aria-label="学習ナビゲーション">
+        <button class="nav-link active" data-nav="home"><span class="nav-ico">⌂</span>ホーム</button>
+        <button class="nav-link" data-nav="quiz"><span class="nav-ico">⚔</span>4択クイズ</button>
+        <button class="nav-link" data-nav="cards"><span class="nav-ico">▤</span>暗記カード</button>
+        <button class="nav-link" data-nav="library"><span class="nav-ico">◫</span>ビタミン図鑑</button>
+        <button class="nav-link" data-nav="review"><span class="nav-ico">◎</span>苦手復習</button>
+        <button class="nav-link" data-nav="reference"><span class="nav-ico">▧</span>元の資料</button>
       </nav>
+      <div class="sidebar-bottom"><span class="status-dot"></span> OFFLINE READY <span class="version">v1.0</span></div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="topbar-title"><span class="topbar-overline">JSPO-AT / 栄養学</span><strong id="page-title">DASHBOARD</strong></div>
+        <div class="topbar-stats"><span class="mini-stat">✦ <b id="top-level">LV.1</b></span><span class="mini-stat gold">◈ <b id="top-xp">0 XP</b></span></div>
+      </header>
+      <main id="main-content" class="main-content" aria-live="polite"></main>
+      <footer class="app-footer">SOURCE: 添付のビタミン一覧表 ／ 学習用に要点を再構成　｜　<a style="color:inherit;text-decoration:underline" href="./study-forge.html">旧STUDY FORGEを開く</a></footer>
     </div>
-
-    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
-
-    <div class="modal-backdrop hidden" id="levelUpModal">
-      <div class="level-modal">
-        <span>LEVEL UP</span>
-        <div class="level-burst" id="levelBurst">2</div>
-        <h2>FORGER EVOLVED</h2>
-        <p id="levelUpText">能力値が上昇した。</p>
-        <button class="primary-btn" id="closeLevelModal">CONTINUE</button>
-      </div>
-    </div>
+    <nav class="bottom-nav" aria-label="モバイルナビゲーション">
+      <button class="bottom-link active" data-nav="home"><span>⌂</span><small>ホーム</small></button>
+      <button class="bottom-link" data-nav="quiz"><span>⚔</span><small>クイズ</small></button>
+      <button class="bottom-link" data-nav="cards"><span>▤</span><small>暗記</small></button>
+      <button class="bottom-link" data-nav="library"><span>◫</span><small>図鑑</small></button>
+      <button class="bottom-link" data-nav="review"><span>◎</span><small>復習</small></button>
+    </nav>
   </div>
-
-  <script>
-window.STUDY_FORGE_QUESTIONS = [{"id":"2023-bac-q001","qNum":1,"question":"貧血について正しいのはどれか。2つ選べ。","choices":["成人女性の約半数は鉄欠乏性貧血、または鉄欠乏状態である。","初期症状としては息切れが多い。","再生不良性貧血も含まれる。","鉄欠乏性貧血の原因は、鉄摂取の不足または鉄排泄の増大のいずれかである。","溶血性貧血の予防はできない。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[0,2],"selectCount":2,"answerMode":"correct","choiceStatementsCorrect":[true,false,true,false,false],"choiceExplanations":["【正しい】〇a．成人女性の約半数は鉄欠乏性貧血、または鉄欠乏状態である。","【誤り】✗b．初期には自覚症状に乏しいこともあり、進行すると動悸、息切れ、めまい、易疲労感などがみられる。","【正しい】〇c．再生不良性貧血も貧血の一つに含まれる。","【誤り】✗d．鉄欠乏性貧血の原因には、鉄摂取不足、鉄吸収障害、鉄需要の増大、鉄排泄の増大などがある。","【誤り】✗e．溶血性貧血には原因に応じた予防が可能なものがある。"],"explanation":"【正しい】〇a．成人女性の約半数は鉄欠乏性貧血、または鉄欠乏状態である。 / 【誤り】✗b．初期には自覚症状に乏しいこともあり、進行すると動悸、息切れ、めまい、易疲労感などがみられる。 / 【正しい】〇c．再生不良性貧血も貧血の一つに含まれる。 / 【誤り】✗d．鉄欠乏性貧血の原因には、鉄摂取不足、鉄吸収障害、鉄需要の増大、鉄排泄の増大などがある。 / 【誤り】✗e．溶血性貧血には原因に応じた予防が可能なものがある。","subject":"内科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q002","qNum":2,"question":"行動変容を促す認知行動介入における目標設定技法について誤っているのはどれか。","choices":["「優勝する」など競技における成功を目標に設定する。","挑戦意欲が湧くような目標を設定する。","評価可能な行動を設定する。","目標の達成日を設定する。","肯定的な目標を設定する。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[0],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[false,true,true,true,true],"choiceExplanations":["【誤り】✗a．結果目標だけでなく、自分でコントロールでき、評価可能な具体的行動を目標として設定する。","【正しい】〇b．挑戦意欲が湧くような目標を設定する。","【正しい】〇c．評価可能な行動を設定する。","【正しい】〇d．目標の達成日を設定する。","【正しい】〇e．肯定的な目標を設定する。"],"explanation":"【誤り】✗a．結果目標だけでなく、自分でコントロールでき、評価可能な具体的行動を目標として設定する。 / 【正しい】〇b．挑戦意欲が湧くような目標を設定する。 / 【正しい】〇c．評価可能な行動を設定する。 / 【正しい】〇d．目標の達成日を設定する。 / 【正しい】〇e．肯定的な目標を設定する。","subject":"コンディ","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q003","qNum":3,"question":"ウイルス性結膜炎について誤っているのはどれか。2つ選べ。","choices":["咽頭結膜熱（プール熱）は、アデノウイルスの3型によって起きることが多い。","咽頭結膜熱（プール熱）の潜伏期間は4～7日で、耳前リンパ節の腫脹や圧痛を伴う。","流行性角結膜炎は感染力がきわめて強く、潜伏期間が約1日と非常に短い特徴がある。","アデノウイルス、エンテロウイルスによる結膜炎に対する直接有効な薬剤はない。","急性出血性結膜炎は発病から1週間ほどの間症状が徐々に強まり、治るまでに通常2～3週間を要する。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[2,4],"selectCount":2,"answerMode":"incorrect","choiceStatementsCorrect":[true,true,false,true,false],"choiceExplanations":["【正しい】〇a．咽頭結膜熱（プール熱）は、アデノウイルス3型によって起きることが多い。","【正しい】〇b．咽頭結膜熱（プール熱）の潜伏期間は4～7日で、耳前リンパ節の腫脹や圧痛を伴う。","【誤り】✗c．流行性角結膜炎は感染力がきわめて強く、潜伏期間は約1週間である。","【正しい】〇d．アデノウイルス、エンテロウイルスによる結膜炎に対する直接有効な薬剤はない。","【誤り】✗e．急性出血性結膜炎は急激に発症する感染力の強い結膜炎であり、「1週間ほど徐々に強まり、通常2～3週間を要する」という経過ではない。"],"explanation":"【正しい】〇a．咽頭結膜熱（プール熱）は、アデノウイルス3型によって起きることが多い。 / 【正しい】〇b．咽頭結膜熱（プール熱）の潜伏期間は4～7日で、耳前リンパ節の腫脹や圧痛を伴う。 / 【誤り】✗c．流行性角結膜炎は感染力がきわめて強く、潜伏期間は約1週間である。 / 【正しい】〇d．アデノウイルス、エンテロウイルスによる結膜炎に対する直接有効な薬剤はない。 / 【誤り】✗e．急性出血性結膜炎は急激に発症する感染力の強い結膜炎であり、「1週間ほど徐々に強まり、通常2～3週間を要する」という経過ではない。","subject":"内科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q004","qNum":4,"question":"関節の構造について誤っているのはどれか。2つ選べ。","choices":["関節内に存在する軟骨は硝子軟骨のみである。","関節軟骨は軟骨表面から栄養分を得ている。","関節包には自由神経終末がない。","滑膜は関節包の最内層の内壁を形成している。","滑膜は滑液の分泌だけでなく、吸収も行っている。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[0,2],"selectCount":2,"answerMode":"incorrect","choiceStatementsCorrect":[false,true,false,true,true],"choiceExplanations":["【誤り】✗a．関節内には硝子軟骨だけでなく、半月板や関節円板などの線維軟骨も存在する。","【正しい】〇b．関節軟骨は滑液を介して軟骨表面から栄養分を得ている。","【誤り】✗c．関節包には自由神経終末が存在し、痛覚などに関与する。","【正しい】〇d．滑膜は関節包の最内層の内壁を形成している。","【正しい】〇e．滑膜は滑液の分泌だけでなく、吸収も行っている。"],"explanation":"【誤り】✗a．関節内には硝子軟骨だけでなく、半月板や関節円板などの線維軟骨も存在する。 / 【正しい】〇b．関節軟骨は滑液を介して軟骨表面から栄養分を得ている。 / 【誤り】✗c．関節包には自由神経終末が存在し、痛覚などに関与する。 / 【正しい】〇d．滑膜は関節包の最内層の内壁を形成している。 / 【正しい】〇e．滑膜は滑液の分泌だけでなく、吸収も行っている。","subject":"解剖","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q005","qNum":5,"question":"歯および口腔の外傷として誤っているのはどれか。","choices":["舌の裂傷が生じた際は気道の確保にも留意する。","歯の完全脱臼の際は乾燥した清潔なガーゼで抜けた歯をくるみ、直ちに医療機関を受診する。","歯の破折面の中心に赤い斑点がある場合、破折は歯髄にまで及んでいる。","下顎骨関節突起部骨折の際は、耳出血を伴うことがある。","口腔外傷時には、より重篤な頭部外傷の可能性を除外しない。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[1],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,false,true,true,true],"choiceExplanations":["【正しい】〇a．舌の裂傷が生じた際は気道の確保にも留意する。","【誤り】✗b．歯の完全脱臼では抜けた歯を乾燥させず、0.9％食塩水などで湿らせたガーゼや専用保存液などに保存し、速やかに受診する。","【正しい】〇c．歯の破折面の中心に赤い斑点がある場合、破折は歯髄にまで及んでいる。","【正しい】〇d．下顎骨関節突起部骨折では耳出血を伴うことがある。","【正しい】〇e．口腔外傷時には、より重篤な頭部外傷の可能性を除外しない。"],"explanation":"【正しい】〇a．舌の裂傷が生じた際は気道の確保にも留意する。 / 【誤り】✗b．歯の完全脱臼では抜けた歯を乾燥させず、0.9％食塩水などで湿らせたガーゼや専用保存液などに保存し、速やかに受診する。 / 【正しい】〇c．歯の破折面の中心に赤い斑点がある場合、破折は歯髄にまで及んでいる。 / 【正しい】〇d．下顎骨関節突起部骨折では耳出血を伴うことがある。 / 【正しい】〇e．口腔外傷時には、より重篤な頭部外傷の可能性を除外しない。","subject":"外科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q006","qNum":6,"question":"糖質の補給と回復について正しいのはどれか。2つ選べ。","choices":["グルコースは肝臓と筋肉に蓄えられている糖質である。","グリコーゲンは血液や体液中にわずかに含まれる糖質である。","過剰に摂取された糖質は脂肪組織において中性脂肪に変換されて貯蔵される。","グリコーゲンの枯渇は、疲労困憊の要因となる。","アスリートにとって糖質を十分に摂取するための目安は、総摂取エネルギー量の40%程度とされる。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[2,3],"selectCount":2,"answerMode":"correct","choiceStatementsCorrect":[false,false,true,true,false],"choiceExplanations":["【誤り】✗a．肝臓と筋肉に蓄えられている糖質はグリコーゲンである。","【誤り】✗b．血液や体液中に存在する主要な糖質はグルコースであり、グリコーゲンは主に肝臓と筋肉に貯蔵される。","【正しい】〇c．過剰に摂取された糖質は脂肪組織において中性脂肪に変換されて貯蔵される。","【正しい】〇d．グリコーゲンの枯渇は、疲労困憊の要因となる。","【誤り】✗e．アスリートが糖質を十分に摂取する目安は、総摂取エネルギー量の60％程度とされる。"],"explanation":"【誤り】✗a．肝臓と筋肉に蓄えられている糖質はグリコーゲンである。 / 【誤り】✗b．血液や体液中に存在する主要な糖質はグルコースであり、グリコーゲンは主に肝臓と筋肉に貯蔵される。 / 【正しい】〇c．過剰に摂取された糖質は脂肪組織において中性脂肪に変換されて貯蔵される。 / 【正しい】〇d．グリコーゲンの枯渇は、疲労困憊の要因となる。 / 【誤り】✗e．アスリートが糖質を十分に摂取する目安は、総摂取エネルギー量の60％程度とされる。","subject":"栄養","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q007","qNum":7,"question":"脳振とうについて誤っているのはどれか。","choices":["急激な脳組織のひずみによって脳の機能障害を生じ、精神活動が障害される。","脳振とうの既往がある者は、ない者よりも脳振とうを起こしやすい。","意識障害を伴わない場合に脳振とうと診断される。","脳振とう後症候群の症状として、めまい、吐き気などが挙げられる。","脳振とうを慢性的に繰り返すと、パーキンソン様症状を呈することがある。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[2],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,true,false,true,true],"choiceExplanations":["【正しい】〇a．急激な脳組織のひずみによって脳の機能障害を生じ、精神活動が障害される。","【正しい】〇b．脳振とうの既往がある者は、ない者よりも再受傷しやすい。","【誤り】✗c．脳振とうは意識消失を伴う場合と伴わない場合のどちらもある。","【正しい】〇d．脳振とう後症候群の症状として、めまい、吐き気などが挙げられる。","【正しい】〇e．脳振とうを慢性的に繰り返すと、パーキンソン様症状を呈することがある。"],"explanation":"【正しい】〇a．急激な脳組織のひずみによって脳の機能障害を生じ、精神活動が障害される。 / 【正しい】〇b．脳振とうの既往がある者は、ない者よりも再受傷しやすい。 / 【誤り】✗c．脳振とうは意識消失を伴う場合と伴わない場合のどちらもある。 / 【正しい】〇d．脳振とう後症候群の症状として、めまい、吐き気などが挙げられる。 / 【正しい】〇e．脳振とうを慢性的に繰り返すと、パーキンソン様症状を呈することがある。","subject":"外科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q008","qNum":8,"question":"関節運動について誤っているのはどれか。","choices":["屈曲は矢状面・水平前額軸の運動である。","外転は前額面・水平矢状軸の運動である。","指の外転とは示指を通る手の長軸から離れる運動である。","外旋は水平面・垂直軸の運動で、出発肢位での前面が外側へ向く方向の運動である。","ぶん回し運動は体節が円錐形を描く運動である。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[2],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,true,false,true,true],"choiceExplanations":["【正しい】〇a．屈曲は矢状面・水平前額軸の運動である。","【正しい】〇b．外転は前額面・水平矢状軸の運動である。","【誤り】✗c．指の外転とは中指を通る手の長軸から離れる運動である。","【正しい】〇d．外旋は水平面・垂直軸の運動で、出発肢位での前面が外側へ向く方向の運動である。","【正しい】〇e．ぶん回し運動は体節が円錐形を描く運動である。"],"explanation":"【正しい】〇a．屈曲は矢状面・水平前額軸の運動である。 / 【正しい】〇b．外転は前額面・水平矢状軸の運動である。 / 【誤り】✗c．指の外転とは中指を通る手の長軸から離れる運動である。 / 【正しい】〇d．外旋は水平面・垂直軸の運動で、出発肢位での前面が外側へ向く方向の運動である。 / 【正しい】〇e．ぶん回し運動は体節が円錐形を描く運動である。","subject":"解剖","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q009","qNum":9,"question":"アスリートのウエイトコントロールについて誤っているのはどれか。","choices":["体重の構成要素は、体脂肪量と除脂肪量に大別される。","たんぱく質の摂取量を増やせば増やすほど、体たんぱく質の合成量は高まる。","エネルギー摂取を増やす場合、現状の食事内容についての分析は重要である。","減量は除脂肪体重の減少を極力抑え、体脂肪を減量させることを目的として行わなければならない。","負のエネルギー出納状態では体重は減少する。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[1],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,false,true,true,true],"choiceExplanations":["【正しい】〇a．体重の構成要素は、体脂肪量と除脂肪量に大別される。","【誤り】✗b．たんぱく質摂取量を増やし続けても、体たんぱく質合成量が際限なく高まるわけではない。","【正しい】〇c．エネルギー摂取を増やす場合、現状の食事内容についての分析は重要である。","【正しい】〇d．減量は除脂肪体重の減少を極力抑え、体脂肪を減少させることを目的として行う。","【正しい】〇e．負のエネルギー出納状態では体重は減少する。"],"explanation":"【正しい】〇a．体重の構成要素は、体脂肪量と除脂肪量に大別される。 / 【誤り】✗b．たんぱく質摂取量を増やし続けても、体たんぱく質合成量が際限なく高まるわけではない。 / 【正しい】〇c．エネルギー摂取を増やす場合、現状の食事内容についての分析は重要である。 / 【正しい】〇d．減量は除脂肪体重の減少を極力抑え、体脂肪を減少させることを目的として行う。 / 【正しい】〇e．負のエネルギー出納状態では体重は減少する。","subject":"栄養","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"},{"id":"2023-bac-q010","qNum":10,"question":"熱中症の予防として誤っているのはどれか。","choices":["汗には塩分も含まれているので、水分補給は0.1%～0.2%程度の食塩水がよい。","運動前後の体重変化は4%以内におさまるように水分補給を行うのがよい。","服装は軽装とし、吸湿性や通気性のよい素材にする。","WBGT31度以上では運動は原則中止する。","WBGT28度以上では厳重警戒とし激しい運動は中止する。"],"choiceLabels":["a","b","c","d","e"],"correctAnswers":[1],"selectCount":1,"answerMode":"incorrect","choiceStatementsCorrect":[true,false,true,true,true],"choiceExplanations":["【正しい】〇a．汗には塩分も含まれているので、水分補給は0.1%～0.2%程度の食塩水がよい。","【誤り】✗b．運動前後の体重減少は2％以内におさまるように水分補給を行う。","【正しい】〇c．服装は軽装とし、吸湿性や通気性のよい素材にする。","【正しい】〇d．WBGT31度以上では運動は原則中止する。","【正しい】〇e．WBGT28度以上では厳重警戒とし、激しい運動は中止する。"],"explanation":"【正しい】〇a．汗には塩分も含まれているので、水分補給は0.1%～0.2%程度の食塩水がよい。 / 【誤り】✗b．運動前後の体重減少は2％以内におさまるように水分補給を行う。 / 【正しい】〇c．服装は軽装とし、吸湿性や通気性のよい素材にする。 / 【正しい】〇d．WBGT31度以上では運動は原則中止する。 / 【正しい】〇e．WBGT28度以上では厳重警戒とし、激しい運動は中止する。","subject":"内科","year":"令和5年","difficulty":2,"source":"2023_bac_暗記試験形式_問1-10.csv"}];
-
-  </script>
-  <script>
-(() => {
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>/* 画像「ビタミン一覧表」の学習用データ。
+ * 「記載なし」は資料に記述がないという意味で、医学的に起こらないという意味ではありません。
+ * 後から同じ形式の項目を追加できます。
+ */
+window.VITAMIN_DATA = [
+  {
+    id:'b1', name:'ビタミンB₁', alias:'チアミン', code:'B1', group:'water',
+    role:'糖質代謝（ピルビン酸からアセチルCoAへの酸化的脱炭酸）',
+    deficiency:'脚気、運動・知覚麻痺、最大酸素摂取量低下、エネルギー代謝障害',
+    excess:null,
+    roleShort:'糖質代謝・ピルビン酸の酸化的脱炭酸',
+    deficiencyShort:'脚気・運動／知覚麻痺',
+    roleHint:'ピルビン酸→アセチルCoA',
+    deficiencyHint:'脚気',
+    mnemonic:'「B₁＝糖質のエネルギー変換→脚気」'
+  },
+  {
+    id:'b2', name:'ビタミンB₂', alias:'リボフラビン', code:'B2', group:'water',
+    role:'ミトコンドリアでのエネルギー代謝、筋収縮・神経筋機能に関連',
+    deficiency:'口角炎、口内炎、舌炎、咽頭炎、エネルギー代謝障害',
+    excess:null,
+    roleShort:'ミトコンドリアでのエネルギー代謝',
+    deficiencyShort:'口角炎・口内炎・舌炎',
+    roleHint:'ミトコンドリア・エネルギー代謝',
+    deficiencyHint:'口角炎・舌炎',
+    mnemonic:'「B₂＝口（口角・口内）に症状」'
+  },
+  {
+    id:'b6', name:'ビタミンB₆', alias:'ピリドキシン', code:'B6', group:'water',
+    role:'アミノ酸代謝、たんぱく質合成、神経伝達物質の産生',
+    deficiency:'皮膚炎、貧血、痙攣、食欲不振、倦怠感、嘔吐',
+    excess:'感覚神経障害',
+    roleShort:'アミノ酸代謝・神経伝達物質の産生',
+    deficiencyShort:'皮膚炎・貧血・痙攣',
+    excessShort:'感覚神経障害',
+    roleHint:'アミノ酸代謝・神経伝達物質',
+    deficiencyHint:'皮膚炎・痙攣',
+    mnemonic:'「B₆＝アミノ酸・神経／過剰は感覚神経障害」'
+  },
+  {
+    id:'b12', name:'ビタミンB₁₂', alias:'シアノコバラミン', code:'B12', group:'water',
+    role:'核酸代謝、造血機能、たんぱく質代謝',
+    deficiency:'巨赤芽球性貧血（悪性貧血）',
+    excess:null,
+    roleShort:'核酸代謝・造血機能',
+    deficiencyShort:'巨赤芽球性貧血（悪性貧血）',
+    roleHint:'造血・核酸代謝',
+    deficiencyHint:'悪性貧血',
+    mnemonic:'「B₁₂＝血をつくる→巨赤芽球性貧血」'
+  },
+  {
+    id:'b3', name:'ナイアシン', alias:'ビタミンB₃', code:'B3', group:'water',
+    role:'解糖過程の補酵素、組織呼吸、脂肪合成、酸化還元反応',
+    deficiency:'ペラグラ（皮膚炎）、下痢、頭痛、不安、幻覚',
+    excess:'消化不良、下痢、便秘、肝機能低下、劇症肝炎',
+    roleShort:'酸化還元反応・解糖系の補酵素',
+    deficiencyShort:'ペラグラ（皮膚炎）・下痢',
+    excessShort:'消化不良・肝機能低下',
+    roleHint:'酸化還元・解糖過程の補酵素',
+    deficiencyHint:'ペラグラ',
+    mnemonic:'「ナイアシン＝ペラグラ」'
+  },
+  {
+    id:'b5', name:'パントテン酸', alias:'ビタミンB₅', code:'B5', group:'water',
+    role:'アセチルCoAの構成成分、糖質・脂質代謝',
+    deficiency:'通常の食生活では欠乏症はみられない',
+    excess:null,
+    roleShort:'アセチルCoAの構成成分',
+    deficiencyShort:'通常の食生活で欠乏はまれ',
+    roleHint:'CoAの構成成分',
+    deficiencyHint:null,
+    mnemonic:'「パントテン酸＝CoAを構成」'
+  },
+  {
+    id:'b9', name:'葉酸', alias:'ビタミンB₉', code:'B9', group:'water',
+    role:'アミノ酸代謝、核酸合成',
+    deficiency:'巨赤芽球性貧血',
+    excess:'神経障害、発熱、蕁麻疹、紅斑',
+    roleShort:'アミノ酸代謝・核酸合成',
+    deficiencyShort:'巨赤芽球性貧血',
+    excessShort:'神経障害・発熱・蕁麻疹',
+    roleHint:'核酸合成',
+    deficiencyHint:null,
+    mnemonic:'「葉酸＝核酸合成→巨赤芽球性貧血」'
+  },
+  {
+    id:'b7', name:'ビオチン', alias:'ビタミンB₇', code:'B7', group:'water',
+    role:'二酸化炭素固定の補酵素、糖質・脂質代謝',
+    deficiency:'通常の食生活では欠乏症はみられない',
+    excess:null,
+    roleShort:'二酸化炭素固定の補酵素',
+    deficiencyShort:'通常の食生活で欠乏はまれ',
+    roleHint:'二酸化炭素固定',
+    deficiencyHint:null,
+    mnemonic:'「ビオチン＝CO₂固定の補酵素」'
+  },
+  {
+    id:'c', name:'ビタミンC', alias:'アスコルビン酸', code:'C', group:'water',
+    role:'コラーゲン合成、抗酸化作用、カルニチン合成、非ヘム鉄の吸収に関与',
+    deficiency:'壊血病、出血傾向、結合組織形成障害、筋力低下、倦怠感',
+    excess:null,
+    roleShort:'コラーゲン合成・抗酸化作用',
+    deficiencyShort:'壊血病・出血傾向',
+    roleHint:'コラーゲン合成・鉄吸収',
+    deficiencyHint:'壊血病',
+    mnemonic:'「C＝コラーゲン→壊血病」'
+  },
+  {
+    id:'a', name:'ビタミンA', alias:'レチノール', code:'A', group:'fat',
+    role:'明暗への順応、成長促進',
+    deficiency:null,
+    excess:'頭痛、頭蓋内圧上昇、皮膚の落屑、脱毛、筋肉痛、肝障害',
+    roleShort:'明暗への順応・成長促進',
+    excessShort:'頭痛・脱毛・肝障害',
+    roleHint:'明暗への順応',
+    deficiencyHint:null,
+    mnemonic:'「A＝明暗への順応（目）」'
+  },
+  {
+    id:'d', name:'ビタミンD', alias:'カルシフェロール', code:'D', group:'fat',
+    role:'小腸と腎臓でのカルシウム・リンの吸収促進および骨形成',
+    deficiency:'カルシウムなどの栄養不足とともに骨密度低下に関与',
+    excess:'高カルシウム血症、腎障害、軟組織の石灰化',
+    roleShort:'カルシウム・リン吸収促進・骨形成',
+    deficiencyShort:'骨密度低下に関与',
+    excessShort:'高カルシウム血症・腎障害',
+    roleHint:'カルシウム・リン吸収',
+    deficiencyHint:'骨密度低下',
+    mnemonic:'「D＝骨・Ca吸収／過剰は高Ca血症」'
+  },
+  {
+    id:'e', name:'ビタミンE', alias:'α-トコフェロール', code:'E', group:'fat',
+    role:'抗酸化作用、細胞膜の保護、赤血球の溶血防止',
+    deficiency:null,
+    excess:'出血',
+    roleShort:'抗酸化作用・細胞膜の保護',
+    excessShort:'出血',
+    roleHint:'抗酸化・細胞膜の保護',
+    deficiencyHint:null,
+    mnemonic:'「E＝抗酸化／過剰は出血」'
+  },
+  {
+    id:'k', name:'ビタミンK', alias:'フィロキノン', code:'K', group:'fat',
+    role:'血液凝固の活性化、骨形成の促進',
+    deficiency:null,
+    excess:null,
+    roleShort:'血液凝固の活性化・骨形成',
+    roleHint:'血液凝固',
+    deficiencyHint:null,
+    mnemonic:'「K＝血液凝固（Koagulation）」'
+  }
+];
+</script>
+  <script>(() => {
   'use strict';
-
-  const SAVE_KEY = 'studyForge.phase1.v1';
-  const TODAY_KEY = () => new Date().toISOString().slice(0, 10);
-
-  const FALLBACK_QUESTIONS = [
-    {id:'fallback-1',question:'筋収縮に必要なカルシウムイオンは主にどこから放出されるか。',choices:['筋小胞体','核','ゴルジ装置','細胞外のみ'],correct:0,explanation:'骨格筋では活動電位により筋小胞体からCa²⁺が放出され、収縮が始まります。',subject:'運動生理',year:'基礎',difficulty:1},
-    {id:'fallback-2',question:'膝関節伸展の主働筋群はどれか。',choices:['大腿四頭筋','ハムストリングス','下腿三頭筋','腸腰筋'],correct:0,explanation:'大腿四頭筋は膝伸展の主働筋群です。',subject:'機能解剖',year:'基礎',difficulty:1},
-    {id:'fallback-3',question:'力積と等しいものはどれか。',choices:['運動量の変化量','加速度の二乗','位置エネルギー','密度'],correct:0,explanation:'力積は力×時間で、運動量の変化量に等しいです。',subject:'バイオメカニクス',year:'基礎',difficulty:2}
-  ];
-
-  const defaultState = () => ({
-    version: 1,
-    player: {
-      level: 1, exp: 0, hp: 100, maxHp: 100, atk: 12, def: 5,
-      critical: 0.08, speed: 10, forgePower: 1
-    },
-    currency: { gold: 0, forgeEnergy: 0 },
-    study: {
-      combo: 0, bestCombo: 0, totalAnswered: 0, totalCorrect: 0,
-      reviewIds: [], history: {}, mode: 'normal', lastQuestionId: null,
-      filters: { subject: 'all', difficulty: 'all' }
-    },
-    battle: { wins: 0, enemyIndex: 0, playerHp: 100 },
-    today: { date: TODAY_KEY(), answered: 0, correct: 0 },
-    settings: { sound: false }
-  });
-
-  let state = loadState();
-  let questions = [...FALLBACK_QUESTIONS];
-  let currentQuestion = null;
-  let currentBattleQuestion = null;
-  let studyAnswered = false;
-  let battleAnswered = false;
-  let studySelection = new Set();
-  let battleSelection = new Set();
-  let currentEnemy = null;
-  let guardActive = false;
-
-  const $ = (id) => document.getElementById(id);
-  const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-
-  const ENEMIES = [
-    {name:'Ashfang Wolf', tier:'NORMAL', hp:76, atk:10, exp:24, gold:16},
-    {name:'Ironhide Boar', tier:'NORMAL', hp:95, atk:12, exp:28, gold:19},
-    {name:'Ember Wraith', tier:'ELITE', hp:122, atk:15, exp:36, gold:25},
-    {name:'Forge Sentinel', tier:'MINI BOSS', hp:165, atk:18, exp:52, gold:38}
-  ];
-
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(SAVE_KEY);
-      if (!raw) return defaultState();
-      const parsed = JSON.parse(raw);
-      const base = defaultState();
-      const merged = {
-        ...base, ...parsed,
-        player: {...base.player, ...(parsed.player || {})},
-        currency: {...base.currency, ...(parsed.currency || {})},
-        study: {...base.study, ...(parsed.study || {})},
-        battle: {...base.battle, ...(parsed.battle || {})},
-        today: {...base.today, ...(parsed.today || {})},
-        settings: {...base.settings, ...(parsed.settings || {})}
-      };
-      if (merged.today.date !== TODAY_KEY()) merged.today = {date:TODAY_KEY(), answered:0, correct:0};
-      merged.battle.playerHp = Math.min(merged.battle.playerHp || merged.player.maxHp, merged.player.maxHp);
-      return merged;
-    } catch (err) {
-      console.warn('Save load failed:', err);
-      return defaultState();
+  const vitamins = window.VITAMIN_DATA || [];
+  const SAVE_KEY = 'vitamin-forge-save-v1';
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  const escapeHTML = s => String(s ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const random = arr => arr[Math.floor(Math.random() * arr.length)];
+  const shuffle = arr => {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
     }
-  }
-
-  function saveState() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
-    catch (err) { console.warn('Save failed:', err); }
-  }
-
-  function getCorrectIndexes(q) {
-    const raw = Array.isArray(q?.correctAnswers) ? q.correctAnswers : (Number.isInteger(q?.correct) ? [q.correct] : []);
-    return [...new Set(raw.filter(index => Number.isInteger(index) && index >= 0 && index < (q?.choices?.length || 0)))].sort((a,b) => a-b);
-  }
-
-  function getSelectCount(q) {
-    const answers = getCorrectIndexes(q);
-    const requested = Number.isInteger(q?.selectCount) ? q.selectCount : answers.length;
-    return Math.max(1, Math.min(q?.choices?.length || 1, requested || answers.length || 1));
-  }
-
-  function getChoiceLabel(q, index) {
-    const custom = Array.isArray(q?.choiceLabels) ? q.choiceLabels[index] : null;
-    return custom || String.fromCharCode(97 + index);
-  }
-
-  function formatAnswerLabels(q, indexes = getCorrectIndexes(q)) {
-    return indexes.map(index => getChoiceLabel(q, index)).join('・');
-  }
-
-  function selectionsMatch(selection, answers) {
-    if (selection.size !== answers.length) return false;
-    return answers.every(index => selection.has(index));
-  }
-
-  function validQuestion(q) {
-    if (!q || typeof q.id !== 'string' || typeof q.question !== 'string' || !Array.isArray(q.choices) || q.choices.length < 2) return false;
-    const answers = getCorrectIndexes(q);
-    return answers.length >= 1 && getSelectCount(q) === answers.length;
-  }
-
-  async function loadQuestions() {
+    return copy;
+  };
+  const today = () => new Intl.DateTimeFormat('sv-SE', {timeZone: 'Asia/Tokyo', year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date());
+  const defaults = () => ({ xp:0, total:0, correct:0, bestCombo:0, combo:0, daily:{date:today(), total:0, correct:0}, weak:{}, answered:{}, cardKnown:{}, recent:[] });
+  function load() {
     try {
-      if (Array.isArray(window.STUDY_FORGE_QUESTIONS) && window.STUDY_FORGE_QUESTIONS.length >= 1) {
-        const loaded = window.STUDY_FORGE_QUESTIONS.filter(validQuestion);
-        if (loaded.length) questions = loaded;
-        return;
+      const raw = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      if (!raw || typeof raw !== 'object') return defaults();
+      const s = {...defaults(), ...raw};
+      for (const key of ['weak','answered','cardKnown']) if (!s[key] || typeof s[key] !== 'object' || Array.isArray(s[key])) s[key] = {};
+      if (!s.daily || typeof s.daily !== 'object' || s.daily.date !== today()) s.daily = {date:today(), total:0, correct:0};
+      if (!Array.isArray(s.recent)) s.recent = [];
+      for (const key of ['xp','total','correct','bestCombo','combo']) s[key] = Math.max(0, Number(s[key]) || 0);
+      return s;
+    } catch(e) { return defaults(); }
+  }
+  let progress = load();
+  const ui = {
+    page:'home', scope:'all', quizType:'all', quiz:null,
+    cardScope:'all', cardMode:'mix', cards:[], cardIndex:0, cardFlipped:false,
+    selectedVitamin:null, search:'', toastTimer:null
+  };
+  function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(progress)); } catch(e) { toast('保存に失敗しました。ブラウザの空き容量をご確認ください。'); } }
+  function calcLevel(xp = progress.xp) { return Math.floor(Math.sqrt(Math.max(xp, 0) / 140)) + 1; }
+  function levelInfo() {
+    const lv = calcLevel(); const start = (lv - 1) ** 2 * 140; const end = lv ** 2 * 140;
+    return {lv, pct:Math.max(0, Math.min(100, (progress.xp - start) / (end - start) * 100)), toNext:end - progress.xp};
+  }
+  function daily() { if (progress.daily.date !== today()) { progress.daily = {date:today(), total:0, correct:0}; save(); } return progress.daily; }
+  function toast(message) {
+    const el = $('#toast'); if (!el) return;
+    el.textContent = message; el.classList.add('show');
+    clearTimeout(ui.toastTimer); ui.toastTimer = setTimeout(() => el.classList.remove('show'), 2700);
+  }
+  function vById(id) { return vitamins.find(v => v.id === id); }
+  function categoryText(group) { return group === 'water' ? '水溶性' : '脂溶性'; }
+  function categoryIcon(group) { return group === 'water' ? '◈' : '♨'; }
+  function safeGroup(group) { return group === 'water' ? 'water' : 'fat'; }
+  function label(v) { return v.name; }
+  function emptyNotice(text) { return `<div class="empty-note">${escapeHTML(text)}</div>`; }
+  function smallTag(v) { return `<span class="pill ${safeGroup(v.group)}">${categoryIcon(v.group)} ${categoryText(v.group)}</span>`; }
+  function fmt(s) { return s === null || s === undefined ? '<span class="no-data">画像では記載なし</span>' : escapeHTML(s); }
+  function scopeSelect(current, action) {
+    return `<div class="segment" role="group" aria-label="出題範囲">
+      ${[['all','すべて 13種'], ['water','水溶性 9種'], ['fat','脂溶性 4種']].map(([val,name]) => `<button class="seg-btn ${current === val ? 'selected' : ''}" data-action="${action}" data-value="${val}" aria-pressed="${current === val}">${name}</button>`).join('')}
+    </div>`;
+  }
+  function headerTitle(title) { $('#page-title').textContent = title; }
+  function updateStats() {
+    const lv = calcLevel(); $('#top-level').textContent = `LV.${lv}`; $('#top-xp').textContent = `${progress.xp} XP`;
+    $$('[data-nav]').forEach(el => {
+      const active = el.dataset.nav === ui.page;
+      el.classList.toggle('active', active);
+      if (el.tagName === 'BUTTON') el.setAttribute('aria-current', active ? 'page' : 'false');
+    });
+  }
+  const titles = {home:'DASHBOARD',quiz:'QUIZ ARENA',cards:'MEMORY CARDS',library:'VITAMIN CODEX',review:'REVIEW ROOM',reference:'REFERENCE'};
+  function navigate(page) {
+    if (!(page in titles)) return;
+    ui.page = page;
+    if (page === 'quiz') ui.quiz = null;
+    if (page === 'cards') buildCards();
+    render(); window.scrollTo({top:0,behavior:'instant'});
+  }
+  function render() {
+    daily(); headerTitle(titles[ui.page]); updateStats();
+    const main = $('#main-content');
+    if (!main) return;
+    if (ui.page === 'home') main.innerHTML = renderHome();
+    if (ui.page === 'quiz') main.innerHTML = renderQuiz();
+    if (ui.page === 'cards') main.innerHTML = renderCards();
+    if (ui.page === 'library') main.innerHTML = renderLibrary();
+    if (ui.page === 'review') main.innerHTML = renderReview();
+    if (ui.page === 'reference') main.innerHTML = renderReference();
+  }
+  function renderHome() {
+    const level = levelInfo(); const d = daily();
+    const weakNum = Object.keys(progress.weak).length;
+    const rate = progress.total > 0 ? Math.round(progress.correct / progress.total * 100) : 0;
+    const todayPct = Math.min(100, d.correct / 10 * 100);
+    return `
+      <div class="section-eyebrow"><span class="live-circle"></span> YOUR STUDY COMMAND CENTER <span class="right-sub">13 VITAMINS • 2 CATEGORIES</span></div>
+      <section class="hero">
+        <div class="hero-glow"></div><div class="hero-lines"></div>
+        <div class="hero-copy">
+          <span class="hero-badge">✦ JSPO-AT EXAM TRAINING</span>
+          <h1>知識を、<br><em>武器</em>に変えろ。</h1>
+          <p>ビタミン13種類の働き・欠乏症・過剰症。<br>4択で戦い、カードで覚え、苦手を攻略しよう。</p>
+          <button class="primary-btn hero-cta" data-action="start-quiz" data-scope="all">⚔ &nbsp;クイズを始める <span>↗</span></button>
+        </div>
+        <div class="hero-orb" aria-hidden="true"><div class="hero-orb-inner"><span>V</span><small>FORGE</small></div><i class="orbit orbit-one"></i><i class="orbit orbit-two"></i></div>
+      </section>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon amber">✦</div><span class="stat-name">YOUR LEVEL</span><strong class="stat-value">${level.lv}<small> LV</small></strong><div class="thin-track"><span style="width:${level.pct}%"></span></div><small class="stat-foot">次のレベルまで ${level.toNext} XP</small></div>
+        <div class="stat-card"><div class="stat-icon mint">◎</div><span class="stat-name">ACCURACY</span><strong class="stat-value">${rate}<small> %</small></strong><div class="stat-foot">正解 ${progress.correct} / 解答 ${progress.total} 問</div></div>
+        <div class="stat-card"><div class="stat-icon purple">⚡</div><span class="stat-name">BEST COMBO</span><strong class="stat-value">${progress.bestCombo}<small> 連続</small></strong><div class="stat-foot">最高連続正解数</div></div>
+        <div class="stat-card"><div class="stat-icon coral">✚</div><span class="stat-name">NEED REVIEW</span><strong class="stat-value">${weakNum}<small> 種</small></strong><button class="stat-foot as-button" data-nav="review">苦手を見直す ↗</button></div>
+      </div>
+      <div class="home-columns">
+        <section class="panel">
+          <div class="panel-title-row"><div><span class="kicker">SELECT YOUR MODE</span><h2>トレーニング</h2></div><span class="dim-label">01 / 03</span></div>
+          <div class="mode-list">
+            <button class="mode-row" data-nav="quiz"><span class="mode-icon quiz-icon">⚔</span><span class="mode-info"><b>4択クイズ</b><small>働き・欠乏症・過剰症をランダム出題</small></span><span class="mode-arrow">↗</span></button>
+            <button class="mode-row" data-nav="cards"><span class="mode-icon card-icon">▤</span><span class="mode-info"><b>暗記カード</b><small>めくって覚える。覚えた度合いを記録</small></span><span class="mode-arrow">↗</span></button>
+            <button class="mode-row" data-nav="library"><span class="mode-icon book-icon">◫</span><span class="mode-info"><b>ビタミン図鑑</b><small>13種類すべてを一覧・検索</small></span><span class="mode-arrow">↗</span></button>
+          </div>
+        </section>
+        <section class="panel daily-panel">
+          <div class="panel-title-row"><div><span class="kicker">DAILY CHALLENGE</span><h2>今日のミッション</h2></div><span class="reward-badge">+XP</span></div>
+          <div class="daily-emblem" aria-hidden="true">✧</div>
+          <p class="daily-headline">正解 10 問に挑戦</p>
+          <p class="daily-detail">毎日10問でビタミンの知識を定着させよう。</p>
+          <div class="daily-numbers"><strong>${Math.min(d.correct,10)} <span>/ 10</span></strong><span>${Math.round(todayPct)}%</span></div>
+          <div class="progress-track"><span style="width:${todayPct}%"></span></div>
+          <div class="daily-footer">${d.correct >= 10 ? '✦ 今日のミッション達成！' : `あと ${Math.max(0,10-d.correct)} 問正解で達成`}</div>
+        </section>
+      </div>
+      <div class="tip-strip"><span>💡</span><p><strong>AT試験 POINT</strong>　脂溶性は「A・D・E・K」の4種類。体内に貯蔵されやすく、過剰摂取にも注意。</p><button data-nav="reference">資料を見る →</button></div>`;
+  }
+  function buildQuestions(scope, type = 'all') {
+    const inScope = vitamins.filter(v => scope === 'all' || v.group === scope);
+    const allDef = vitamins.filter(v => v.deficiency && v.deficiencyShort);
+    const allExc = vitamins.filter(v => v.excess && v.excessShort);
+    const bank = [];
+    function multiple({id, vitamin, kind, prompt, correct, optionsFrom, explain, hint}) {
+      const candidates = shuffle([...new Set(optionsFrom.filter(x => x && x !== correct))]);
+      if (candidates.length < 3) return;
+      const choices = shuffle([correct,...candidates.slice(0,3)]);
+      bank.push({id, vitaminId:vitamin.id, kind, prompt, choices, correct, explain, hint});
+    }
+    inScope.forEach(v => {
+      const names = (scope === 'all' ? vitamins : inScope).map(x => x.name);
+      if (type === 'all' || type === 'role') {
+        multiple({id:`${v.id}-role`,vitamin:v,kind:'働き',prompt:`${v.name}の主な働きは？`,correct:v.roleShort,optionsFrom:vitamins.map(x => x.roleShort),explain:`${v.name}（${v.alias}）：${v.role}`,hint:v.mnemonic});
+        multiple({id:`${v.id}-reverse-role`,vitamin:v,kind:'働き',prompt:`「${v.roleHint}」に関わるビタミンは？`,correct:v.name,optionsFrom:names,explain:`${v.name}（${v.alias}）：${v.role}`,hint:v.mnemonic});
       }
-      const response = await fetch('data/questions.json', {cache:'no-store'});
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      const loaded = Array.isArray(data) ? data.filter(validQuestion) : [];
-      if (loaded.length) questions = loaded;
-    } catch (err) {
-      console.info('Using built-in fallback question set.', err);
-    }
-  }
-
-  function normalizeFilters() {
-    if (!state.study.filters || typeof state.study.filters !== 'object') {
-      state.study.filters = {subject:'all', difficulty:'all'};
-    }
-    state.study.filters.subject ||= 'all';
-    state.study.filters.difficulty ||= 'all';
-  }
-
-  function buildQuestionFilters() {
-    normalizeFilters();
-    const subjects = [...new Set(questions.map(q => q.subject || 'GENERAL'))].sort((a,b) => a.localeCompare(b,'ja'));
-    const select = $('subjectFilter');
-    select.innerHTML = '<option value="all">ALL SUBJECTS</option>' +
-      subjects.map(subject => `<option value="${escapeHtml(subject)}">${escapeHtml(subject)}</option>`).join('');
-    if (subjects.includes(state.study.filters.subject)) select.value = state.study.filters.subject;
-    else { state.study.filters.subject = 'all'; select.value = 'all'; }
-    $('difficultyFilter').value = ['1','2','3'].includes(String(state.study.filters.difficulty)) ? String(state.study.filters.difficulty) : 'all';
-  }
-
-  function expToNext(level = state.player.level) {
-    return Math.round(100 * Math.pow(1.18, level - 1));
-  }
-
-  function comboMultiplier() {
-    const combo = state.study.combo;
-    if (combo >= 20) return 1.65;
-    if (combo >= 10) return 1.4;
-    if (combo >= 5) return 1.22;
-    if (combo >= 3) return 1.1;
-    return 1;
-  }
-
-  function titleForLevel(level) {
-    if (level >= 20) return 'Master Forger';
-    if (level >= 12) return 'Arcane Forger';
-    if (level >= 7) return 'Steel Forger';
-    if (level >= 3) return 'Apprentice Forger';
-    return 'Rookie Forger';
-  }
-
-  function rankForLevel(level) {
-    if (level >= 20) return 'V';
-    if (level >= 12) return 'IV';
-    if (level >= 7) return 'III';
-    if (level >= 3) return 'II';
-    return 'I';
-  }
-
-  function addRewards({exp=0,gold=0,energy=0}, showToast = true) {
-    state.player.exp += exp;
-    state.currency.gold += gold;
-    state.currency.forgeEnergy += energy;
-    let levelsGained = 0;
-    while (state.player.exp >= expToNext()) {
-      state.player.exp -= expToNext();
-      state.player.level += 1;
-      state.player.maxHp += 12;
-      state.player.hp = state.player.maxHp;
-      state.battle.playerHp = state.player.maxHp;
-      state.player.atk += 3;
-      state.player.def += 2;
-      state.player.critical = Math.min(.25, state.player.critical + .005);
-      state.player.speed += 1;
-      levelsGained++;
-    }
-    if (showToast && (exp || gold || energy)) toast(`<b>REWARD</b> +${exp} EXP / +${gold} G / +${energy} FE`);
-    if (levelsGained) showLevelUp(levelsGained);
-    saveState();
-    renderAll();
-  }
-
-  function showLevelUp(levelsGained) {
-    $('levelBurst').textContent = state.player.level;
-    $('levelUpText').textContent = `LEVEL ${state.player.level} — HP +${12*levelsGained} / ATK +${3*levelsGained} / DEF +${2*levelsGained}`;
-    $('levelUpModal').classList.remove('hidden');
-  }
-
-  function toast(html) {
-    const item = document.createElement('div');
-    item.className = 'toast';
-    item.innerHTML = html;
-    $('toastStack').appendChild(item);
-    setTimeout(() => item.remove(), 2800);
-  }
-
-  function navigate(screen) {
-    $$('.screen').forEach(el => el.classList.toggle('active', el.dataset.screen === screen));
-    $$('.nav-btn').forEach(el => el.classList.toggle('active', el.dataset.nav === screen));
-    if (screen === 'study' && !currentQuestion) nextStudyQuestion();
-    if (screen === 'battle') ensureEnemy();
-    window.scrollTo({top:0, behavior:'smooth'});
-    renderAll();
-  }
-
-  function renderAll() {
-    $('goldValue').textContent = state.currency.gold.toLocaleString();
-    $('forgeEnergyValue').textContent = state.currency.forgeEnergy.toLocaleString();
-    $('homeLevel').textContent = state.player.level;
-    $('playerTitle').textContent = titleForLevel(state.player.level);
-    $('rankEmblem').textContent = rankForLevel(state.player.level);
-    const need = expToNext();
-    $('expText').textContent = `${state.player.exp} / ${need}`;
-    $('expBar').style.width = `${Math.min(100, state.player.exp / need * 100)}%`;
-    $('statHp').textContent = state.player.maxHp;
-    $('statAtk').textContent = state.player.atk;
-    $('statDef').textContent = state.player.def;
-    $('statCrit').textContent = `${Math.round(state.player.critical * 100)}%`;
-    $('todayAnswered').textContent = state.today.answered;
-    $('todayCorrect').textContent = state.today.correct;
-    $('todayAccuracy').textContent = state.today.answered ? `${Math.round(state.today.correct / state.today.answered * 100)}%` : '—';
-    $('bestCombo').textContent = state.study.bestCombo;
-    $('reviewCount').textContent = state.study.reviewIds.length;
-    $('questionBankCount').textContent = questions.length.toLocaleString();
-    $('questionSubjectCount').textContent = `${new Set(questions.map(q => q.subject || 'GENERAL')).size} SUBJECTS`;
-    $('studyCombo').textContent = state.study.combo;
-    updatePoolCount();
-    $('battleWins').textContent = state.battle.wins;
-    $('battleAtk').textContent = state.player.atk;
-    $('battleEnergy').textContent = state.currency.forgeEnergy;
-
-    if (currentQuestion && !studyAnswered) renderRewardPreview(currentQuestion);
-    renderBattleBars();
-  }
-
-  function renderRewardPreview(question) {
-    const mult = comboMultiplier();
-    const baseExp = 10 + (question.difficulty || 1) * 3;
-    const baseGold = 6 + (question.difficulty || 1) * 2;
-    const baseEnergy = 1 + Math.ceil((question.difficulty || 1) / 2);
-    $('previewExp').textContent = `+${Math.round(baseExp * mult)}`;
-    $('previewGold').textContent = `+${Math.round(baseGold * mult)}`;
-    $('previewEnergy').textContent = `+${baseEnergy}`;
-    $('comboMultiplier').textContent = `COMBO ×${mult.toFixed(2)}`;
-  }
-
-  function questionPool(mode = state.study.mode) {
-    normalizeFilters();
-    let pool = questions;
-    if (mode === 'review') {
-      const set = new Set(state.study.reviewIds);
-      const reviewPool = questions.filter(q => set.has(q.id));
-      pool = reviewPool.length ? reviewPool : questions;
-    }
-    const subject = state.study.filters.subject;
-    const difficulty = state.study.filters.difficulty;
-    const filtered = pool.filter(q =>
-      (subject === 'all' || (q.subject || 'GENERAL') === subject) &&
-      (difficulty === 'all' || String(q.difficulty || 1) === String(difficulty))
-    );
-    return filtered.length ? filtered : pool;
-  }
-
-  function updatePoolCount() {
-    if (!$('poolCount')) return;
-    const pool = questionPool(state.study.mode);
-    $('poolCount').textContent = `POOL ${pool.length.toLocaleString()} / BANK ${questions.length.toLocaleString()}`;
-  }
-
-  function setQuestionFilter(kind, value) {
-    normalizeFilters();
-    state.study.filters[kind] = value;
-    saveState();
-    updatePoolCount();
-    nextStudyQuestion();
-  }
-
-  function pickQuestion(mode = state.study.mode, excludeId = null) {
-    const pool = questionPool(mode);
-    const candidates = pool.length > 1 ? pool.filter(q => q.id !== excludeId) : pool;
-    return candidates[Math.floor(Math.random() * candidates.length)] || FALLBACK_QUESTIONS[0];
-  }
-
-  function nextStudyQuestion() {
-    studyAnswered = false;
-    studySelection = new Set();
-    currentQuestion = pickQuestion(state.study.mode, state.study.lastQuestionId);
-    state.study.lastQuestionId = currentQuestion.id;
-    $('questionSubject').textContent = currentQuestion.subject || 'GENERAL';
-    $('questionDifficulty').textContent = ['EASY','NORMAL','HARD'][Math.max(0, Math.min(2, (currentQuestion.difficulty || 1)-1))];
-    $('questionYear').textContent = currentQuestion.year || '—';
-    const qLabel = currentQuestion.qNum ? `問${currentQuestion.qNum}` : 'QUESTION';
-    $('questionCounter').textContent = state.study.mode === 'review' ? `REVIEW • ${qLabel}` : `AT EXAM • ${qLabel}`;
-    $('questionText').textContent = currentQuestion.question;
-    $('answerFeedback').className = 'answer-feedback';
-    $('answerFeedback').innerHTML = '';
-    $('nextQuestionBtn').classList.add('hidden');
-    $('submitAnswerBtn').classList.remove('hidden');
-    $('submitAnswerBtn').disabled = true;
-    renderChoices($('choiceGrid'), currentQuestion, studySelection, updateStudySelectionUI);
-    updateStudySelectionUI();
-    renderRewardPreview(currentQuestion);
-  }
-
-  function renderChoices(container, question, selection, onChange) {
-    container.innerHTML = '';
-    const maxSelections = getSelectCount(question);
-    question.choices.forEach((choice, index) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'choice-btn';
-      btn.setAttribute('aria-pressed', 'false');
-      btn.innerHTML = `<span class="choice-key">${escapeHtml(getChoiceLabel(question,index))}</span><span>${escapeHtml(choice)}</span>`;
-      btn.addEventListener('click', () => {
-        if (btn.disabled) return;
-        if (selection.has(index)) {
-          selection.delete(index);
-        } else {
-          if (maxSelections === 1) selection.clear();
-          else if (selection.size >= maxSelections) {
-            toast(`<b>SELECT ${maxSelections}</b> ${maxSelections}つまで選択できます`);
-            return;
-          }
-          selection.add(index);
+      if ((type === 'all' || type === 'deficiency') && v.deficiency) {
+        const options = allDef.filter(other => {
+          // 類似した貧血や「通常は欠乏がまれ」を誤答として並べない
+          if (['b9','b12'].includes(v.id) && ['b9','b12'].includes(other.id) && other.id !== v.id) return false;
+          if (['b5','b7'].includes(v.id) && ['b5','b7'].includes(other.id) && other.id !== v.id) return false;
+          return true;
+        }).map(x => x.deficiencyShort);
+        multiple({id:`${v.id}-deficiency`,vitamin:v,kind:'欠乏症',prompt:`${v.name}の欠乏について正しいものは？`,correct:v.deficiencyShort,optionsFrom:options,explain:`${v.name}の欠乏：${v.deficiency}`,hint:v.mnemonic});
+        if (v.deficiencyHint) {
+          multiple({id:`${v.id}-reverse-deficiency`,vitamin:v,kind:'欠乏症',prompt:`「${v.deficiencyHint}」と特に関係するビタミンは？`,correct:v.name,optionsFrom:names.filter(n => !(v.id === 'b12' && n === '葉酸')),explain:`${v.name}の欠乏：${v.deficiency}`,hint:v.mnemonic});
         }
-        Array.from(container.querySelectorAll('.choice-btn')).forEach((choiceBtn, choiceIndex) => {
-          const selected = selection.has(choiceIndex);
-          choiceBtn.classList.toggle('selected', selected);
-          choiceBtn.setAttribute('aria-pressed', String(selected));
-        });
-        if (onChange) onChange();
-      });
-      container.appendChild(btn);
-    });
-  }
-
-  function updateStudySelectionUI() {
-    if (!currentQuestion) return;
-    const needed = getSelectCount(currentQuestion);
-    const count = studySelection.size;
-    const hint = $('selectionHint');
-    hint.className = `selection-hint${count === needed ? ' ready' : ''}`;
-    hint.textContent = needed === 1 ? `1つ選択してください • ${count}/1` : `${needed}つ選択してください • ${count}/${needed}`;
-    $('submitAnswerBtn').disabled = count !== needed || studyAnswered;
-  }
-
-  function explanationHtml(q) {
-    const answers = formatAnswerLabels(q);
-    let details = '';
-    if (Array.isArray(q.choiceExplanations) && q.choiceExplanations.length === q.choices.length) {
-      details = `<div class="explanation-list">${q.choiceExplanations.map((text,index) => {
-        const truth = Array.isArray(q.choiceStatementsCorrect) ? q.choiceStatementsCorrect[index] : null;
-        const cls = truth === true ? ' is-true' : truth === false ? ' is-false' : '';
-        return `<div class="choice-explanation${cls}">${escapeHtml(text)}</div>`;
-      }).join('')}</div>`;
-    } else if (q.explanation) {
-      details = `<div class="explanation-list"><div class="choice-explanation">${escapeHtml(q.explanation)}</div></div>`;
-    }
-    return `<div class="correct-answer-line">正解：${escapeHtml(answers)}</div>${details}`;
-  }
-
-  function answerStudy() {
-    if (studyAnswered || !currentQuestion) return;
-    const q = currentQuestion;
-    const answers = getCorrectIndexes(q);
-    if (studySelection.size !== getSelectCount(q)) return;
-    studyAnswered = true;
-    const correct = selectionsMatch(studySelection, answers);
-    const buttons = Array.from($('choiceGrid').querySelectorAll('.choice-btn'));
-    buttons.forEach((btn, i) => {
-      btn.disabled = true;
-      if (answers.includes(i)) btn.classList.add('correct');
-      if (studySelection.has(i) && !answers.includes(i)) btn.classList.add('wrong');
-    });
-    $('submitAnswerBtn').disabled = true;
-    $('submitAnswerBtn').classList.add('hidden');
-    $('selectionHint').className = `selection-hint ${correct ? 'result-ok' : 'result-bad'}`;
-    $('selectionHint').textContent = correct ? `正解 • ${formatAnswerLabels(q)}` : `不正解 • 正解は ${formatAnswerLabels(q)}`;
-
-    state.study.totalAnswered++;
-    state.today.answered++;
-    state.study.history[q.id] = {answered:(state.study.history[q.id]?.answered || 0)+1, correct:(state.study.history[q.id]?.correct || 0)+(correct?1:0), lastCorrect:correct};
-
-    if (correct) {
-      state.study.totalCorrect++;
-      state.today.correct++;
-      state.study.combo++;
-      state.study.bestCombo = Math.max(state.study.bestCombo, state.study.combo);
-      state.study.reviewIds = state.study.reviewIds.filter(id => id !== q.id);
-      const mult = comboMultiplier();
-      const exp = Math.round((10 + (q.difficulty||1)*3) * mult);
-      const gold = Math.round((6 + (q.difficulty||1)*2) * mult);
-      const energy = 1 + Math.ceil((q.difficulty||1)/2);
-      $('answerFeedback').innerHTML = `<strong>✓ CORRECT — COMBO ${state.study.combo}</strong>${explanationHtml(q)}`;
-      addRewards({exp,gold,energy});
-    } else {
-      state.study.combo = 0;
-      if (!state.study.reviewIds.includes(q.id)) state.study.reviewIds.push(q.id);
-      $('answerFeedback').innerHTML = `<strong>✕ WRONG — 復習問題に追加</strong>${explanationHtml(q)}`;
-      toast('<b>REVIEW ADDED</b> 間違えた問題を復習リストへ登録');
-      saveState();
-      renderAll();
-    }
-    $('answerFeedback').classList.add('show');
-    $('nextQuestionBtn').classList.remove('hidden');
-  }
-
-  function setStudyMode(mode) {
-    state.study.mode = mode;
-    $$('.seg').forEach(btn => btn.classList.toggle('active', btn.dataset.studyMode === mode));
-    $('studyModeHelp').textContent = mode === 'review'
-      ? (state.study.reviewIds.length ? `復習待ち ${state.study.reviewIds.length}問から出題します。` : '復習待ちがないため通常問題から出題します。')
-      : '全問題から出題します。';
-    saveState();
-    nextStudyQuestion();
-  }
-
-  function enemyForIndex(index) {
-    const base = ENEMIES[index % ENEMIES.length];
-    const cycle = Math.floor(index / ENEMIES.length);
-    const scale = 1 + cycle * .22;
-    return {
-      ...base,
-      level: 1 + index,
-      maxHp: Math.round(base.hp * scale),
-      hp: Math.round(base.hp * scale),
-      atkScaled: Math.round(base.atk * (1 + cycle*.16)),
-      expScaled: Math.round(base.exp * (1 + cycle*.18)),
-      goldScaled: Math.round(base.gold * (1 + cycle*.18))
-    };
-  }
-
-  function ensureEnemy(forceNew = false) {
-    if (!currentEnemy || forceNew) currentEnemy = enemyForIndex(state.battle.enemyIndex);
-    state.battle.playerHp = Math.max(1, Math.min(state.battle.playerHp || state.player.maxHp, state.player.maxHp));
-    guardActive = false;
-    $('battleActions').classList.remove('hidden');
-    $('battleQuiz').classList.add('hidden');
-    $('battleResult').classList.add('hidden');
-    $('enemyName').textContent = currentEnemy.name;
-    $('enemyTier').textContent = currentEnemy.tier;
-    $('enemyLevel').textContent = `Lv.${currentEnemy.level}`;
-    $('battleLog').textContent = `${currentEnemy.name} が出現。QUIZ STRIKEで知識を攻撃力へ変換せよ。`;
-    renderBattleBars();
-  }
-
-  function renderBattleBars() {
-    if (!currentEnemy) return;
-    $('enemyHpText').textContent = `${Math.max(0,currentEnemy.hp)} / ${currentEnemy.maxHp}`;
-    $('enemyHpBar').style.width = `${Math.max(0, currentEnemy.hp / currentEnemy.maxHp * 100)}%`;
-    $('playerHpText').textContent = `${Math.max(0,state.battle.playerHp)} / ${state.player.maxHp}`;
-    $('playerHpBar').style.width = `${Math.max(0, state.battle.playerHp / state.player.maxHp * 100)}%`;
-  }
-
-  function startQuizStrike() {
-    if (!currentEnemy || currentEnemy.hp <= 0 || state.battle.playerHp <= 0) return;
-    battleAnswered = false;
-    battleSelection = new Set();
-    currentBattleQuestion = pickQuestion('normal', currentBattleQuestion?.id);
-    $('battleActions').classList.add('hidden');
-    $('battleQuiz').classList.remove('hidden');
-    $('battleQuestionSubject').textContent = `${currentBattleQuestion.subject || 'GENERAL'} • ${currentBattleQuestion.year || '—'}`;
-    $('battleQuestionText').textContent = currentBattleQuestion.question;
-    $('submitBattleAnswerBtn').classList.remove('hidden');
-    $('submitBattleAnswerBtn').disabled = true;
-    renderChoices($('battleChoiceGrid'), currentBattleQuestion, battleSelection, updateBattleSelectionUI);
-    updateBattleSelectionUI();
-  }
-
-  function updateBattleSelectionUI() {
-    if (!currentBattleQuestion) return;
-    const needed = getSelectCount(currentBattleQuestion);
-    const count = battleSelection.size;
-    const hint = $('battleSelectionHint');
-    hint.className = `selection-hint${count === needed ? ' ready' : ''}`;
-    hint.textContent = needed === 1 ? `1つ選択 • ${count}/1` : `${needed}つ選択 • ${count}/${needed}`;
-    $('submitBattleAnswerBtn').disabled = count !== needed || battleAnswered;
-  }
-
-  function answerBattle() {
-    if (battleAnswered || !currentBattleQuestion) return;
-    const q = currentBattleQuestion;
-    const answers = getCorrectIndexes(q);
-    if (battleSelection.size !== getSelectCount(q)) return;
-    battleAnswered = true;
-    const correct = selectionsMatch(battleSelection, answers);
-    const buttons = Array.from($('battleChoiceGrid').querySelectorAll('.choice-btn'));
-    buttons.forEach((btn, i) => {
-      btn.disabled = true;
-      if (answers.includes(i)) btn.classList.add('correct');
-      if (battleSelection.has(i) && !answers.includes(i)) btn.classList.add('wrong');
-    });
-    $('submitBattleAnswerBtn').disabled = true;
-    $('submitBattleAnswerBtn').classList.add('hidden');
-    $('battleSelectionHint').className = `selection-hint ${correct ? 'result-ok' : 'result-bad'}`;
-    $('battleSelectionHint').textContent = correct ? `正解 • ${formatAnswerLabels(q)}` : `不正解 • 正解 ${formatAnswerLabels(q)}`;
-
-    state.study.totalAnswered++;
-    state.today.answered++;
-    state.study.history[q.id] = {answered:(state.study.history[q.id]?.answered || 0)+1, correct:(state.study.history[q.id]?.correct || 0)+(correct?1:0), lastCorrect:correct};
-
-    setTimeout(() => {
-      $('battleQuiz').classList.add('hidden');
-      if (correct) {
-        state.study.totalCorrect++;
-        state.today.correct++;
-        state.study.combo++;
-        state.study.bestCombo = Math.max(state.study.bestCombo, state.study.combo);
-        state.study.reviewIds = state.study.reviewIds.filter(id => id !== q.id);
-        let damage = Math.round(state.player.atk * (1 + state.study.combo * .018) + (q.difficulty||1)*2);
-        const crit = Math.random() < state.player.critical;
-        if (crit) damage = Math.round(damage * 1.7);
-        currentEnemy.hp -= damage;
-        floatDamage(damage, crit);
-        $('battleLog').textContent = crit ? `CRITICAL! 正解の知識が ${damage} ダメージを与えた。` : `正解！ ${damage} ダメージ。COMBO ${state.study.combo}`;
-        addRewards({exp:4+(q.difficulty||1)*2,gold:2,energy:1}, false);
-        if (currentEnemy.hp <= 0) return winBattle();
-      } else {
-        state.study.combo = 0;
-        if (!state.study.reviewIds.includes(q.id)) state.study.reviewIds.push(q.id);
-        $('battleLog').textContent = `不正解。${currentEnemy.name} の反撃！`;
-        enemyAttack();
-        if (state.battle.playerHp <= 0) return loseBattle();
       }
-      saveState();
-      renderAll();
-      setTimeout(() => $('battleActions').classList.remove('hidden'), 220);
-    }, 900);
+      if ((type === 'all' || type === 'excess') && v.excess) {
+        multiple({id:`${v.id}-excess`,vitamin:v,kind:'過剰症',prompt:`${v.name}の過剰摂取に関連する症状は？`,correct:v.excessShort,optionsFrom:allExc.map(x => x.excessShort),explain:`${v.name}の過剰摂取：${v.excess}`,hint:v.mnemonic});
+        multiple({id:`${v.id}-reverse-excess`,vitamin:v,kind:'過剰症',prompt:`過剰摂取で「${v.excessShort}」がみられるビタミンは？`,correct:v.name,optionsFrom:names,explain:`${v.name}の過剰摂取：${v.excess}`,hint:v.mnemonic});
+      }
+    });
+    return bank;
   }
-
-  function enemyAttack() {
-    const raw = Math.max(1, currentEnemy.atkScaled - Math.round(state.player.def * .45));
-    const damage = guardActive ? Math.max(1, Math.round(raw * .38)) : raw;
-    state.battle.playerHp -= damage;
-    guardActive = false;
-    $('battleStage').classList.remove('shake');
-    void $('battleStage').offsetWidth;
-    $('battleStage').classList.add('shake');
-    floatDamage(damage, false, true);
-    renderBattleBars();
+  function chooseQuestions(scope, type, reviewIds = null) {
+    const pool = buildQuestions(scope, type).filter(q => !reviewIds || reviewIds.includes(q.vitaminId));
+    // 苦手や未回答を優先しながら、同じビタミンの連続出題を減らす
+    const sorted = shuffle(pool).sort((a,b) => {
+      const sa = (progress.answered[a.id]?.seen || 0) - (progress.weak[a.vitaminId] ? 5 : 0);
+      const sb = (progress.answered[b.id]?.seen || 0) - (progress.weak[b.vitaminId] ? 5 : 0);
+      return sa - sb;
+    });
+    const chosen = [], usedVitamins = new Set();
+    for (const q of sorted) { if (!usedVitamins.has(q.vitaminId)) { chosen.push(q); usedVitamins.add(q.vitaminId); } if (chosen.length === 10) break; }
+    if (chosen.length < 10) for (const q of sorted) { if (!chosen.includes(q)) chosen.push(q); if (chosen.length === 10) break; }
+    return chosen;
   }
-
-  function guard() {
-    if (!currentEnemy || currentEnemy.hp <= 0 || state.battle.playerHp <= 0) return;
-    guardActive = true;
-    const heal = Math.max(3, Math.round(state.player.maxHp * .06));
-    state.battle.playerHp = Math.min(state.player.maxHp, state.battle.playerHp + heal);
-    $('battleLog').textContent = `GUARD：HPを ${heal} 回復。次の攻撃ダメージを大幅軽減。`;
-    renderBattleBars();
-    setTimeout(() => {
-      enemyAttack();
-      if (state.battle.playerHp <= 0) loseBattle();
-      else $('battleLog').textContent += ` ${currentEnemy.name} の攻撃を受け流した。`;
-      saveState();
-      renderAll();
-    }, 280);
+  function startQuiz(scope = ui.scope, type = ui.quizType, reviewIds = null) {
+    const questions = chooseQuestions(scope,type,reviewIds);
+    if (!questions.length) return toast('この条件で出せる問題がありません。範囲を変えてください。');
+    ui.page = 'quiz'; ui.scope = scope;
+    ui.quiz = {questions,index:0,answered:false,selected:null,correct:0,review:!!reviewIds,earned:0,done:false,oldLevel:calcLevel()};
+    render(); window.scrollTo({top:0,behavior:'instant'});
   }
-
-  function floatDamage(value, crit = false, enemyDmg = false) {
-    const el = document.createElement('div');
-    el.className = `damage-float${crit?' crit':''}${enemyDmg?' enemy-dmg':''}`;
-    el.textContent = enemyDmg ? `-${value}` : `${crit?'CRIT ':''}-${value}`;
-    $('floatingLayer').appendChild(el);
-    setTimeout(() => el.remove(), 900);
-  }
-
-  function winBattle() {
-    currentEnemy.hp = 0;
-    const exp = currentEnemy.expScaled;
-    const gold = currentEnemy.goldScaled;
-    const energy = currentEnemy.tier.includes('BOSS') ? 5 : currentEnemy.tier === 'ELITE' ? 3 : 2;
-    state.battle.wins++;
-    state.battle.enemyIndex++;
-    state.battle.playerHp = Math.min(state.player.maxHp, state.battle.playerHp + Math.round(state.player.maxHp*.18));
-    $('battleActions').classList.add('hidden');
-    $('battleQuiz').classList.add('hidden');
-    $('battleResult').classList.remove('hidden');
-    $('battleResultTitle').textContent = 'VICTORY';
-    $('battleResultText').textContent = `${currentEnemy.name} 撃破 — +${exp} EXP / +${gold} G / +${energy} FE`;
-    addRewards({exp,gold,energy}, false);
-    toast(`<b>VICTORY</b> ${currentEnemy.name} を撃破`);
-    renderBattleBars();
-  }
-
-  function loseBattle() {
-    state.battle.playerHp = 0;
-    $('battleActions').classList.add('hidden');
-    $('battleQuiz').classList.add('hidden');
-    $('battleResult').classList.remove('hidden');
-    $('battleResultTitle').textContent = 'DEFEAT';
-    $('battleResultText').textContent = '敗北。ペナルティはありません。HPを全回復して同じ敵へ再挑戦できます。';
-    $('nextBattleBtn').textContent = 'RETRY';
-    saveState();
-    renderAll();
-  }
-
-  function nextBattle() {
-    const defeated = currentEnemy && currentEnemy.hp <= 0;
-    if (defeated) {
-      currentEnemy = null;
-      $('nextBattleBtn').textContent = 'NEXT ENEMY';
-      ensureEnemy(true);
-    } else {
-      state.battle.playerHp = state.player.maxHp;
-      $('nextBattleBtn').textContent = 'NEXT ENEMY';
-      ensureEnemy(false);
+  function renderQuiz() {
+    if (!ui.quiz) {
+      const count = buildQuestions(ui.scope,ui.quizType).length;
+      return `<div class="page-head"><span class="kicker">BATTLE MODE</span><h1>4択クイズ <small>QUIZ ARENA</small></h1><p>画像の情報から問題を作成。覚えるだけでなく、答えを思い出す練習をしよう。</p></div>
+        <div class="setup-panel panel"><div class="setup-ornament">⚔</div><span class="kicker">01 / CHOOSE CATEGORY</span><h2>学習するビタミン</h2>${scopeSelect(ui.scope,'set-quiz-scope')}
+        <div class="setup-divider"></div><span class="kicker">02 / CHOOSE QUESTION TYPE</span><h2>出題テーマ</h2>
+        <div class="type-grid">${[['all','MIX','全部から出題'],['role','ROLE','主な働き'],['deficiency','DEFICIT','欠乏・欠乏症'],['excess','EXCESS','過剰症']].map(([value,head,sub])=> `<button class="type-choice ${ui.quizType===value?'chosen':''}" data-action="set-quiz-type" data-value="${value}"><b>${head}</b><small>${sub}</small></button>`).join('')}</div>
+        <div class="setup-bottom"><span>出題可能 <b>${count}</b> 問から最大10問</span><button class="primary-btn" data-action="start-quiz">⚔ クイズスタート →</button></div></div>`;
     }
-    saveState();
-    renderAll();
+    const qz = ui.quiz;
+    if (qz.done) return renderQuizResult();
+    const q = qz.questions[qz.index];
+    const v = vById(q.vitaminId);
+    const answered = qz.answered;
+    const correctSelected = answered && qz.selected === q.correct;
+    return `<div class="quiz-stage">
+      <div class="quiz-topline"><span class="kicker">${qz.review?'REVIEW CHALLENGE':'VITAMIN KNOWLEDGE BATTLE'}</span><button class="text-btn" data-action="quit-quiz">✕ やめる</button></div>
+      <div class="round-info"><span>QUESTION <b>${String(qz.index + 1).padStart(2,'0')}</b><small> / ${String(qz.questions.length).padStart(2,'0')}</small></span><span class="combo-pill ${progress.combo >=3 ? 'on':''}">⚡ ${progress.combo} COMBO</span></div>
+      <div class="quiz-progress"><span style="width:${(qz.index + 1)/qz.questions.length*100}%"></span></div>
+      <div class="question-box"><div class="question-top"><span class="question-type">${escapeHTML(q.kind)}</span>${smallTag(v)}</div><h1>${escapeHTML(q.prompt)}</h1><p class="question-hint">正しいものを1つ選ぼう</p></div>
+      <div class="answer-list">${q.choices.map((choice,i)=>{
+        const correct = answered && choice === q.correct;
+        const wrong = answered && choice === qz.selected && choice !== q.correct;
+        return `<button class="answer-btn ${correct?'is-correct':''} ${wrong?'is-wrong':''} ${answered&&!correct&&!wrong?'is-dim':''}" data-action="answer" data-value="${i}" ${answered?'disabled':''} aria-label="選択肢${i+1}: ${escapeHTML(choice)}"><span class="answer-letter">${'ABCD'[i]}</span><span class="answer-text">${escapeHTML(choice)}</span><span class="answer-mark">${correct?'✓':wrong?'×':'›'}</span></button>`;
+      }).join('')}</div>
+      ${answered ? `<div class="feedback ${correctSelected?'feedback-ok':'feedback-bad'}"><div class="feedback-head"><span class="feedback-symbol">${correctSelected?'✓':'!'}</span><b>${correctSelected?'正解！ KNOWLEDGE ACQUIRED':'おしい！ 復習リストに追加'}</b>${correctSelected?`<span class="gain-tag">+${qz.lastGain} XP</span>`:''}</div><p><strong>正解：</strong>${escapeHTML(q.correct)}</p><p class="feedback-explanation">${escapeHTML(q.explain)}</p><div class="feedback-memory">💡 ${escapeHTML(q.hint)}</div></div>
+      <button class="primary-btn full-width next-btn" data-action="next-question">${qz.index === qz.questions.length - 1 ? '結果を見る →':'次の問題へ →'}</button>` : `<p class="quiz-caption">正解で XP 獲得 ／ 不正解は自動で苦手登録</p>`}
+    </div>`;
   }
-
-  function escapeHtml(value) {
-    return String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  function answerQuestion(choiceIndex) {
+    const qz = ui.quiz;
+    if (!qz || qz.done || qz.answered) return;
+    const q = qz.questions[qz.index];
+    if (!Number.isInteger(choiceIndex) || choiceIndex < 0 || choiceIndex >= q.choices.length) return;
+    const choice = q.choices[choiceIndex], ok = choice === q.correct;
+    const oldLevel = calcLevel();
+    qz.selected = choice; qz.answered = true;
+    progress.total++; daily().total++;
+    const record = progress.answered[q.id] || {seen:0,correct:0}; record.seen++;
+    if (ok) {
+      record.correct++;
+      progress.correct++; daily().correct++; progress.combo++;
+      progress.bestCombo = Math.max(progress.bestCombo, progress.combo);
+      qz.correct++;
+      const bonus = progress.combo >= 10 ? 10 : progress.combo >= 5 ? 6 : progress.combo >= 3 ? 3 : 0;
+      const gain = 15 + bonus;
+      qz.earned += gain; qz.lastGain = gain; progress.xp += gain;
+      if (qz.review && progress.weak[q.vitaminId]) {
+        progress.weak[q.vitaminId].streak = (progress.weak[q.vitaminId].streak || 0) + 1;
+        if (progress.weak[q.vitaminId].streak >= 2) {
+          delete progress.weak[q.vitaminId]; toast(`${vById(q.vitaminId).name}の苦手を克服！`);
+        }
+      }
+    } else {
+      progress.combo = 0; qz.lastGain = 0;
+      const old = progress.weak[q.vitaminId] || {misses:0,streak:0};
+      old.misses++; old.streak = 0; progress.weak[q.vitaminId] = old;
+    }
+    progress.answered[q.id] = record;
+    progress.recent.unshift({id:q.id,vitaminId:q.vitaminId,ok,date:Date.now()}); progress.recent = progress.recent.slice(0,50);
+    save(); render();
+    if (calcLevel() > oldLevel) toast(`✦ LEVEL UP! LV.${calcLevel()} に到達`);
   }
-
-  function bindEvents() {
-    $$('[data-nav]').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.nav)));
-    $('nextQuestionBtn').addEventListener('click', nextStudyQuestion);
-    $('submitAnswerBtn').addEventListener('click', answerStudy);
-    $('submitBattleAnswerBtn').addEventListener('click', answerBattle);
-    $$('.seg').forEach(btn => btn.addEventListener('click', () => setStudyMode(btn.dataset.studyMode)));
-    $('subjectFilter').addEventListener('change', e => setQuestionFilter('subject', e.target.value));
-    $('difficultyFilter').addEventListener('change', e => setQuestionFilter('difficulty', e.target.value));
-    $('reviewStartBtn').addEventListener('click', () => { setStudyMode('review'); navigate('study'); });
-    $('quizStrikeBtn').addEventListener('click', startQuizStrike);
-    $('guardBtn').addEventListener('click', guard);
-    $('nextBattleBtn').addEventListener('click', nextBattle);
-    $('closeLevelModal').addEventListener('click', () => $('levelUpModal').classList.add('hidden'));
+  function nextQuestion() {
+    const qz = ui.quiz; if (!qz || !qz.answered || qz.done) return;
+    if (qz.index >= qz.questions.length - 1) qz.done = true;
+    else {qz.index++; qz.answered=false; qz.selected=null;}
+    render(); window.scrollTo({top:0,behavior:'smooth'});
   }
-
-  async function init() {
-    bindEvents();
-    await loadQuestions();
-    normalizeFilters();
-    buildQuestionFilters();
-    $$('.seg').forEach(btn => btn.classList.toggle('active', btn.dataset.studyMode === state.study.mode));
-    $('studyModeHelp').textContent = state.study.mode === 'review'
-      ? (state.study.reviewIds.length ? `復習待ち ${state.study.reviewIds.length}問から出題します。` : '復習待ちがないため通常問題から出題します。')
-      : '全問題から出題します。';
-    nextStudyQuestion();
-    renderAll();
-    saveState();
+  function renderQuizResult() {
+    const q = ui.quiz; const rate = Math.round(q.correct/q.questions.length * 100);
+    const label = rate === 100 ? 'PERFECT CLEAR' : rate >= 80 ? 'EXCELLENT' : rate >= 50 ? 'GOOD FIGHT' : 'KEEP TRAINING';
+    return `<div class="result-panel panel"><span class="kicker">TRAINING COMPLETE</span><div class="result-medal">${rate===100?'✦':rate>=80?'🏆':'⚔'}</div><h1>${label}</h1><p>ラウンド終了！知識が確実に武器になっている。</p>
+      <div class="result-score"><strong>${q.correct}</strong><span> / ${q.questions.length} 問 正解</span></div><div class="result-bars"><span style="width:${rate}%"></span></div>
+      <div class="result-rewards"><div><span>正答率</span><b>${rate}%</b></div><div><span>獲得 EXP</span><b class="reward-value">+${q.earned}</b></div><div><span>現在レベル</span><b>LV.${calcLevel()}</b></div></div>
+      <div class="result-actions"><button class="primary-btn" data-action="restart-quiz">もう一度挑戦 ↗</button><button class="secondary-btn" data-nav="review">苦手を復習</button><button class="ghost-btn" data-nav="home">ホームへ</button></div>
+    </div>`;
   }
-
-  init();
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.info('Service worker registration skipped:', err));
+  function buildCards() {
+    const available = vitamins.filter(v => ui.cardScope === 'all' || v.group === ui.cardScope);
+    const modes = ui.cardMode === 'mix' ? ['role','deficiency','excess'] : [ui.cardMode];
+    const cards = [];
+    for (const v of available) for (const mode of modes) {
+      if (ui.cardMode === 'mix' && v[mode] === null) continue;
+      cards.push({v, mode, key:`${v.id}:${mode}`});
+    }
+    ui.cards = shuffle(cards); ui.cardIndex=0; ui.cardFlipped=false;
   }
+  const modeText = {role:'主な働き',deficiency:'不足・欠乏症',excess:'過剰摂取'};
+  function renderCards() {
+    if (!ui.cards.length) buildCards();
+    const card = ui.cards[ui.cardIndex];
+    if (!card) return emptyNotice('カードがありません。');
+    const countKnown = ui.cards.filter(c => progress.cardKnown[c.key]).length;
+    const {v,mode} = card;
+    return `<div class="page-head"><span class="kicker">RECALL & REPEAT</span><h1>暗記カード <small>MEMORY DECK</small></h1><p>答えを思い出してからカードをタップ。覚えたカードを記録できる。</p></div>
+      <div class="flash-layout"><div class="flash-main">
+        <div class="card-controls"><div><span class="small-caption">CATEGORY</span>${scopeSelect(ui.cardScope,'set-card-scope')}</div><div><label class="small-caption" for="card-mode">暗記する項目</label><select id="card-mode" class="style-select" aria-label="暗記項目"><option value="mix" ${ui.cardMode==='mix'?'selected':''}>MIX（記載のある項目）</option><option value="role" ${ui.cardMode==='role'?'selected':''}>主な働き</option><option value="deficiency" ${ui.cardMode==='deficiency'?'selected':''}>欠乏症</option><option value="excess" ${ui.cardMode==='excess'?'selected':''}>過剰症</option></select></div></div>
+        <div class="flash-progress-top"><span>${ui.cardIndex+1} / ${ui.cards.length} CARDS</span><span>覚えた ${countKnown} 枚</span></div><div class="flash-progress"><span style="width:${(ui.cardIndex+1)/ui.cards.length*100}%"></span></div>
+        <button class="flip-card ${ui.cardFlipped?'flipped':''}" data-action="flip-card" aria-label="カードを裏返す" aria-pressed="${ui.cardFlipped}">
+          <span class="flip-inner"><span class="flip-face flip-front"><span class="flash-corner">VITAMIN KNOWLEDGE • ${escapeHTML(v.code)}</span><span class="flash-gem ${safeGroup(v.group)}">${categoryIcon(v.group)}</span><span class="flash-title">${escapeHTML(v.name)}</span><span class="flash-alias">${escapeHTML(v.alias)}</span><span class="flash-question">${escapeHTML(modeText[mode])}は？</span><span class="flash-click">TAP TO REVEAL ↻</span></span>
+          <span class="flip-face flip-back"><span class="flash-corner">ANSWER REVEALED • ${escapeHTML(v.code)}</span><span class="flash-answer-caption">${escapeHTML(modeText[mode])}</span><span class="flash-answer">${fmt(v[mode])}</span><span class="flash-mnemonic">💡 ${escapeHTML(v.mnemonic)}</span><span class="flash-click">TAP TO FLIP ↻</span></span></span>
+        </button><div class="flip-prompt">カードをタップして答えを確認</div>
+        <div class="flash-buttons"><button class="secondary-btn" data-action="card-again">↺ まだ覚えてない</button><button class="primary-btn" data-action="card-known">✓ 覚えた！</button></div>
+        <div class="flash-subbuttons"><button class="text-btn" data-action="card-prev">← 前のカード</button><button class="text-btn" data-action="shuffle-cards">シャッフル ⤨</button><button class="text-btn" data-action="card-next">次のカード →</button></div>
+      </div><aside class="flash-side panel"><span class="kicker">HOW TO REMEMBER</span><h3>暗記のコツ</h3><div class="step-item"><b>01</b><span>答えを見る前に、<strong>声に出して思い出す</strong></span></div><div class="step-item"><b>02</b><span>わからなければ裏返し、<strong>要点を確認</strong></span></div><div class="step-item"><b>03</b><span>「まだ覚えてない」は、<strong>苦手リストにも登録</strong></span></div><div class="tip-mini">脂溶性：<strong>A / D / E / K</strong><br>水溶性：<strong>B群 / C</strong></div></aside></div>`;
+  }
+  function advanceCard(step = 1) {
+    if (!ui.cards.length) return;
+    ui.cardIndex = (ui.cardIndex + step + ui.cards.length) % ui.cards.length;
+    ui.cardFlipped = false; render();
+  }
+  function rateCard(known) {
+    const c = ui.cards[ui.cardIndex]; if (!c) return;
+    if (known) { progress.cardKnown[c.key]=true; toast('覚えたカードとして記録しました！'); }
+    else {
+      delete progress.cardKnown[c.key];
+      const old=progress.weak[c.v.id] || {misses:0,streak:0};
+      old.misses++; old.streak=0; progress.weak[c.v.id]=old;
+      toast(`${c.v.name} を復習リストに追加しました`);
+    }
+    save(); advanceCard();
+  }
+  function renderLibrary() {
+    const items = vitamins.filter(v => ui.scope === 'all' || v.group === ui.scope);
+    return `<div class="page-head"><span class="kicker">KNOWLEDGE ARCHIVE</span><h1>ビタミン図鑑 <small>VITAMIN CODEX</small></h1><p>13種類の生理的働き・欠乏症・過剰症をまとめて確認。</p></div>
+      <div class="library-toolbar"><div class="search-box"><span>⌕</span><input id="vitamin-search" type="search" placeholder="名前・働き・症状で検索" value="${escapeHTML(ui.search)}" aria-label="ビタミンを検索"></div>${scopeSelect(ui.scope,'set-library-scope')}</div>
+      <div class="library-count"><b>${items.length}</b> VITAMINS IN COLLECTION <span>タップして詳細を見る</span></div>
+      <div class="vitamin-grid">${items.map(v=> {
+        const open = ui.selectedVitamin === v.id;
+        const matches = `${v.name} ${v.alias} ${v.role} ${v.deficiency || ''} ${v.excess || ''}`.toLowerCase().includes(ui.search.toLowerCase());
+        return `<article class="vitamin-item ${open?'open':''} ${!matches?'hide':''}" data-search="${escapeHTML((v.name+' '+v.alias+' '+v.role+' '+(v.deficiency||'')+' '+(v.excess||'')).toLowerCase())}">
+          <button class="vitamin-toggle" data-action="toggle-vitamin" data-value="${v.id}" aria-expanded="${open}"><span class="vitamin-badge ${safeGroup(v.group)}">${escapeHTML(v.code)}</span><span class="vitamin-meta"><strong>${escapeHTML(v.name)}</strong><small>${escapeHTML(v.alias)}</small></span>${smallTag(v)}<span class="expand-symbol">${open?'−':'＋'}</span></button>
+          ${open? `<div class="vitamin-detail"><div class="fact-row"><span class="fact-label"><i class="fact-dot good"></i>主な働き</span><p>${escapeHTML(v.role)}</p></div><div class="fact-row"><span class="fact-label"><i class="fact-dot warn"></i>不足・欠乏症</span><p>${fmt(v.deficiency)}</p></div><div class="fact-row"><span class="fact-label"><i class="fact-dot bad"></i>過剰摂取</span><p>${fmt(v.excess)}</p></div><div class="memory-point">💡 ${escapeHTML(v.mnemonic)}</div><button class="detail-quiz" data-action="quiz-vitamin" data-value="${v.id}">このビタミンをクイズで確認 →</button></div>`:''}</article>`;
+      }).join('')}</div>
+      <p id="no-search-result" class="search-empty ${items.some(v => (`${v.name} ${v.alias} ${v.role} ${v.deficiency||''} ${v.excess||''}`).toLowerCase().includes(ui.search.toLowerCase()))?'hide':''}">該当するビタミンがありません。</p>
+      <div class="footnote">※「画像では記載なし」は、元の資料に記述がないという意味で、症状が絶対に起こらないという意味ではありません。 <button class="text-btn" data-nav="reference">元の一覧画像を確認 ↗</button></div>`;
+  }
+  function renderReview() {
+    const ids = Object.keys(progress.weak).filter(id => vById(id));
+    const totalMisses = ids.reduce((acc,id) => acc+(progress.weak[id].misses||0),0);
+    return `<div class="page-head"><span class="kicker">TURN WEAKNESS INTO POWER</span><h1>苦手復習 <small>REVIEW ROOM</small></h1><p>間違えた問題・覚えられなかったカードを自動記録。復習クイズで克服しよう。</p></div>
+      <div class="review-summary"><div><span class="kicker">NEED REVIEW</span><strong>${ids.length}<small> 種類</small></strong></div><div><span class="kicker">TOTAL MISTAKES</span><strong>${totalMisses}<small> 回</small></strong></div><div class="review-summary-action"><button class="primary-btn" data-action="start-review" ${!ids.length?'disabled':''}>◎ 苦手だけ出題 →</button><small>復習で連続2回正解すると自動解除</small></div></div>
+      ${ids.length ? `<div class="review-heading"><h2>苦手リスト</h2><span>${ids.length} ITEMS</span></div><div class="review-list">${ids.map(id => {
+        const v = vById(id), rec = progress.weak[id];
+        return `<div class="review-entry"><span class="vitamin-badge ${safeGroup(v.group)}">${escapeHTML(v.code)}</span><span class="review-entry-info"><b>${escapeHTML(v.name)}</b><small>間違い ${rec.misses}回 • 復習連続正解 ${rec.streak||0}/2</small></span><button class="weak-clear" data-action="clear-weak" data-value="${id}" aria-label="${escapeHTML(v.name)}の苦手登録を解除">克服済み ✓</button></div>`;
+      }).join('')}</div>` : `<div class="review-empty panel"><div>✧</div><h2>まだ苦手問題はありません</h2><p>4択クイズで間違えたビタミンや、暗記カードで「まだ覚えてない」を選んだ項目がここに入ります。</p><button class="primary-btn" data-nav="quiz">クイズで実力チェック →</button></div>`}
+      <div class="tip-strip"><span>💡</span><p>クイズやカードの「苦手登録」はビタミン単位です。復習クイズでは該当ビタミンを優先して出題します。</p></div>`;
+  }
+  function renderReference() {
+    return `<div class="page-head"><span class="kicker">ORIGINAL STUDY SHEET</span><h1>元の資料 <small>REFERENCE</small></h1><p>受け取った一覧画像をそのまま確認できます。ピンチ操作で拡大して読めます。</p></div>
+      <div class="reference-panel panel"><div class="reference-title"><span>JSPO-AT試験対策 / ビタミン一覧表</span><a class="secondary-btn" href="assets/vitamin-chart.jpeg" target="_blank" rel="noopener">画像を大きく開く ↗</a></div><img src="assets/vitamin-chart.jpeg" alt="元のビタミン・ミネラル一覧表" loading="lazy"></div>
+      <div class="footnote">元画像にはミネラル一覧も含まれます。本アプリのクイズ・暗記カードはビタミン13種類を対象としています。</div>`;
+  }
+  document.addEventListener('click', event => {
+    const btn = event.target.closest('[data-action],[data-nav]');
+    if (!btn || btn.disabled) return;
+    if (btn.dataset.nav) { event.preventDefault(); navigate(btn.dataset.nav); return; }
+    const action = btn.dataset.action, value = btn.dataset.value;
+    switch(action) {
+      case 'set-quiz-scope': ui.scope=value; render(); break;
+      case 'set-quiz-type': ui.quizType=value; render(); break;
+      case 'set-card-scope': ui.cardScope=value; buildCards(); render(); break;
+      case 'set-library-scope': ui.scope=value; ui.selectedVitamin=null; render(); break;
+      case 'start-quiz': startQuiz(btn.dataset.scope || ui.scope, ui.quizType); break;
+      case 'quiz-vitamin': startQuiz('all','all',[value]); break;
+      case 'answer': answerQuestion(Number(value)); break;
+      case 'next-question': nextQuestion(); break;
+      case 'quit-quiz': ui.quiz=null; render(); break;
+      case 'restart-quiz': startQuiz(ui.scope,ui.quizType); break;
+      case 'flip-card': ui.cardFlipped=!ui.cardFlipped; btn.classList.toggle('flipped',ui.cardFlipped); btn.setAttribute('aria-pressed',String(ui.cardFlipped)); break;
+      case 'card-next': advanceCard(); break;
+      case 'card-prev': advanceCard(-1); break;
+      case 'card-known': rateCard(true); break;
+      case 'card-again': rateCard(false); break;
+      case 'shuffle-cards': buildCards(); render(); toast('カードをシャッフルしました'); break;
+      case 'toggle-vitamin': ui.selectedVitamin=ui.selectedVitamin===value ? null : value; render(); break;
+      case 'clear-weak': delete progress.weak[value]; save(); render(); toast('苦手リストから解除しました'); break;
+      case 'start-review': {
+        const weakIds=Object.keys(progress.weak).filter(id=>vById(id));
+        if (weakIds.length) startQuiz('all','all',weakIds);
+        break;
+      }
+    }
+  });
+  document.addEventListener('change', event => {
+    if (event.target.id === 'card-mode') { ui.cardMode=event.target.value; buildCards(); render(); }
+  });
+  document.addEventListener('input', event => {
+    if (event.target.id !== 'vitamin-search') return;
+    ui.search=event.target.value;
+    const term=ui.search.toLowerCase(); let shown=0;
+    $$('.vitamin-item').forEach(card => { const yes=card.dataset.search.includes(term); card.classList.toggle('hide',!yes); if (yes) shown++; });
+    $('#no-search-result')?.classList.toggle('hide',shown>0);
+  });
+  document.addEventListener('keydown', event => {
+    if (ui.page !== 'quiz' || !ui.quiz || ui.quiz.done) return;
+    if (['1','2','3','4'].includes(event.key) && !ui.quiz.answered && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'')) answerQuestion(Number(event.key)-1);
+    if (event.key === 'Enter' && ui.quiz.answered && !/BUTTON|INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'')) nextQuestion();
+  });
+  if (!vitamins.length) { $('#main-content').textContent='問題データが読み込めませんでした。data/vitamins.js を確認してください。'; return; }
+  buildCards(); render();
 })();
 
-  </script>
+// GitHub Pages 静的 HTML 版
+</script>
 </body>
 </html>
