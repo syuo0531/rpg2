@@ -165,7 +165,7 @@
   return false;
  }
  function handleChange(target){
-  if(target.id==='customerLinked'){
+  if(target.id==='field_customerId'||target.id==='customerLinked'){
    const x=customerOf(target.value),f=document.querySelector('#field_client'),p=document.querySelector('#field_price');
    if(x&&f){f.value=x.name;if(p&&!Number(p.value))p.value=x.defaultPrice||0}
    return true;
