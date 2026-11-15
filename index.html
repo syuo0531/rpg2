@@ -18,6 +18,47 @@
 /* Table-first schedule experience */
 .table-section{margin-top:18px}.table-section .section-head{padding:0 2px}.table-note{color:var(--sub);font-size:12px;margin:6px 0 12px}.shift-table,.slot-table{width:100%;border-collapse:separate;border-spacing:0;text-align:left;font-size:12px}.shift-table{min-width:1040px}.slot-table{min-width:max(700px,100%)}.shift-table th,.slot-table th{background:#f5f8fc;color:#536379;font-weight:800;white-space:nowrap;padding:13px 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}.shift-table td,.slot-table td{padding:11px 9px;vertical-align:top;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}.shift-table tr:last-child td,.slot-table tr:last-child td{border-bottom:0}.shift-table tr>:last-child,.slot-table tr>:last-child{border-right:0}.shift-table th:first-child,.shift-table td:first-child,.slot-table th:first-child,.slot-table td:first-child{position:sticky;left:0;z-index:2;background:#fff;min-width:125px;box-shadow:1px 0 0 var(--line)}.shift-table thead th:first-child,.slot-table thead th:first-child{z-index:3;background:#f5f8fc}.shift-table .is-today{background:#eef5ff}.shift-table .tbl-time{display:block;width:100%;padding:6px 7px;text-align:left;border-radius:7px;background:#e8f2ff;border:0;color:#21579e;font-weight:800;font-size:12px;min-height:30px;margin-bottom:5px}.shift-table .tbl-muted{color:#99a5b5;font-size:11px}.shift-table .tbl-count{display:block;color:#415775;font-size:11px;margin:5px 0}.shift-table .tbl-add{display:inline-flex;align-items:center;justify-content:center;border:1px dashed #d3ddeb;background:#fff;color:var(--accent);border-radius:6px;min-height:27px;padding:4px 6px;font-size:11px}.shift-table .tbl-add:hover{background:#edf5ff}.tbl-summary{font-weight:800;background:#f7faff}.tbl-person{display:flex;gap:8px;align-items:center;font-weight:800;white-space:nowrap}.day-selector{display:flex;gap:7px;overflow:auto;padding:4px 1px 13px}.day-selector button{border:1px solid var(--line);background:white;min-width:77px;border-radius:10px;padding:8px 9px;min-height:50px;font-weight:800;flex:1}.day-selector button.active{background:var(--accent-light);color:var(--accent);border-color:#a9c7fa}.table-wrap{overflow:auto;border-radius:var(--radius)}.slot-table td{height:54px;vertical-align:middle}.slot-table .time-col{font-variant-numeric:tabular-nums;width:94px;min-width:94px;font-weight:800;color:var(--sub);text-align:center}.slot-table .slot-open{background:#f0fbf6}.slot-table .slot-booked{background:#ebf3ff}.slot-table .slot-booked.tentative{background:#fff8e8}.slot-table .slot-booked.done{background:#e9f7ef}.slot-table .slot-closed{background:#f8fafc}.slot-booking,.slot-quick{display:block;border:0;text-align:left;width:100%;border-radius:7px;min-height:35px;padding:5px 8px;font-size:11px;line-height:1.5}.slot-booking{font-weight:800;color:#2458a0;background:transparent}.slot-booking small{display:block;font-weight:600}.slot-continued{color:#7891ae;font-size:10px}.slot-quick{color:#2b8b69;background:transparent}.slot-quick:hover{background:#ddf5e9}.date-heading{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.date-heading input{width:150px;min-height:35px}@media(max-width:720px){.table-section{margin-top:17px}.day-selector button{flex:0 0 82px}.shift-table th,.shift-table td{padding:10px 7px}.table-note{line-height:1.6}.mobile-nav{overflow-x:auto;justify-content:space-between}.mobile-nav button{flex:1 0 54px;font-size:9px;padding:4px 1px}}
 
+
+/* Weekly time grid: dates vertically, half-hour time slots horizontally */
+.axis-panel{overflow:hidden}
+.axis-bar{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--line)}
+.axis-bar strong{font-weight:800;font-size:14px}
+.axis-filters{display:flex;flex-wrap:wrap;gap:7px}
+.axis-filters .control{width:auto;min-width:110px;min-height:36px;padding:7px 9px;font-size:12px}
+.axis-scroll{overflow:auto;max-height:68vh;overscroll-behavior:contain}
+.axis-table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:11px}
+.axis-table th,.axis-table td{border-right:1px solid #e4ebf3;border-bottom:1px solid #e4ebf3;vertical-align:top}
+.axis-table thead th{position:sticky;top:0;z-index:3;background:#eff4fa;padding:11px 7px;text-align:center;color:#485e78;font-size:12px;font-weight:850;min-width:136px;width:136px;box-shadow:0 1px 0 #dce5ed;font-variant-numeric:tabular-nums}
+.axis-table tbody td{padding:7px 6px;width:136px;min-width:136px;height:105px}
+.axis-table tr>*:last-child{border-right:0}
+.axis-table tbody tr:last-child>*{border-bottom:0}
+.axis-table thead th:first-child,.axis-table tbody th:first-child{position:sticky;left:0;width:108px;min-width:108px;max-width:108px;z-index:4;text-align:left;background:#fff;box-shadow:1px 0 0 #dce5ed;padding:11px 9px}
+.axis-table thead th:first-child{z-index:6;background:#eff4fa}
+.axis-table tbody tr.axis-today th:first-child{background:#eaf3ff;color:#2159a0}
+.axis-table tbody th strong{display:block;font-size:13px;white-space:normal}
+.axis-table tbody th small{display:block;margin-top:5px;color:var(--sub);font-size:10px;font-weight:500}
+.axis-cell-empty{background:#f9fbfd}
+.axis-cell-free{background:#f0faf5}
+.axis-cell-booked{background:#eef4ff}
+.axis-action{display:block;border:1px solid transparent;min-height:30px;width:100%;text-align:left;padding:5px 7px;border-radius:7px;font-size:11px;margin-bottom:4px;line-height:1.35;overflow-wrap:anywhere}
+.axis-action:last-child{margin-bottom:0}
+.axis-action b,.axis-action small{display:block}
+.axis-action small{font-size:10px;margin-top:2px}
+.axis-booking{background:#dfeaff;border-color:#c9defa;color:#285a9b;font-weight:750}
+.axis-booking.tentative{background:#fff0d4;color:#946313;border-color:#f4d69a}
+.axis-booking.done{background:#e1f4ea;color:#167458;border-color:#b6e4d0}
+.axis-continue{opacity:.7}
+.axis-free{background:#e1f5e9;color:#256b50;border-color:#b5e3c9;border-style:dashed;cursor:pointer}
+.axis-free:hover{background:#cbedda}
+.axis-shift{font-size:10px;color:#657e9a;display:block;padding:0 2px 4px}
+.axis-shift button{font:inherit;border:0;background:transparent;color:inherit;min-height:0;padding:0;text-decoration:underline;text-decoration-style:dotted;text-align:left}
+.axis-dash{color:#9da9b5}
+.axis-legend{padding:12px 16px;display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--sub);border-top:1px solid var(--line)}
+.axis-help{margin:9px 0 17px;color:var(--sub);font-size:11px;line-height:1.7}
+.axis-details{margin-top:18px}
+.axis-details .section-head{margin-bottom:10px}
+@media(max-width:720px){.axis-scroll{max-height:60vh}.axis-bar{padding:12px}.axis-filters{width:100%}.axis-filters .control{flex:1;min-width:0}.axis-table thead th,.axis-table tbody td{min-width:126px;width:126px}.axis-table thead th:first-child,.axis-table tbody th:first-child{min-width:85px;width:85px;max-width:85px;padding:9px 7px}.axis-table tbody th strong{font-size:12px}}
+
   </style>
 </head>
 <body>
@@ -47,6 +88,7 @@ const today=dayKey(new Date());
 function sample(){const mon=monday(today), wed=addDays(mon,2), thu=addDays(mon,3), fri=addDays(mon,4), sat=addDays(mon,5);return {version:1,demo:true,staff:[{id:'s1',name:'スタッフA',role:'トレーナー',color:colors[0]},{id:'s2',name:'スタッフB',role:'トレーナー',color:colors[1]}],shifts:[{id:'sh1',staffId:'s1',date:mon,start:'09:00',end:'18:00',breakMin:60},{id:'sh2',staffId:'s1',date:wed,start:'10:00',end:'20:00',breakMin:60},{id:'sh3',staffId:'s1',date:fri,start:'09:00',end:'17:00',breakMin:45},{id:'sh4',staffId:'s2',date:mon,start:'12:00',end:'21:00',breakMin:60},{id:'sh5',staffId:'s2',date:thu,start:'10:00',end:'19:00',breakMin:60},{id:'sh6',staffId:'s2',date:sat,start:'09:00',end:'16:00',breakMin:45}],bookings:[{id:'b1',staffId:'s1',date:mon,start:'10:00',duration:60,client:'お客様A',menu:'パーソナル60分',status:'確定',notes:''},{id:'b2',staffId:'s2',date:mon,start:'14:30',duration:60,client:'お客様B',menu:'パーソナル60分',status:'仮予約',notes:''},{id:'b3',staffId:'s1',date:wed,start:'15:00',duration:90,client:'お客様C',menu:'パーソナル90分',status:'確定',notes:''},{id:'b4',staffId:'s2',date:thu,start:'11:00',duration:60,client:'お客様D',menu:'体験セッション',status:'完了',notes:''}]};}
 const KEY='fitdesk_local_v1';
 function load(){try{let raw=localStorage.getItem(KEY);if(raw){let obj=JSON.parse(raw);if(validData(obj))return obj}}catch(e){console.warn('load failed',e)}return sample()}
+let tableStaff='all',tableTimeRange='all';
 let db=load(),page='table',mode=window.innerWidth<=720?'day':'week',cursor=today,filterBooking='',filterStatus='',filterStaff='',filterFrom='',filterTo='',toastTimer=null;
 function validData(o){return o&&Array.isArray(o.staff)&&Array.isArray(o.shifts)&&Array.isArray(o.bookings)&&o.staff.every(s=>s&&typeof s.id==='string'&&typeof s.name==='string')&&o.shifts.every(s=>s&&typeof s.date==='string'&&typeof s.staffId==='string')&&o.bookings.every(b=>b&&typeof b.date==='string'&&typeof b.staffId==='string'&&typeof b.client==='string')}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('保存できませんでした。端末の空き容量やブラウザ設定を確認してください。')}render()}
@@ -58,37 +100,56 @@ const worked=s=>Math.max(0,duration(s.start,s.end)-(Number(s.breakMin)||0));
 const workingHours=list=>(list.reduce((n,s)=>n+worked(s),0)/60).toFixed(1);
 const fmtM=m=>`${(m/60).toFixed(1)}h`;
 const weekDays=()=>Array.from({length:7},(_,i)=>addDays(monday(cursor),i));
-const periodShift=()=>db.shifts.filter(s=>weekDays().includes(s.date));
-const periodBooking=()=>db.bookings.filter(b=>weekDays().includes(b.date));
-const statClass=s=>({'仮予約':'tentative','完了':'done','キャンセル':'cancel'}[s]||'');
-function toast(msg){let root=$('#toastRoot');root.innerHTML=`<div class="toast">${esc(msg)}</div>`;clearTimeout(toastTimer);toastTimer=setTimeout(()=>root.innerHTML='',3000)}
-const navs=[['table','シフト表','calendar'],['calendar','カレンダー','calendar'],['bookings','予約一覧','booking'],['staff','スタッフ','staff'],['reports','勤務・予約集計','report'],['settings','データ管理','data']];
-function changePage(p){page=p;window.scrollTo({top:0,behavior:'smooth'});render()}
-function render(){
- const titles={table:['シフト・予約表','スタッフ別の週間勤務と時間別予約を表で確認できます'],calendar:['シフト・予約カレンダー','勤務と予約をひとつの画面で確認できます'],bookings:['予約一覧','予約内容の確認・変更・キャンセル'],staff:['スタッフ管理','スタッフの追加・編集と担当状況'],reports:['勤務・予約集計','選択中の週の稼働状況をまとめます'],settings:['データ管理','バックアップや初期化を行います']};
- $('#pageTitle').textContent=titles[page][0];$('#pageDesc').textContent=titles[page][1];
- const navHtml=(mobile=false)=>navs.map(([id,label,ico])=>`<button type="button" data-nav="${id}" class="${mobile?'':'navbtn '}${page===id?'active':''}" ${page===id?'aria-current="page"':''}>${icon(ico)}<span>${mobile?(id==='reports'?'集計':id==='settings'?'設定':label):label}</span></button>`).join('');
- $('#desktopNav').innerHTML=navHtml();$('#mobileNav').innerHTML=navHtml(true);
- $('#topActions').innerHTML=page==='staff'?`<button class="btn primary" data-open="staff">${icon('plus')}スタッフを追加</button>`:page==='settings'?`<button class="btn" data-export="json">${icon('download')}バックアップを保存</button>`:`<button class="btn" data-open="shift">${icon('plus')}勤務を登録</button><button class="btn primary" data-open="booking">${icon('plus')}予約を追加</button>`;
- $('#demoBanner').innerHTML=db.demo?`<div class="demo-banner"><span>現在は<strong>サンプルデータ</strong>を表示しています。お客様Aなどは架空の登録例です。</span><button data-clear-demo>サンプルを消して開始</button></div>`:'';
- $('#content').innerHTML=({table:renderTables,calendar:renderCalendar,bookings:renderBookings,staff:renderStaff,reports:renderReports,settings:renderSettings}[page])();
-}
-function statCards(){const shifts=periodShift(),bookings=periodBooking().filter(active),bookMin=bookings.reduce((v,b)=>v+Number(b.duration),0),shiftMin=shifts.reduce((v,s)=>v+worked(s),0);const stats=[['勤務時間',fmtM(shiftMin),`${shifts.length}件のシフト`],['予約件数',bookings.length+'件','キャンセルを除く'],['予約時間',fmtM(bookMin),'予約枠の合計'],['予約占有率',shiftMin?Math.round(bookMin/shiftMin*100)+'%':'—','予約時間 ÷ 勤務時間']];return `<div class="stats">${stats.map((s,i)=>`<div class="panel stat"><div class="label">${s[0]}</div><div class="num">${s[1]}</div><div class="meta">${s[2]}</div><div class="line" style="background:${['#2e78e8','#0e9c81','#bd86dd','#efa947'][i]}"></div></div>`).join('')}</div>`}
-function periodBar(){const days=weekDays();return `<div class="panel board-toolbar"><div class="toolbar-left"><button class="btn small" data-move="-7" aria-label="前の週">${icon('left')}</button><div class="weektitle">${niceDate(days[0])} 〜 ${niceDate(days[6])}</div><button class="btn small" data-move="7" aria-label="次の週">${icon('right')}</button><button class="btn small" data-today>今週</button></div><div class="toolbar-right"><div class="switch"><button data-mode="week" class="${mode==='week'?'selected':''}">週表示</button><button data-mode="day" class="${mode==='day'?'selected':''}">日表示</button></div>${mode==='day'?`<input aria-label="表示日" type="date" class="control" style="width:153px;min-height:37px" id="currentDay" value="${cursor}">`:''}</div></div>`}
-
-function renderTables(){
- const days=weekDays(),shifts=periodShift(),bookings=periodBooking().filter(active);
- const cols=days.map(d=>`<th scope="col" class="${d===today?'is-today':''}">${esc(niceDate(d))}</th>`).join('');
- const staffRows=db.staff.map(s=>{
-   const cells=days.map(d=>{
-     const ss=myShifts(s.id,d),bb=myBookings(s.id,d).filter(active);
-     return `<td class="${d===today?'is-today':''}">${ss.length?ss.map(sh=>`<button class="tbl-time" type="button" data-edit-shift="${esc(sh.id)}" title="勤務を編集">${esc(sh.start)}〜${esc(sh.end)}</button>`).join(''):'<span class="tbl-muted">休み</span>'}
-      <span class="tbl-count">予約 ${bb.length}件</span>
-      <button class="tbl-add" type="button" data-open="shift" data-staff="${esc(s.id)}" data-date="${d}">＋勤務</button>
-      <button class="tbl-add" type="button" data-add-booking="${esc(s.id)}" data-date="${d}">＋予約</button></td>`
-   }).join('');
-   return `<tr><th scope="row"><span class="tbl-person"><span class="avatar" style="background:${safeColor(s.color)}">${esc(s.name.charAt(0))}</span>${esc(s.name)}</span></th>${cells}<td class="tbl-summary">${workingHours(shifts.filter(sh=>sh.staffId===s.id))}時間<br><span class="tbl-count">予約 ${bookings.filter(b=>b.staffId===s.id).length}件</span></td></tr>`
+const periodShift=()=>db.shifts.filter(s=>weekDays().includes(s.datefunction renderTables(){
+ const days=weekDays(), staff=db.staff, visible=tableStaff==='all'?staff:staff.filter(x=>x.id===tableStaff);
+ const shifts=periodShift(), bookings=periodBooking().filter(active);
+ const allowed=id=>visible.some(x=>x.id===id);
+ const selectedShifts=shifts.filter(x=>allowed(x.staffId)),selectedBookings=bookings.filter(x=>allowed(x.staffId));
+ const starts=[540,...selectedShifts.map(x=>mins(x.start)),...selectedBookings.map(x=>mins(x.start))];
+ const ends=[1260,...selectedShifts.map(x=>mins(x.end)),...selectedBookings.map(x=>mins(x.start)+Number(x.duration))];
+ let first=Math.max(0,Math.floor(Math.min(...starts)/30)*30);
+ let last=Math.min(1440,Math.ceil(Math.max(...ends)/30)*30);
+ if(tableTimeRange==='morning'){first=360;last=720}
+ if(tableTimeRange==='afternoon'){first=720;last=1080}
+ if(tableTimeRange==='evening'){first=1080;last=1440}
+ const times=Array.from({length:(last-first)/30},(_,i)=>first+30*i);
+ const staffOptions='<option value="all">全スタッフ</option>'+staff.map(x=>`<option value="${esc(x.id)}" ${tableStaff===x.id?'selected':''}>${esc(x.name)}</option>`).join('');
+ const rangeOptions=[['all','全時間'],['morning','午前 6〜12時'],['afternoon','午後 12〜18時'],['evening','夜 18〜24時']].map(([id,label])=>`<option value="${id}" ${tableTimeRange===id?'selected':''}>${label}</option>`).join('');
+ const controls=`<div class="axis-filters"><select class="control" id="tableStaffFilter" aria-label="表示するスタッフ">${staffOptions}</select><select class="control" id="tableTimeRange" aria-label="表示する時間帯">${rangeOptions}</select></div>`;
+ function renderCell(date,t){
+  const entries=[];
+  let hasWork=false,hasBooking=false;
+  for(const staffer of visible){
+   const ss=db.shifts.filter(x=>x.date===date&&x.staffId===staffer.id);
+   const working=ss.some(x=>mins(x.start)<=t&&t+30<=mins(x.end));
+   const booking=db.bookings.find(x=>active(x)&&x.date===date&&x.staffId===staffer.id&&overlaps(t,t+30,mins(x.start),mins(x.start)+Number(x.duration)));
+   if(working)hasWork=true;
+   const shiftStart=ss.find(x=>t<=mins(x.start)&&mins(x.start)<t+30);
+   if(shiftStart)entries.push(`<span class="axis-shift"><button data-edit-shift="${esc(shiftStart.id)}" title="勤務を編集">${esc(staffer.name)} 出勤 ${esc(shiftStart.start)}〜${esc(shiftStart.end)}</button></span>`);
+   if(booking){
+    hasBooking=true;
+    const isStart=t<=mins(booking.start)&&mins(booking.start)<t+30;
+    entries.push(`<button class="axis-action axis-booking ${statClass(booking.status)} ${isStart?'':'axis-continue'}" type="button" data-edit-booking="${esc(booking.id)}"><b>${isStart?esc(booking.start)+' ':'↳ '}${esc(booking.client)}</b><small>${esc(staffer.name)}・${isStart?esc(booking.menu||'予約'):'予約継続中'}</small></button>`);
+   }else if(working){
+    entries.push(`<button class="axis-action axis-free" type="button" data-add-booking="${esc(staffer.id)}" data-date="${date}" data-start="${timeFromMinutes(t)}">＋ ${esc(staffer.name)} 空き</button>`);
+   }
+  }
+  return `<td class="${hasBooking?'axis-cell-booked':hasWork?'axis-cell-free':'axis-cell-empty'}">${entries.join('')||'<span class="axis-dash">—</span>'}</td>`;
+ }
+ const rows=days.map(date=>{
+  const dayShifts=selectedShifts.filter(x=>x.date===date);
+  const dayBookings=selectedBookings.filter(x=>x.date===date);
+  return `<tr class="${date===today?'axis-today':''}"><th scope="row"><strong>${esc(niceDate(date))}</strong><small>勤務 ${workingHours(dayShifts)}h</small><small>予約 ${dayBookings.length}件</small><button type="button" class="tbl-add" data-open="shift" data-date="${date}">＋ 勤務</button></th>${times.map(t=>renderCell(date,t)).join('')}</tr>`;
  }).join('');
+ const header=`<tr><th scope="col">日付 ↓<br>時間 →</th>${times.map(t=>`<th scope="col">${timeFromMinutes(t)}</th>`).join('')}</tr>`;
+ const mainTable=`<section class="table-section"><div class="panel axis-panel"><div class="axis-bar"><strong>週間シフト・予約表</strong>${controls}</div><div class="axis-scroll" role="region" aria-label="縦軸が日付、横軸が時間の週間勤務予約表" tabindex="0"><table class="axis-table"><thead>${header}</thead><tbody>${rows}</tbody></table></div><div class="axis-legend"><span>🟩 勤務中・空き</span><span>🟦 確定予約</span><span>🟨 仮予約</span><span>✓ 完了</span><span>— 勤務なし</span></div></div><p class="axis-help">表を左右にスクロールして時間を移動できます。「空き」から予約登録、予約や「出勤」から編集ができます。休憩は実働時間の集計に反映されますが、予約可能枠には反映されません。</p></section>`;
+ const detailRows=selectedShifts.slice().sort((a,b)=>a.date.localeCompare(b.date)||a.start.localeCompare(b.start)).map(sh=>`<tr><td>${esc(niceDate(sh.date))}</td><td class="name-cell">${esc(byStaff(sh.staffId)?.name||'未登録')}</td><td>${esc(sh.start)}</td><td>${esc(sh.end)}</td><td>${Number(sh.breakMin)||0}分</td><td>${fmtM(worked(sh))}</td><td><button class="btn small" data-edit-shift="${esc(sh.id)}">編集</button></td></tr>`).join('');
+ const details=`<section class="axis-details"><div class="section-head"><h2 class="subheading">勤務詳細</h2><span class="hint">勤務・休憩・実働</span></div><div class="panel table-scroll"><table class="data-table"><thead><tr><th>日付</th><th>スタッフ</th><th>開始</th><th>終了</th><th>休憩</th><th>実働</th><th>編集</th></tr></thead><tbody>${detailRows||'<tr><td colspan="7">この週の勤務登録はありません</td></tr>'}</tbody></table></div></section>`;
+ const bar=`<div class="panel board-toolbar"><div class="toolbar-left"><button class="btn small" data-move="-7" aria-label="前週">${icon('left')}</button><strong class="weektitle">${niceDate(days[0])} 〜 ${niceDate(days[6])}</strong><button class="btn small" data-move="7" aria-label="翌週">${icon('right')}</button><button class="btn small" data-today>今週</button></div></div>`;
+ return statCards()+bar+(staff.length?mainTable+details:empty('スタッフを追加してください','スタッフを追加すると日付×時間の表が表示されます。','staff'));
+}
+
+join('');
  const total=days.map(d=>`<td>${workingHours(shifts.filter(s=>s.date===d))}時間<br><span class="tbl-count">予約 ${bookings.filter(b=>b.date===d).length}件</span></td>`).join('');
  const weekly=`<section class="table-section"><div class="section-head"><h2 class="subheading">週間シフト表</h2><span class="hint">勤務時間・予約数</span></div>
  <div class="panel table-wrap"><table class="shift-table"><thead><tr><th scope="col">スタッフ</th>${cols}<th scope="col">週合計</th></tr></thead><tbody>${staffRows}<tr class="tbl-summary"><th scope="row">合計</th>${total}<td>${workingHours(shifts)}時間<br><span class="tbl-count">予約 ${bookings.length}件</span></td></tr></tbody></table></div></section>`;
@@ -143,7 +204,7 @@ function exportData(type){if(type==='json'){download('fitdesk_backup_'+today+'.j
 async function importData(file){if(!file)return;try{let parsed=JSON.parse(await file.text());if(!validData(parsed))throw Error('データ構造が異なります');if(!confirm(`バックアップを復元しますか？\n現在のデータは上書きされます。\nスタッフ ${parsed.staff.length}名、勤務 ${parsed.shifts.length}件、予約 ${parsed.bookings.length}件`))return;db={version:1,demo:false,staff:parsed.staff,shifts:parsed.shifts,bookings:parsed.bookings};save();toast('バックアップを復元しました')}catch(e){alert('ファイルを読み込めませんでした。FitDeskのJSONバックアップを選択してください。')}finally{$('#importFile').value=''}}
 document.addEventListener('click',e=>{const el=e.target.closest('button,[data-nav],[data-import],[data-export]');if(!el){if(e.target.id==='modalBackdrop')closeModal();return}let d=el.dataset;if(d.nav){changePage(d.nav);return}if(d.open){({staff:openStaff,shift:openShift,booking:openBooking}[d.open])(undefined,{staffId:d.staff,date:d.date});return}if(d.addBooking){openBooking(undefined,{staffId:d.addBooking,date:d.date,start:d.start});return}if(d.editBooking){openBooking(d.editBooking);return}if(d.editShift){openShift(d.editShift);return}if(d.editStaff){openStaff(d.editStaff);return}if(d.close!==undefined){closeModal();return}if(d.delete){deleteEntry(d.delete,d.id);return}if(d.pickDay){cursor=d.pickDay;render();return}if(d.mode){mode=d.mode;render();return}if(d.move){cursor=addDays(cursor,Number(d.move));render();return}if(d.today!==undefined){cursor=today;render();return}if(d.export){exportData(d.export);return}if(d.import!==undefined){$('#importFile')?.click();return}if(d.clearDemo!==undefined){if(confirm('サンプルデータをすべて削除しますか？')){db={version:1,demo:false,staff:[],shifts:[],bookings:[]};save();toast('空の状態から開始できます')}return}if(d.reset!==undefined){if(confirm('すべてのデータを削除して初期化しますか？\nこの操作は元に戻せません。先にバックアップしてください。')&&confirm('最終確認：スタッフ・勤務・予約をすべて削除しますか？')){db={version:1,demo:false,staff:[],shifts:[],bookings:[]};save();toast('初期化しました')}return}});
 document.addEventListener('submit',e=>{if(e.target.id==='entryForm'){e.preventDefault();submitForm(e.target)}});
-document.addEventListener('change',e=>{const id=e.target.id;if(id==='currentDay'||id==='tableDay'){cursor=e.target.value;render()}else if(id==='statusFilter'){filterStatus=e.target.value;render()}else if(id==='staffFilter'){filterStaff=e.target.value;render()}else if(id==='fromFilter'){filterFrom=e.target.value;render()}else if(id==='toFilter'){filterTo=e.target.value;render()}else if(id==='importFile')importData(e.target.files?.[0]);});
+document.addEventListener('change',e=>{const id=e.target.id;if(id==='tableStaffFilter'){tableStaff=e.target.value;render()}else if(id==='tableTimeRange'){tableTimeRange=e.target.value;render()}else if(id==='currentDay'||id==='tableDay'){cursor=e.target.value;render()}else if(id==='statusFilter'){filterStatus=e.target.value;render()}else if(id==='staffFilter'){filterStaff=e.target.value;render()}else if(id==='fromFilter'){filterFrom=e.target.value;render()}else if(id==='toFilter'){filterTo=e.target.value;render()}else if(id==='importFile')importData(e.target.files?.[0]);});
 document.addEventListener('input',e=>{if(e.target.id==='bookingSearch'){filterBooking=e.target.value;const pos=e.target.selectionStart;render();const field=$('#bookingSearch');field?.focus();field?.setSelectionRange(pos,pos)}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
