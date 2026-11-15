@@ -100,9 +100,9 @@ function renderTables(){
  const timeRows=Array.from({length:(last-first)/30},(_,i)=>{
    const t=first+i*30;
    return `<tr><th scope="row" class="time-col">${timeFromMinutes(t)}</th>${db.staff.map(s=>{
-     const booking=dayBookings.find(b=>b.staffId===s.id&&mins(b.start)<=t&&t<mins(b.start)+Number(b.duration));
+     const booking=dayBookings.find(b=>b.staffId===s.id&&overlaps(t,t+30,mins(b.start),mins(b.start)+Number(b.duration)));
      const hasShift=dayShifts.some(sh=>sh.staffId===s.id&&mins(sh.start)<=t&&t+30<=mins(sh.end));
-     if(booking){const beginning=t===Math.floor(mins(booking.start)/30)*30;
+     if(booking){const beginning=t<=mins(booking.start)&&mins(booking.start)<t+30;
        return `<td class="slot-booked ${statClass(booking.status)}">${beginning?`<button type="button" class="slot-booking" data-edit-booking="${esc(booking.id)}">${esc(booking.start)} ${esc(booking.client)}<small>${esc(booking.menu||'予約')} · ${esc(booking.status)}</small></button>`:`<span class="slot-continued">予約中</span>`}</td>`;
      }
      return hasShift?`<td class="slot-open"><button type="button" class="slot-quick" data-add-booking="${esc(s.id)}" data-date="${day}" data-start="${timeFromMinutes(t)}">＋ 空き枠</button></td>`:'<td class="slot-closed"><span class="tbl-muted">—</span></td>';
