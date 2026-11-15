@@ -1,7 +1,7 @@
 (function(){'use strict';window.createFitDeskPro=function createFitDeskPro(c){
  'use strict';
  const key='fitdesk_cloud_config_v1';
- let client=null,user=null,cloudCfg=null,remoteRevision=null,syncEnabled=false,dirty=false,busy=false,timer=null,poll=null,customerSearch='',reportRange='month',cloudMsg='未設定',remoteMeta=null;
+ let client=null,user=null,cloudCfg=null,remoteRevision=null,syncEnabled=false,dirty=false,busy=false,timer=null,poll=null,customerSearch='',reportRange='month',cloudMsg='未設定',remoteMeta=null,localChanges=0;
  const db=()=>c.db();
  const e=v=>c.esc(v);
  const clean=()=>{const d=db(); if(!Array.isArray(d.customers))d.customers=[];if(!Array.isArray(d.notifications))d.notifications=[];if(!Array.isArray(d.blocks))d.blocks=[];};
@@ -110,7 +110,7 @@
   if(busy){dirty=true;return}
   busy=true;
   try{
-   const local=db();const {data:current,error:readError}=await client.from('fitdesk_state').select('revision,updated_at').eq('user_id',user.id).maybeSingle();
+   const startSeq=localChanges,local=JSON.parse(JSON.stringify(db()));const {data:current,error:readError}=await client.from('fitdesk_state').select('revision,updated_at').eq('user_id',user.id).maybeSingle();
    if(readError)throw readError;
    if(!force&&current&&remoteRevision!==current.revision)throw Error('他端末の変更が先に保存されています。クラウドから読み込み、内容を確認してください');
    if(force&&current&&!confirm('クラウドにあるデータをこの端末の内容で上書きします。よろしいですか？'))return;
@@ -122,12 +122,12 @@
     if(error)throw error;if(!data)throw Error('同期の競合が発生しました。他の端末の変更を確認してください');
     remoteRevision=data.revision;remoteMeta=data;
    }
-   syncEnabled=true;dirty=false;cloudMsg='同期済み・版 '+remoteRevision;
-  }catch(error){dirty=true;syncEnabled=false;cloudMsg='同期停止：'+errMsg(error);c.toast(cloudMsg)}finally{busy=false;redraw()}
+   syncEnabled=true;dirty=localChanges!==startSeq;cloudMsg=dirty?'新しい端末変更を続けて同期します':'同期済み・版 '+remoteRevision;
+  }catch(error){dirty=true;syncEnabled=false;cloudMsg='同期停止：'+errMsg(error);c.toast(cloudMsg)}finally{busy=false;if(syncEnabled&&dirty){clearTimeout(timer);timer=setTimeout(()=>pushCloud(false),500)}redraw()}
  }
  function onLocalSave(){
   if(!syncEnabled||!client||!user)return;
-  dirty=true;clearTimeout(timer);timer=setTimeout(()=>{if(syncEnabled)pushCloud(false)},900);
+  localChanges++;dirty=true;clearTimeout(timer);timer=setTimeout(()=>{if(syncEnabled)pushCloud(false)},900);
  }
  async function pollCloud(){
   if(!syncEnabled||!client||!user||busy||dirty)return;
