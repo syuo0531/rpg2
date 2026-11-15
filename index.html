@@ -136,12 +136,6 @@ let db=load(),page='table',mode=window.innerWidth<=720?'day':'week',cursor=today
 db.blocks=Array.isArray(db.blocks)?db.blocks:[];
 db.customers=Array.isArray(db.customers)?db.customers:[];
 db.notifications=Array.isArray(db.notifications)?db.notifications:[];
-const pro=window.createFitDeskPro({
- db:()=>db,setDb:v=>{db=v},save,render,page:()=>page,
- esc,uid,icon,modal,field,input,select,selectStaff,closeModal,toast,
- byStaff,validData,worked,fmtM,niceDate,dayKey,fromKey,addDays,monday,today,
- download
-});
 function validData(o){return o&&Array.isArray(o.staff)&&Array.isArray(o.shifts)&&Array.isArray(o.bookings)&&(!('blocks' in o)||Array.isArray(o.blocks)&&o.blocks.every(b=>b&&typeof b.id==='string'&&typeof b.staffId==='string'&&typeof b.date==='string'&&typeof b.start==='string'&&typeof b.end==='string'))&&o.staff.every(s=>s&&typeof s.id==='string'&&typeof s.name==='string')&&o.shifts.every(s=>s&&typeof s.date==='string'&&typeof s.staffId==='string')&&o.bookings.every(b=>b&&typeof b.date==='string'&&typeof b.staffId==='string'&&typeof b.client==='string')}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('保存できませんでした。端末の空き容量やブラウザ設定を確認してください。')}pro.onLocalSave();render()}
 const byStaff=id=>db.staff.find(x=>x.id===id);
@@ -159,6 +153,12 @@ const blocked=(staffId,date,start,end,ignore='')=>db.blocks.some(x=>x.id!==ignor
 const statClass=s=>({'仮予約':'tentative','完了':'done','キャンセル':'cancel'}[s]||'');
 function toast(msg){let root=$('#toastRoot');root.innerHTML=`<div class="toast">${esc(msg)}</div>`;clearTimeout(toastTimer);toastTimer=setTimeout(()=>root.innerHTML='',3000)}
 const navs=[['table','シフト表','calendar'],['blocks','休憩・不可','clock'],['calendar','カレンダー','calendar'],['bookings','予約一覧','booking'],['customers','顧客管理','staff'],['staff','スタッフ','staff'],['reports','売上・勤務集計','report'],['notifications','お知らせ','booking'],['cloud','クラウド同期','data'],['settings','データ管理','data']];
+const pro=window.createFitDeskPro({
+ db:()=>db,setDb:v=>{db=v},save,render,page:()=>page,
+ esc,uid,icon,modal,field,input,select,selectStaff,closeModal,toast,
+ byStaff,validData,worked,fmtM,niceDate,dayKey,fromKey,addDays,monday,today,
+ download
+});
 function changePage(p){page=p;window.scrollTo({top:0,behavior:'smooth'});render()}
 function render(){
  const titles={table:['シフト・予約表','縦軸は日付、横軸は15分刻み。予約時間を横長バーで表示します'],blocks:['休憩・予約不可時間','休憩や外出などの予約できない時間を管理します'],calendar:['シフト・予約カレンダー','勤務と予約をひとつの画面で確認できます'],bookings:['予約一覧','予約内容の確認・変更・キャンセル'],customers:['顧客管理','顧客台帳・予約履歴・回数券をまとめて確認できます'],notifications:['お知らせ','変更履歴と今後の予約を確認します'],cloud:['クラウド同期・ログイン','Supabase接続・メール認証とデータ同期'],staff:['スタッフ管理','スタッフの追加・編集と担当状況'],reports:['勤務・予約集計','選択中の週の稼働状況をまとめます'],settings:['データ管理','バックアップや初期化を行います']};
