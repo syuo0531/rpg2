@@ -1,0 +1,11 @@
+{
+  "name": "FitDesk — ジムのシフト・予約管理",
+  "short_name": "FitDesk",
+  "description": "パーソナルジムの勤務シフトと予約管理",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#111d2c",
+  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
